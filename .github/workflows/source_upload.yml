@@ -33,18 +33,16 @@ jobs:
           source: 'app/*'
           target: ${{ secrets.NFS_PATH }}/
       
-#      # web pod --> django model migrations & collectstatic
-#      - name: Django collectstatic & model migration & fetch_commits
-#        uses: garygrossgarten/github-action-ssh@release
-#        with:
-#          host: ${{ secrets.CICD_HOST }}
-#          username: ${{ secrets.CICD_USER }}
-#          password: ${{ secrets.CICD_PASS }}
-#          command: |
-#            web_pod=$(kubectl get pod -n ibs-prod | grep web | head -n 1 | cut -d ' ' -f1)
-#            kubectl exec -n ibs-prod $web_pod -- python manage.py collectstatic --no-input
-#            kubectl exec -n ibs-prod $web_pod -- sh migrate.sh
-#            kubectl exec -n ibs-prod $web_pod -- python manage.py fetch_commits
+      # web pod --> django model migrations & collectstatic
+      - name: Custom source link to rhymix
+        uses: garygrossgarten/github-action-ssh@release
+        with:
+          host: ${{ secrets.NFS_HOST }}
+          username: ${{ secrets.NFS_USER }}
+          password: ${{ secrets.NFS_PASS }}
+          command: |
+            cd ${{ secrets.NFS_PATH }}/app
+            sh link.sh
       
       # slack --> notification
       - name: Send slack when failed
