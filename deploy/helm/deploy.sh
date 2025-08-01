@@ -24,12 +24,13 @@ if [ -f "$CURR_DIR/.env" ]; then
         helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner
     fi
     # Helm nfs-provisioner 설치 여부 확인 후 설치
-    if ! helm status rhymix-nfs-subdir-external-provisioner -n kube-system >/dev/null 2>&1; then
-      helm upgrade --install rhymix nfs-subdir-external-provisioner/nfs-subdir-external-provisioner \
-          -n kube-system \
-          --set nfs.server=${NFS_HOST} \
-          --set nfs.path=${NFS_PATH}/volume/data \
-          --set storageClass.name=nfs-rhymix
+    if ! helm status rhymix-nfs-external-provisioner -n kube-system >/dev/null 2>&1; then
+      helm upgrade --install rhymix-nfs-external-provisioner \
+      nfs-subdir-external-provisioner/nfs-subdir-external-provisioner \
+            -n kube-system \
+            --set nfs.server=${NFS_HOST} \
+            --set nfs.path=${NFS_PATH}/volume/data \
+            --set storageClass.name=nfs-rhymix
     fi
 
     # Role 적용 및 Helm 배포

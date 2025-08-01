@@ -65,8 +65,9 @@ jobs:
               if ! helm repo list | grep -q 'nfs-subdir-external-provisioner'; then
                 helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner
               fi
-              if ! helm status rhymix-nfs-subdir-external-provisioner -n kube-system >/dev/null 2>&1; then
-                helm upgrade --install rhymix nfs-subdir-external-provisioner/nfs-subdir-external-provisioner \
+              if ! helm status rhymix-nfs-external-provisioner -n kube-system >/dev/null 2>&1; then
+                helm upgrade --install rhymix-nfs-external-provisioner \
+                nfs-subdir-external-provisioner/nfs-subdir-external-provisioner \
                   -n kube-system \
                   --set nfs.server=${{ secrets.NFS_HOST }} \
                   --set nfs.path=${{ secrets.NFS_PATH }}/volume/data \
