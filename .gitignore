@@ -1,0 +1,11 @@
+# ide
+.idea
+
+# custom docker-compost file
+docker-compose.yml
+
+# data directory of database
+mysql
+
+# settings
+.env

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Release.Name }}-{{ include "web.fullname" . }}-source-pv
+spec:
+  storageClassName: {{ include "web.fullname" . }}-app
+  capacity:
+    storage: 500Mi
+  accessModes:
+    - ReadWriteMany
+  mountOptions:
+    - hard
+    - nfsvers=4.1
+  nfs:
+    path: {{ .Values.global.nfsPath }}/app
+    server: {{ .Values.global.nfsHost }}

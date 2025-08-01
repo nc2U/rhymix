@@ -1,0 +1,102 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "nginx.fullname" . }}-config
+data:
+  SNIPPETS.CONF: |
+    # block direct access to templates, XML schemas, config files, dotfiles, environment info, etc.
+    location ~ ^/modules/editor/(skins|styles)/.+\.html$ {
+    	# pass
+    }
+    location ~ ^/(addons|common/tpl|files/(faceOff|ruleset)|(m\.)?layouts|modules|plugins|themes|widgets|widgetstyles)/.+\.(html|xml|blade\.php)$ {
+    	return 403;
+    }
+    location ~ ^/files/(attach|config|cache)/.+\.(ph(p|t|ar)?[0-9]?|p?html?|cgi|pl|exe|[aj]spx?|inc|bak)$ {
+    	return 403;
+    }
+    location ~ ^/files/(env|member_extra_info/(new_message_flags|point))/ {
+    	return 403;
+    }
+    location ~ ^/(\.git|\.ht|\.travis|codeception\.|composer\.|Gruntfile\.js|package\.json|CONTRIBUTING|COPYRIGHT|LICENSE|README) {
+    	return 403;
+    }
+
+    # fix incorrect relative URLs (for legacy support)
+    location ~ ^/(.+)/(addons|files|layouts|m\.layouts|modules|widgets|widgetstyles)/(.+) {
+    	try_files $uri $uri/ /$2/$3;
+    }
+
+    # fix incorrect minified URLs (for legacy support)
+    location ~ ^/(.+)\.min\.(css|js)$ {
+    	try_files $uri $uri/ /$1.$2;
+    }
+
+    # fix download URL when other directives for static files are present
+    location ~ ^/files/download/ {
+    	try_files $uri $uri/ /index.php$is_args$args;
+    }
+
+    # all other short URLs
+    location / {
+    	try_files $uri $uri/ /index.php$is_args$args;
+    }
+  PUBLIC.CONF: |
+    server {
+        listen 80;                  # 다른 파일을 만들어 쓰는 경우 default 삭제
+        root /var/www/html;         # 라이믹스를 설치할 경로 (반드시 최상단에 위치해야 합니다.)
+        server_name _;              # 사용할 도메인을 여기에 추가해도 됨 (예: server_name example.com www.example.com;)
+        client_max_body_size 32m;   # 업로드 허용 용량 (라이믹스는 분할 업로드를 지원하므로 약 10MB만 넘으면 사실상 무한대가 됩니다.)
+
+        index index.php index.html index.htm;
+
+        access_log  /var/log/nginx/rhymix.access.log;
+        error_log   /var/log/nginx/rhymix.error.log;
+
+        include snippets/rhymix.conf;   # 라이믹스 rewrite 규칙 인클루드
+
+        # location 구문을 사용하는 다른 설정은 반드시 라이믹스 rewrite 규칙보다 나중에 선언해야 합니다.
+
+        # PHP 처리
+        location ~ \.php$ {
+            try_files $uri =404;
+            include fastcgi_params;
+            fastcgi_pass web:9000;  # PHP-FPM 컨테이너 이름 또는 unix:/run/php/php8.2-fpm.sock;
+            fastcgi_index index.php;
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        }
+
+        # Let’s Encrypt 인증서 갱신용 (certbot 등)
+        location ~ ^/.well-known/acme-challenge/ {
+            allow all;
+            root /var/www/html;
+        }
+
+        # favicon 요청 등 기본 파일
+        location = /favicon.ico {
+            access_log off;
+            log_not_found off;
+        }
+
+        # robots.txt
+        location = /robots.txt {
+            access_log off;
+            log_not_found off;
+        }
+
+        # 캐시 정적 파일 (css, js, images 등)
+        location ~* \.(?:ico|css|js|gif|jpe?g|png|woff2?|eot|ttf|svg|mp4|webm|ogg|mp3|wav)$ {
+            expires 7d;
+            access_log off;
+            add_header Cache-Control "public";
+        }
+
+        # 디버깅용 파일 제외
+        location ~ \.(bak|swp|sql|tgz|gz|zip|tar)$ {
+            deny all;
+        }
+
+        # 숨김 파일 차단 (.htaccess, .git 등)
+        location ~ /\. {
+            deny all;
+        }
+    }
