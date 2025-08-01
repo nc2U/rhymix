@@ -31,7 +31,7 @@ jobs:
           username: ${{ secrets.NFS_USER }}
           password: ${{ secrets.NFS_PASS }}
           source: 'app/_rhymix,app/custom'
-          target: ${{ secrets.NFS_PATH }}/app/
+          target: ${{ secrets.NFS_PATH }}/
       
 #      # web pod --> django model migrations & collectstatic
 #      - name: Django collectstatic & model migration & fetch_commits
