@@ -1,0 +1,3 @@
+[submodule "app/_rhymix"]
+	path = app/_rhymix
+	url = https://github.com/rhymix/rhymix.git
