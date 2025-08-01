@@ -32,7 +32,7 @@ jobs:
           username: ${{ secrets.CICD_USER }}
           password: ${{ secrets.CICD_PASS }}
           source: 'deploy/helm,deploy/kubectl'
-          target: ${{ secrets.CICD_PATH }}/deploy/
+          target: ${{ secrets.CICD_PATH }}/
       
 #      # helm upgrade --> install
 #      - name: SSH Remote Commands from ci/cd server
