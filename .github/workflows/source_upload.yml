@@ -1,4 +1,4 @@
-name: Source Upload [main]
+name: Source Upload [NFS]
 
 on:
   push:
@@ -30,7 +30,7 @@ jobs:
           host: ${{ secrets.NFS_HOST }}
           username: ${{ secrets.NFS_USER }}
           password: ${{ secrets.NFS_PASS }}
-          source: 'app/_rhymix,app/custom'
+          source: 'app'
           target: ${{ secrets.NFS_PATH }}/
       
 #      # web pod --> django model migrations & collectstatic
