@@ -30,7 +30,7 @@ jobs:
           host: ${{ secrets.NFS_HOST }}
           username: ${{ secrets.NFS_USER }}
           password: ${{ secrets.NFS_PASS }}
-          source: 'app'
+          source: 'app/*'
           target: ${{ secrets.NFS_PATH }}/
       
 #      # web pod --> django model migrations & collectstatic
