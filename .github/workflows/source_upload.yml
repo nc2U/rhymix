@@ -41,8 +41,9 @@ jobs:
           username: ${{ secrets.NFS_USER }}
           password: ${{ secrets.NFS_PASS }}
           command: |
-            cd ${{ secrets.NFS_PATH }}/app
-            sh link.sh
+            cd ${{ secrets.NFS_PATH }}/app/_rhymix
+            git clone https://github.com/rhymix/rhymix.git .
+            sh ../link.sh
       
       # slack --> notification
       - name: Send slack when failed
