@@ -33,21 +33,20 @@ jobs:
           source: 'app/*'
           target: ${{ secrets.NFS_PATH }}/
       
-      # web pod --> django model migrations & collectstatic
-      - name: Custom source link to rhymix
-        uses: garygrossgarten/github-action-ssh@release
-        with:
-          host: ${{ secrets.NFS_HOST }}
-          username: ${{ secrets.NFS_USER }}
-          password: ${{ secrets.NFS_PASS }}
-          command: |
-            cd ${{ secrets.NFS_PATH }}/app/_rhymix
-            if [ ! -d ".git" ]; then
-              git clone https://github.com/rhymix/rhymix.git .
-            else
-              git pull origin master
-            fi
-#            echo '${{ secrets.NFS_PASS }}' | sudo -S mkdir -p files && chmod -R 777 ./files
+#      # web pod --> django model migrations & collectstatic
+#      - name: Custom source link to rhymix
+#        uses: garygrossgarten/github-action-ssh@release
+#        with:
+#          host: ${{ secrets.NFS_HOST }}
+#          username: ${{ secrets.NFS_USER }}
+#          password: ${{ secrets.NFS_PASS }}
+#          command: |
+#            cd ${{ secrets.NFS_PATH }}/app/_rhymix
+#            if [ ! -d ".git" ]; then
+#              git clone https://github.com/rhymix/rhymix.git .
+#            else
+#              git pull origin master
+#            fi
       
       # slack --> notification
       - name: Send slack when failed
