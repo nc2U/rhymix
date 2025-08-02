@@ -42,8 +42,12 @@ jobs:
           password: ${{ secrets.NFS_PASS }}
           command: |
             cd ${{ secrets.NFS_PATH }}/app/_rhymix
-            git clone https://github.com/rhymix/rhymix.git .
-            mkdir files && chmod -R 777 ./files
+            if [ ! -d ".git" ]; then
+              git clone https://github.com/rhymix/rhymix.git .
+            else
+              git pull origin master
+            fi
+            mkdir -p files && chmod -R 777 ./files
       
       # slack --> notification
       - name: Send slack when failed
