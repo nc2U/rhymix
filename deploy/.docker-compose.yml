@@ -24,6 +24,8 @@ services:
     image: nc2u/rhymix
     volumes:
       - ../app:/var/www/html
+      # bind mount 추가: 레이아웃 연결
+      - ../app/custom/layouts/ibs_layout:/var/www/html/_rhymix/layouts/ibs_layout
       - ./docker/php/php-logging.conf:/usr/local/etc/php-fpm.d/zz-log.conf
     environment:
       BASE_URL: http://localhost:8080/
@@ -49,6 +51,8 @@ services:
       - '8080:80'
     volumes:
       - ../app:/var/www/html
+      # bind mount 추가: 레이아웃 연결
+      - ../app/custom/layouts/ibs_layout:/var/www/html/_rhymix/layouts/ibs_layout
       - ./docker/nginx/snippets:/etc/nginx/snippets
       - ./docker/nginx/conf.d:/etc/nginx/conf.d
     depends_on:
