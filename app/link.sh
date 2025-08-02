@@ -9,7 +9,8 @@ echo "🔗 심볼릭 링크 생성을 시작합니다..."
 # 1. 커스텀 레이아웃 링크 생성
 # 원본: custom/layouts/ibs-layout
 # 링크: _rhymix/layouts/ibs-layout
-ln -sf "../../layouts/ibs_layout" "${RHYMIX_PATH}/layouts/ibs_layout"
+ln -sf "../../custom/layouts/ibs_layout" "${RHYMIX_PATH}/layouts/ibs_layout"
+ln -sf "../../custom/layouts/test_layout" "${RHYMIX_PATH}/layouts/test_layout"
 
 # 2. 커스텀 모듈 링크 생성 (예시)
 # ln -sf "../../modules/ibs_module" "${RHYMIX_PATH}/modules/ibs_module"
