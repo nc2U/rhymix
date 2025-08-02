@@ -14,3 +14,17 @@ spec:
   nfs:
     path: {{ .Values.global.nfsPath }}/app
     server: {{ .Values.global.nfsHost }}
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Release.Name }}-{{ include "web.fullname" . }}-layout-pv
+spec:
+  capacity:
+    storage: 50Mi
+  accessModes:
+    - ReadOnlyMany
+  nfs:
+    server: {{ .Values.global.nfsHost }}
+    path: {{ .Values.global.nfsPath }}/app/custom/layouts/ibs_layout
+  persistentVolumeReclaimPolicy: Retain

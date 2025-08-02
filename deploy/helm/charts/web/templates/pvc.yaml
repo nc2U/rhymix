@@ -9,3 +9,15 @@ spec:
   resources:
     requests:
       storage: 500Mi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Release.Name }}-{{ include "web.fullname" . }}-layout-pvc
+spec:
+  accessModes:
+    - ReadOnlyMany
+  resources:
+    requests:
+      storage: 50Mi
+  volumeName: {{ .Release.Name }}-{{ include "web.fullname" . }}-layout-pv
