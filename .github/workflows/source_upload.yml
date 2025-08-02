@@ -44,7 +44,6 @@ jobs:
             cd ${{ secrets.NFS_PATH }}/app/_rhymix
             git clone https://github.com/rhymix/rhymix.git .
             mkdir files && chmod -R 777 ./files
-            sh ../link.sh
       
       # slack --> notification
       - name: Send slack when failed
