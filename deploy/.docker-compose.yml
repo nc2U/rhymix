@@ -23,7 +23,7 @@ services:
     build: docker/php
     image: nc2u/rhymix
     volumes:
-      - ../app/_rhymix:/var/www/html
+      - ../app:/var/www/html
       - ./docker/php/php-logging.conf:/usr/local/etc/php-fpm.d/zz-log.conf
     environment:
       BASE_URL: http://localhost:8080/
@@ -48,7 +48,7 @@ services:
     ports:
       - '8080:80'
     volumes:
-      - ../app/_rhymix:/var/www/html
+      - ../app:/var/www/html
       - ./docker/nginx/snippets:/etc/nginx/snippets
       - ./docker/nginx/conf.d:/etc/nginx/conf.d
     depends_on:
