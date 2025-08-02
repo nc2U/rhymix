@@ -15,6 +15,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: {{ .Release.Name }}-{{ include "nginx.fullname" . }}-layout-pvc
 spec:
+  storageClassName: {{ include "nginx.fullname" . }}-layout
   accessModes:
     - ReadOnlyMany
   resources:
