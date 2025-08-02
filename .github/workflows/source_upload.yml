@@ -47,7 +47,7 @@ jobs:
             else
               git pull origin master
             fi
-            echo '${{ secrets.NFS_PASS }}' | sudo mkdir -p files && chmod -R 777 ./files
+            echo '${{ secrets.NFS_PASS }}' | sudo -S mkdir -p files && chmod -R 777 ./files
       
       # slack --> notification
       - name: Send slack when failed
