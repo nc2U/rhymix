@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <layout version="0.2">
-	<title xml:lang="ko">XEDITION</title>
-	<description xml:lang="ko">XE 1.8 기본 테마</description>
-	<version>1.9</version>
-	<date>2015-06-25</date>
+	<title xml:lang="ko">IBS_Edition</title>
+	<description xml:lang="ko">IBS 1.0 기본 테마</description>
+	<version>1.0</version>
+	<date>2025-08-01</date>
 	<author email_address="developer@xpressengine.com" link="https://www.xpressengine.com/">
-		<name xml:lang="ko">NAVER</name>
+		<name xml:lang="ko">IBS</name>
 	</author>
 	<menus>
 		<menu name="GNB" maxdepth="3" default="true">
