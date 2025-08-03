@@ -1,5 +1,6 @@
-# ide
+# ide & os
 .idea
+.DS_Store
 
 # custom docker-compost file
 docker-compose.yml
