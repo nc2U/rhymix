@@ -29,7 +29,6 @@ jobs:
           password: ${{ secrets.NFS_PASS }}
           source: 'volume/backups/*.sh'
           target: ${{ secrets.NFS_PATH }}/
-          rm: true
 
       # mysql pod --> database bakcup
       - name: database backup
