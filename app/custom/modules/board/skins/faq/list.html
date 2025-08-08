@@ -1,17 +1,35 @@
 <include target="_header.html" />
 <include cond="$oDocument->isExists()" target="_read.html" />
-
 <div class="board_list" id="board_list" cond="isset($list_config)">
     <div class="panel-group mt20" id="accordion" role="tablist" aria-multiselectable="true" cond="$document_list || $notice_list">
-        <div class="panel panel-default" loop="$document_list=>$document">
+        <!-- 루프 시작 전에 플래그를 초기화 -->
+        {@$is_first = true}
+        <div class="panel panel-default" loop="$document_list=>$no,$document">
             <!-- LIST -->
             <block loop="$list_config=>$key,$val">
 
-            <div class="panel-heading" role="tab" id="heading_0" cond="$val->type=='title' && $val->idx==-1">
-                <a href="{getUrl('document_srl',$document->document_srl, 'listStyle', $listStyle, 'cpage','')}">{$document->getTitle()}</a>
-                {$document->printExtraImages(60*60*$module_info->duration_new)}
+            <div class="panel-heading" role="tab" id="heading_{$no}" cond="$val->type=='title' && $val->idx==-1">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapse_{$no}"  aria-controls="collapse_{$no}" class="faq_title">
+                    <div>
+                        <h4 class="panel-title">
+                            <p>
+                                <span style="font-size:14.6667px;">{$list_counter}//{$document->getTitle()}</span>
+                                {$document->printExtraImages(60*60*$module_info->duration_new)}
+                            </p>
+                        </h4>
+                    </div>
+                </a>
+
+            </div>
+
+            <div id="collapse_{$no}" class="panel-collapse collapse<!--@if($is_first)--> in<!--@end-->" role="tabpanel" aria-labelledby="heading_{$no}" cond="$val->type=='title' && $val->idx==-1">
+                <div class="panel-body">
+                    <p style="padding: 20px"><span style="font-size:14.6667px;">이 부분은 게시물 본문 ...</span></p>
+                </div>
             </div>
             </block>
+            <!-- 첫 번째 아이템 렌더링 후, 플래그를 false로 변경 -->
+            {@$is_first = false}
         </div>
     </div>
 </div>

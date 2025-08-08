@@ -96,3 +96,17 @@ div {
 .collapse {
     display: none;
 }
+.collapse.in {
+    display: block;
+}
+.panel-collapse {
+    max-height: 0;
+    overflow: hidden;
+    transform: translateY(100%);
+    transition: max-height 0.35s ease;
+}
+
+.panel-collapse.in {
+    max-height: 1500px; /* 충분히 큰 값 */
+    transform: translateY(0);
+}
