@@ -123,6 +123,9 @@ volumes:
   - name: layout
     persistentVolumeClaim:
       claimName: rhymix-nginx-layout-pvc
+  - name: skin
+    persistentVolumeClaim:
+      claimName: rhymix-nginx-skin-pvc
 
 # Additional volumeMounts on the output Deployment definition.
 volumeMounts:
@@ -138,6 +141,8 @@ volumeMounts:
   - name: layout
     mountPath: /var/www/html/_rhymix/layouts/ibs_layout
     readOnly: true
+  - name: skin
+    mountPath: /var/www/html/_rhymix/modules/board/skins/faq
 
 nodeSelector: {}
 

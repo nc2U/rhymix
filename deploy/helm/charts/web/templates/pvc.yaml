@@ -22,3 +22,16 @@ spec:
     requests:
       storage: 50Mi
   volumeName: {{ .Release.Name }}-{{ include "web.fullname" . }}-layout-pv
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Release.Name }}-{{ include "web.fullname" . }}-skin-pvc
+spec:
+  storageClassName: {{ include "web.fullname" . }}-skin
+  accessModes:
+    - ReadOnlyMany
+  resources:
+    requests:
+      storage: 10Mi
+  volumeName: {{ .Release.Name }}-{{ include "web.fullname" . }}-skin-pv

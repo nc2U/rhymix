@@ -22,3 +22,16 @@ spec:
     requests:
       storage: 50Mi
   volumeName: {{ .Release.Name }}-{{ include "nginx.fullname" . }}-layout-pv
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Release.Name }}-{{ include "nginx.fullname" . }}-skin-pvc
+spec:
+  storageClassName: {{ include "nginx.fullname" . }}-skin
+  accessModes:
+    - ReadOnlyMany
+  resources:
+    requests:
+      storage: 10Mi
+  volumeName: {{ .Release.Name }}-{{ include "nginx.fullname" . }}-skin-pv

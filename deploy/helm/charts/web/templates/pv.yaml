@@ -29,3 +29,18 @@ spec:
     server: {{ .Values.global.nfsHost }}
     path: {{ .Values.global.nfsPath }}/app/custom/layouts/ibs_layout
   persistentVolumeReclaimPolicy: Retain
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Release.Name }}-{{ include "web.fullname" . }}-skin-pv
+spec:
+  storageClassName: {{ include "web.fullname" . }}-skin
+  capacity:
+    storage: 10Mi
+  accessModes:
+    - ReadOnlyMany
+  nfs:
+    server: {{ .Values.global.nfsHost }}
+    path: {{ .Values.global.nfsPath }}/app/custom/modules/board/skins/faq
+  persistentVolumeReclaimPolicy: Retain
