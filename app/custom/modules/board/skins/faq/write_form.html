@@ -17,8 +17,8 @@
 		<!--@if($grant->manager)-->
 			<select name="is_notice">
 				<option value="N" selected="selected"|cond="$oDocument->get('is_notice') === 'N'">{$lang->not_notice}</option>
-				<option value="Y" selected="selected"|cond="$oDocument->get('is_notice') === 'Y'">{$lang->notice}</option>
-				<option value="A" selected="selected"|cond="$oDocument->get('is_notice') === 'A'">{$lang->notice_all}</option>
+<!--				<option value="Y" selected="selected"|cond="$oDocument->get('is_notice') === 'Y'">{$lang->notice}</option>-->
+<!--				<option value="A" selected="selected"|cond="$oDocument->get('is_notice') === 'A'">{$lang->notice_all}</option>-->
 			</select>
 		<!--@endif-->
 	</div>
@@ -84,7 +84,7 @@
 			<button cond="$is_logged" class="btn" type="button" onclick="doDocumentSave(this);">{$lang->cmd_temp_save}</button>
 			<button cond="$is_logged" class="btn" type="button" onclick="doDocumentLoad(this);">{$lang->cmd_load}</button>
 			</block>
-            <button class="btn" type="button" onclick="window.location.replace('/faq')">목록</button>
+            <button class="btn" type="button" onclick="window.location.href='/{$mid}'">목록</button>
 		</div>
 	</div>
 </form>
