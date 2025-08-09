@@ -1,5 +1,43 @@
 <include target="_header.html" />
 <include cond="$oDocument->isExists()" target="_read.html" />
+
+<!-- FAQ 전용 CSS -->
+<style>
+.mt20 { margin-top: 20px; }
+.panel-group { margin-bottom: 20px; }
+.panel { margin-bottom: 20px; background-color: #fff; border: 1px solid #ddd; border-radius: 4px; }
+.panel-default { border-color: #ddd; }
+.panel-heading {
+    padding: 15px;
+    background: linear-gradient(to bottom, #f5f5f5 0, #e8e8e8 100%);
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.panel-heading:hover { background-color: #e8e8e8; }
+.panel-title { margin: 0; font-size: 16px; font-weight: 500; }
+.panel-title p { margin: 0; }
+.faq_title { text-decoration: none; color: #333; display: block; width: 100%; }
+.faq_title:hover, .faq_title:focus { text-decoration: none; color: #333; }
+.panel-collapse {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+.panel-collapse.in { max-height: 2000px; }
+.panel-body { padding: 0; background-color: #fafafa; }
+.faq-content {
+    padding: 20px;
+    line-height: 1.6;
+    color: #333;
+    font-size: 14px;
+    border-top: 1px solid #ddd;
+}
+.faq-content p { margin-bottom: 10px; }
+.faq-content img { max-width: 100%; height: auto; }
+.loading-content { text-align: center; color: #666; }
+</style>
+
 <div class="board_list" id="board_list" cond="isset($list_config)">
     <div class="panel-group mt20" id="accordion" role="tablist" aria-multiselectable="true" cond="$document_list || $notice_list">
         <!-- 루프 시작 전에 플래그를 초기화 -->
@@ -9,22 +47,22 @@
             <block loop="$list_config=>$key,$val">
 
             <div class="panel-heading" role="tab" id="heading_{$no}" cond="$val->type=='title' && $val->idx==-1">
-                <a data-toggle="collapse" data-parent="#accordion" href="#collapse_{$no}"  aria-controls="collapse_{$no}" class="faq_title">
-                    <div>
-                        <h4 class="panel-title">
-                            <p>
-                                <span style="font-size:14.6667px;">{$list_counter}//{$document->getTitle()}</span>
-                                {$document->printExtraImages(60*60*$module_info->duration_new)}
-                            </p>
-                        </h4>
-                    </div>
-                </a>
-
+                <div class="faq_title" data-target="collapse_{$no}">
+                    <h4 class="panel-title">
+                        <span>{$document->getTitle()}</span>
+                        {$document->printExtraImages(60*60*$module_info->duration_new)}
+                    </h4>
+                </div>
             </div>
 
             <div id="collapse_{$no}" class="panel-collapse collapse<!--@if($is_first)--> in<!--@end-->" role="tabpanel" aria-labelledby="heading_{$no}" cond="$val->type=='title' && $val->idx==-1">
                 <div class="panel-body">
-                    <p style="padding: 20px"><span style="font-size:14.6667px;">이 부분은 게시물 본문 ...</span></p>
+                    <!-- 문서 내용 렌더링 -->
+                    <div class="faq-content">
+                        <div class="loading-content" data-document-srl="{$document->document_srl}">
+                            <p>내용을 불러오는 중...</p>
+                        </div>
+                    </div>
                 </div>
             </div>
             </block>
@@ -40,4 +78,5 @@
 		<a cond="$grant->manager" href="{getUrl('','mid',$mid,'act','dispDocumentManageDocument')}" class="btn" onclick="popopen(this.href,'manageDocument'); return false;">{$lang->cmd_manage_document}</a>
 	</div>
 </div>
+
 <include target="_footer.html" />

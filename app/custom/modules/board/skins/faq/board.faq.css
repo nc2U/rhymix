@@ -110,3 +110,63 @@ div {
     max-height: 1500px; /* 충분히 큰 값 */
     transform: translateY(0);
 }
+
+/* FAQ 내용 스타일 */
+.faq-content {
+    padding: 20px;
+    line-height: 1.6;
+    color: #333;
+    font-size: 14px;
+}
+
+.faq-content p {
+    margin-bottom: 10px;
+}
+
+.faq-content img {
+    max-width: 100%;
+    height: auto;
+}
+
+.faq-content ul, .faq-content ol {
+    margin: 10px 0 10px 20px;
+}
+
+.faq-content li {
+    margin-bottom: 5px;
+}
+
+/* 패널 타이틀 스타일 */
+.faq_title {
+    text-decoration: none;
+    color: #333;
+    display: block;
+    width: 100%;
+    transition: background-color 0.2s ease;
+}
+
+.faq_title:hover {
+    text-decoration: none;
+    background-color: #f0f0f0;
+}
+
+.faq_title:focus {
+    outline: none;
+    text-decoration: none;
+}
+
+.panel-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.panel-title p {
+    margin: 0;
+    padding: 0;
+}
+
+.panel-body {
+    padding: 0;
+    background-color: #fafafa;
+}
