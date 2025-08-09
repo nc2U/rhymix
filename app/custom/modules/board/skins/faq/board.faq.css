@@ -429,3 +429,219 @@ div {
     color: #333;
     background-color: #e6e6e6;
 }
+
+/* Board Read */
+
+/* _read.html */
+.board_read {
+    background: #fff url(bgHeader.gif) no-repeat 0 -50px;
+}
+.read_header {
+    position: relative;
+    background: url(bgHeader.gif) no-repeat right -50px;
+}
+.read_header h1 {
+    width: 600px;
+    margin: 0 0 0 15px;
+    font-size: 12px;
+    line-height: 36px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: #fff;
+}
+.read_header h1 a {
+    text-decoration: none;
+    color: #fff;
+}
+.read_header h1 .category {
+    font-weight: normal;
+    border-right: 1px solid #7e7e7e;
+    padding: 0 10px 0 0;
+    margin: 0 5px 0 0;
+}
+.read_header .time {
+    margin: 0;
+    position: absolute;
+    top: 11px;
+    right: 12px;
+    color: #bfbfbf;
+    font-size: 11px;
+}
+.read_header .meta {
+    margin: 0;
+    padding: 8px 12px 8px 15px;
+    background: #f6f6f6;
+    border-bottom: 1px solid #ddd;
+    white-space: nowrap;
+}
+.read_header .meta:after {
+    content: "";
+    display: block;
+    clear: both;
+}
+.read_header .meta .author {
+    float: left;
+    text-decoration: none;
+    color: #666;
+    font-weight: bold;
+}
+.read_header .meta .author img {
+    margin-top: -1px;
+}
+.read_header .meta .sum {
+    float: right;
+    color: #666;
+    font-size: 11px;
+}
+.read_header .meta .sum .vote {
+    border-left: 1px solid #ccc;
+    padding: 0 0 0 10px;
+    margin: 0 0 0 6px;
+}
+.read_body {
+    padding: 15px;
+    background: #fff;
+}
+.read_body .xe_content {
+    color: #333;
+}
+.read_footer {
+    overflow: hidden;
+}
+.read_footer .fileList {
+    margin: 15px 0;
+    display: inline;
+    float: left;
+}
+.read_footer .toggleFile {
+    border: 0;
+    background: url(icoSet.gif) no-repeat 0 2px;
+    cursor: pointer;
+    overflow: visible;
+    padding: 0 0 0 15px;
+    color: #4b4b4b;
+}
+.read_footer .files {
+    display: none;
+    list-style: none;
+    margin: 15px 0;
+    padding: 0;
+    line-height: 16px;
+}
+.read_footer .files li {
+    background: url(icoSet.gif) no-repeat 0 -28px;
+    padding: 0 0 0 15px;
+}
+.read_footer .files a {
+    color: #4b4b4b;
+    position: relative;
+    text-decoration: none;
+}
+.read_footer .files a .fileSize {
+    visibility: hidden;
+    position: absolute;
+    padding: 1px 4px;
+    left: 100%;
+    top: -4px;
+    border: 1px solid #ddd;
+    font: 11px Tahoma, Geneva, sans-serif;
+    background: #fff;
+    white-space: nowrap;
+}
+.read_footer .files a:hover .fileSize,
+.read_footer .files a:active .fileSize,
+.read_footer .files a:focus .fileSize {
+    visibility: visible;
+}
+.read_footer .tns {
+    float: right;
+    margin: 15px 0;
+}
+.read_footer .tns a:hover,
+.read_footer .tns a:active,
+.read_footer .tns a:focus {
+    text-decoration: underline;
+}
+.read_footer .tags {
+    display: inline-block;
+    height: 16px;
+    font-size: 11px;
+    color: #666;
+    vertical-align: top;
+    padding: 0 15px 0 32px;
+    line-height: 16px;
+    background: url(icoSet.gif) no-repeat 0 -58px;
+}
+.read_footer .tags a {
+    text-decoration: none;
+    color: #666;
+}
+.read_footer .action {
+    display: inline-block;
+    line-height: 16px;
+    font-size: 11px;
+    margin: 0 15px 0 0;
+}
+.read_footer .sns {
+    display: inline;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    vertical-align: top;
+}
+.read_footer .sns li {
+    display: inline;
+    vertical-align: top;
+}
+.read_footer .sns a {
+    display: inline-block;
+    height: 16px;
+    line-height: 16px;
+}
+.read_footer .sns .link a {
+    width: 16px;
+    height: 0;
+    padding: 16px 0 0 0;
+    overflow: hidden;
+    background: url(icoSet.gif) no-repeat;
+}
+.read_footer .sns .twitter a {
+    background-position: 0 -270px;
+}
+.read_footer .sns .facebook a {
+    background-position: 0 -330px;
+}
+.read_footer .sns .delicious a {
+    background-position: 0 -360px;
+}
+.read_footer .sign {
+    clear: both;
+    border: 1px solid #ddd;
+    margin: 0 0 -1px 0;
+    padding: 10px 15px;
+    overflow: hidden;
+}
+.read_footer .sign .pf {
+    float: left;
+    margin: 0 15px 0 0;
+    width: 80px;
+    height: 80px;
+}
+.read_footer .sign .tx {
+    overflow: hidden;
+    line-height: 1.3;
+    font-size: 11px;
+    border-left: 1px dotted #ddd;
+    padding: 0 0 0 15px;
+    color: #333;
+}
+.read_footer .sign .tx * {
+    margin: 0;
+}
+.read_footer .btnArea {
+    clear: both;
+    text-align: right;
+    padding: 10px 0;
+    border-top: 1px solid #ddd;
+}
