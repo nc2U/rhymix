@@ -6,7 +6,7 @@
 	</h3>
 	{$oComment->getContent(false)}
 </div>
-<form action="./" method="get" onsubmit="return procFilter(this, delete_comment)" class="context_message">
+<form action=".." method="get" onsubmit="return procFilter(this, delete_comment)" class="context_message">
 	<input type="hidden" name="mid" value="{$mid}" />
 	<input type="hidden" name="page" value="{$page}" />
 	<input type="hidden" name="document_srl" value="{$oComment->get('document_srl')}" />
