@@ -2,72 +2,12 @@
 	
 	// 커스터마이징된 라이믹스 설치 스크립트
 	// 원본을 기반으로 회사/프로젝트에 맞게 수정
-	
 	$lang = Context::getLangType();
 	$logged_info = Context::get('logged_info');
 	
 	$oMenuAdminController = getAdminController('menu');
 	
 	// 커스텀 사이트맵 구조
-//	$sitemap = array(
-//		'GNB' => array(
-//			'title' => 'Main Menu',
-//			'list' => array(
-//				array(
-//					'menu_name' => 'Home',
-//					'module_type' => 'WIDGET',
-//					'module_id' => 'index',
-//				),
-//				array(
-//					'menu_name' => '사업 인내',
-//					'module_id' => 'about',
-//				),
-//				array(
-//					'menu_name' => '소통 공간',
-//					'module_id' => 'notice',
-//				),
-//				array(
-//					'menu_name' => '자료 공개',
-//					'module_id' => 'board1',
-//				),
-//				array(
-//					'menu_name' => '자주하는 질문',
-//					'module_type' => 'board',
-//					'module_id' => 'faq',
-//				),
-//			),
-//		),
-//		'UNB' => array(
-//			'title' => 'Utility Menu',
-//			'list' => array(
-//				array(
-//					'menu_name' => '로그인',
-//					'module_type' => 'member',
-//					'module_id' => 'login',
-//				),
-//				array(
-//					'menu_name' => '회원가입',
-//					'module_type' => 'member',
-//					'module_id' => 'signup',
-//				),
-//			),
-//		),
-//		'FNB' => array(
-//			'title' => 'Footer Menu',
-//			'list' => array(
-//				array(
-//					'menu_name' => '서비스 이용 약관',
-//					'module_type' => 'ARTICLE',
-//					'module_id' => 'terms',
-//				),
-//				array(
-//					'menu_name' => '개인정보처리방침',
-//					'module_type' => 'ARTICLE',
-//					'module_id' => 'privacy',
-//				),
-//			),
-//		),
-//	);
 	$sitemap = array(
 		'GNB' => array(
 			'title' => 'Main Menu',
@@ -78,19 +18,19 @@
 					'module_id' => 'index',
 				),
 				array(
-					'menu_name' => '사업 인내',
+					'menu_name' => '사업 안내',
 					'module_type' => 'board',
-					'module_id' => 'board',
+					'module_id' => 'about',
 				),
 				array(
 					'menu_name' => '소통 공간',
 					'module_type' => 'board',
-					'module_id' => 'qna',
+					'module_id' => 'notice',
 				),
 				array(
 					'menu_name' => '자료 공개',
 					'module_type' => 'board',
-					'module_id' => 'notice',
+					'module_id' => 'board1',
 				),
 				array(
 					'menu_name' => '자주하는 질문',
@@ -175,9 +115,7 @@
 	
 	// 커스텀 레이아웃 생성
 	$extra_vars = new stdClass();
-	$extra_vars->use_demo = 'N';  // 데모 비활성화
-//	$extra_vars->company_name = '우리 회사';
-//	$extra_vars->company_slogan = '최고의 서비스를 제공합니다';
+	$extra_vars->use_demo = 'Y';
 	$extra_vars->use_ncenter_widget = 'Y';
 	$extra_vars->content_fixed_width = 'Y';
 	$extra_vars->GNB = $sitemap['GNB']['menu_srl'];
@@ -202,7 +140,7 @@
 	
 	// 모바일 레이아웃 생성
 	$mlayout_srl = $args->layout_srl = getNextSequence();
-	$args->layout = 'default';  // 커스텀 모바일 레이아웃
+	$args->layout = 'default';
 	$args->title = 'welcome_mobile_layout';
 	$args->layout_type = 'M';
 	$extra_vars->main_menu = $sitemap['GNB']['menu_srl'];
@@ -272,8 +210,7 @@
 	
 	$obj->module_srl = $module_srl;
 	Context::set('version', RX_VERSION);
-	//	Context::set('company_name', '우리 회사');
-	$obj->title = '브랜드 이야기';
+	$obj->title = 'Brand Story!';
 	
 	// 커스텀 Welcome 콘텐츠 (필요시 별도 템플릿 파일 생성)
 	$obj->content = '
@@ -302,8 +239,10 @@
 	if (!$output->toBool()) return $output;
 	
 	// 페이지 위젯 설정
+	/* @var $oModuleController moduleController */
 	$oModuleController = getController('module');
-	$mdocument_srl = $document_srl; // 모바일도 동일한 문서 사용
+//	$mdocument_srl = $document_srl; // 모바일도 동일한 문서 사용
+	$mdocument_srl = $output->get('document_srl');
 	$module_info = $oModuleModel->getModuleInfoByModuleSrl($module_srl);
 	$module_info->content = '<img hasContent="true" class="zbxe_widget_output" widget="widgetContent" style="width: 100%; float: left;" body="" document_srl="' . $document_srl . '" widget_padding_left="0" widget_padding_right="0" widget_padding_top="0" widget_padding_bottom="0"  />';
 	$module_info->mcontent = '<img hasContent="true" class="zbxe_widget_output" widget="widgetContent" style="width: 100%; float: left;" body="" document_srl="' . $mdocument_srl . '" widget_padding_left="0" widget_padding_right="0" widget_padding_top="0" widget_padding_bottom="0"  />';
@@ -317,7 +256,7 @@
 	executeQuery('module.updateDomain', $domain_args);
 	
 	// 관리자 즐겨찾기에 유용한 모듈들 추가
-	foreach (['board', 'member', 'layout', 'menu', 'module'] as $module_name) {
+	foreach (['advanced_mailer', 'ncenterlite'] as $module_name) {
 		$oAdminController->_insertFavorite(0, $module_name);
 	}
 	
