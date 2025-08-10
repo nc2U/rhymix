@@ -91,6 +91,7 @@ div {
 
 .panel-default {
     border-color: #ddd;
+    margin-bottom: 6px !important;
 }
 
 /* Panel Heading */
