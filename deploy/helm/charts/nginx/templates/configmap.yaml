@@ -40,7 +40,7 @@ data:
     location / {
     	try_files $uri $uri/ /index.php$is_args$args;
     }
-  PUBLIC.CONF: |
+  DEFAULT.CONF: |
     server {
         listen 80;                  # 다른 파일을 만들어 쓰는 경우 default 삭제
         root /var/www/html/_rhymix; # 라이믹스를 설치할 경로 (반드시 최상단에 위치해야 합니다.)
