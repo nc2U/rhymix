@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module version="0.2">
+    <title xml:lang="ko">커스텀 설치 모듈</title>
+    <description xml:lang="ko">설치 과정에서 커스텀 사이트 구조를 생성합니다.</description>
+    <version>1.0</version>
+    <date>2024-01-01</date>
+    
+    <author email_address="admin@company.com" link="https://company.com">
+        <name xml:lang="ko">Company</n>
+    </author>
+    
+    <!-- 설치 관련 트리거들 -->
+    <triggers>
+        <trigger>
+            <target>install.procInstallComplete</target>
+            <type>after</type>
+            <called_position>after</called_position>
+        </trigger>
+        <trigger>
+            <target>install.getInstallCompleteConfig</target>
+            <type>after</type>
+            <called_position>after</called_position>
+        </trigger>
+    </triggers>
+</module>
