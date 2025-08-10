@@ -1,5 +1,5 @@
 services:
-
+  
   # MariaDB Service
   mariadb:
     container_name: rhymix-mariadb
@@ -16,7 +16,7 @@ services:
       MYSQL_PASSWORD: my-db-password # 실제 데이터로 수정
       MARIADB_ROOT_PASSWORD: my-db-password # 실제 데이터로 수정
       TZ: Asia/Seoul
-
+  
   # PHP FPM Service
   web:
     container_name: rhymix-php
@@ -35,12 +35,6 @@ services:
       DATABASE_NAME: my-db-name # mariadb env 와 일치
       DATABASE_USER: my-db-user # mariadb env 와 일치
       DATABASE_PASSWORD: my-db-password # mariadb env 와 일치
-      EMAIL_PROTOCOL: SMTP  # mail/sendmail/smtp
-      EMAIL_HOST: ''
-      EMAIL_USER: ''
-      EMAIL_PASS: ''
-      EMAIL_PORT: 587
-      EMAIL_CRYPTO: tls # SMTP Encryption. Can be null, tls or ssl
     depends_on:
       - mariadb
   
