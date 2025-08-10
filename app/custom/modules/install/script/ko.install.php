@@ -1,14 +1,14 @@
 <?php
-
-// 커스터마이징된 라이믹스 설치 스크립트
-// 원본을 기반으로 회사/프로젝트에 맞게 수정
+	
+	// 커스터마이징된 라이믹스 설치 스크립트
+	// 원본을 기반으로 회사/프로젝트에 맞게 수정
 	
 	$lang = Context::getLangType();
 	$logged_info = Context::get('logged_info');
 	
 	$oMenuAdminController = getAdminController('menu');
-
-// 커스텀 사이트맵 구조
+	
+	// 커스텀 사이트맵 구조
 	$sitemap = array(
 		'GNB' => array(
 			'title' => 'Main Menu',
@@ -19,24 +19,21 @@
 					'module_id' => 'index',
 				),
 				array(
-					'menu_name' => '회사소개',
-					'module_type' => 'ARTICLE',
+					'menu_name' => '사업 인내',
 					'module_id' => 'about',
 				),
 				array(
-					'menu_name' => '제품소개',
-					'module_type' => 'board',
-					'module_id' => 'products',
-				),
-				array(
-					'menu_name' => '공지사항',
-					'module_type' => 'board',
+					'menu_name' => '소통 공간',
 					'module_id' => 'notice',
 				),
 				array(
-					'menu_name' => '고객지원',
+					'menu_name' => '자료 공개',
+					'module_id' => 'board1',
+				),
+				array(
+					'menu_name' => '자주하는 질문',
 					'module_type' => 'board',
-					'module_id' => 'support',
+					'module_id' => 'faq',
 				),
 			),
 		),
@@ -59,7 +56,7 @@
 			'title' => 'Footer Menu',
 			'list' => array(
 				array(
-					'menu_name' => '이용약관',
+					'menu_name' => '서비스 이용 약관',
 					'module_type' => 'ARTICLE',
 					'module_id' => 'terms',
 				),
@@ -98,8 +95,8 @@
 			if ($item['list']) __makeMenu($item['list'], $menu_srl);
 		}
 	}
-
-// 사이트맵 생성
+	
+	// 사이트맵 생성
 	foreach ($sitemap as $id => &$val) {
 		$output = $oMenuAdminController->addMenu($val['title']);
 		if (!$output->toBool()) {
@@ -111,12 +108,14 @@
 		
 		$oMenuAdminController->makeHomemenuCacheFile($val['menu_srl']);
 	}
-
-// 커스텀 레이아웃 생성
+	
+	// 커스텀 레이아웃 생성
 	$extra_vars = new stdClass();
 	$extra_vars->use_demo = 'N';  // 데모 비활성화
-	$extra_vars->company_name = '우리 회사';
-	$extra_vars->company_slogan = '최고의 서비스를 제공합니다';
+//	$extra_vars->company_name = '우리 회사';
+//	$extra_vars->company_slogan = '최고의 서비스를 제공합니다';
+	$extra_vars->use_ncenter_widget = 'Y';
+	$extra_vars->content_fixed_width = 'Y';
 	$extra_vars->GNB = $sitemap['GNB']['menu_srl'];
 	$extra_vars->UNB = $sitemap['UNB']['menu_srl'];
 	$extra_vars->FNB = $sitemap['FNB']['menu_srl'];
@@ -124,35 +123,35 @@
 	$args = new stdClass();
 	$layout_srl = $args->layout_srl = getNextSequence();
 	$args->site_srl = 0;
-// 커스텀 레이아웃 사용 (app/custom/layouts/에 있는 레이아웃)
-	$args->layout = 'custom_company';  // 커스텀 레이아웃명
-	$args->title = 'Company Layout';
+	// 커스텀 레이아웃 사용 (app/custom/layouts/에 있는 레이아웃)
+	$args->layout = 'ibs_layout';  // 커스텀 레이아웃명
+	$args->title = 'IBS_Edition';
 	$args->layout_type = 'P';
 	$oLayoutAdminController = getAdminController('layout');
 	$output = $oLayoutAdminController->insertLayout($args);
 	if (!$output->toBool()) return $output;
-
-// PC 레이아웃 업데이트
+	
+	// PC 레이아웃 업데이트
 	$args->extra_vars = serialize($extra_vars);
 	$output = $oLayoutAdminController->updateLayout($args);
 	if (!$output->toBool()) return $output;
-
-// 모바일 레이아웃 생성
+	
+	// 모바일 레이아웃 생성
 	$mlayout_srl = $args->layout_srl = getNextSequence();
-	$args->layout = 'custom_mobile';  // 커스텀 모바일 레이아웃
-	$args->title = 'Mobile Layout';
+	$args->layout = 'default';  // 커스텀 모바일 레이아웃
+	$args->title = 'welcome_mobile_layout';
 	$args->layout_type = 'M';
 	$extra_vars->main_menu = $sitemap['GNB']['menu_srl'];
 	
 	$output = $oLayoutAdminController->insertLayout($args);
 	if (!$output->toBool()) return $output;
-
-// 모바일 레이아웃 업데이트
+	
+	// 모바일 레이아웃 업데이트
 	$args->extra_vars = serialize($extra_vars);
 	$output = $oLayoutAdminController->updateLayout($args);
 	if (!$output->toBool()) return $output;
-
-// 디자인 파일 생성
+	
+	// 디자인 파일 생성
 	$siteDesignPath = RX_BASEDIR . 'files/site_design/';
 	FileHandler::makeDir($siteDesignPath);
 	
@@ -167,8 +166,10 @@
 	}
 	
 	$skinTypes = array('skin' => 'skins/', 'mskin' => 'm.skins/');
+	
 	$designInfo->module = new stdClass();
 	
+	/* @var $oModuleModel moduleModel */
 	$oModuleModel = getModel('module');
 	foreach ($skinTypes as $key => $dir) {
 		$skinType = $key == 'skin' ? 'P' : 'M';
@@ -177,88 +178,66 @@
 			$designInfo->module->{$moduleName}->{$key} = $oModuleModel->getModuleDefaultSkin($moduleName, $skinType, 0, false);
 		}
 	}
-
-// 커스텀 스킨 사용 (app/custom/modules/board/skins/에 있는 스킨)
-	$designInfo->module->board->skin = 'custom_board';
+	
+	// 커스텀 스킨 사용 (app/custom/modules/board/skins/에 있는 스킨)
+	$designInfo->module->board->skin = 'xedition';
 	$designInfo->module->editor->skin = 'ckeditor';
 	
+	/* @var $oAdminController adminAdminController */
 	$oAdminController = getAdminController('admin');
 	$oAdminController->makeDefaultDesignFile($designInfo, 0);
-
-// Welcome 페이지 생성
+	
+	// Welcome 페이지 생성
 	$moduleInfo = $oModuleModel->getModuleInfoByMenuItemSrl($sitemap['GNB']['list'][0]['menu_srl']);
 	$module_srl = $moduleInfo->module_srl;
 	
+	// insert PageContents - widget
 	$oTemplateHandler = TemplateHandler::getInstance();
+	/* @var $oDocumentModel documentModel */
 	$oDocumentModel = getModel('document');
+	/* @var $oDocumentController documentController */
 	$oDocumentController = getController('document');
 	
 	$obj = new stdClass();
+	
 	$obj->member_srl = $logged_info->member_srl;
 	$obj->user_id = htmlspecialchars_decode($logged_info->user_id);
 	$obj->user_name = htmlspecialchars_decode($logged_info->user_name);
 	$obj->nick_name = htmlspecialchars_decode($logged_info->nick_name);
 	$obj->email_address = $logged_info->email_address;
-	$obj->module_srl = $module_srl;
 	
+	$obj->module_srl = $module_srl;
 	Context::set('version', RX_VERSION);
-	Context::set('company_name', '우리 회사');
-	$obj->title = '우리 회사에 오신 것을 환영합니다';
-
-// 커스텀 Welcome 콘텐츠 (필요시 별도 템플릿 파일 생성)
+	//	Context::set('company_name', '우리 회사');
+	$obj->title = '브랜드 이야기';
+	
+	// 커스텀 Welcome 콘텐츠 (필요시 별도 템플릿 파일 생성)
 	$obj->content = '
-<div class="welcome-content">
-    <h2>우리 회사에 오신 것을 환영합니다</h2>
-    <p>최고의 서비스와 제품을 제공하는 우리 회사입니다.</p>
-    <p>궁금한 사항이 있으시면 언제든 문의해 주세요.</p>
-</div>
-';
+<link href="./layouts/ibs_layout/css/welcome.css" rel="stylesheet" />
+<div class="welcomeXE">
+<section class="intro"><span class="noti">BRAND STORY!</span>
+<h1 class="tit">변화하는 고객의 삶으로부터 새로운 자이가 시작됩니다</h1>
+
+<p class="cont">자이는 시대의 변화에 맞춰 대한민국 아파트 브랜드 역사의 변곡점마다 주목받는 족적을 납겨왔습니다.</p>
+
+<p class="cont">고유의 미학과 앞선 기술이 투영된 특별한 주거경험을 선보이며 새로운 라이프 스타일을 선도하는 대한민국 대표 아파트 브랜드로 자리매김해 왔습니다.</p>
+
+<p class="cont">이제, 자이가 또 한 번의 도약을 준비합니다. 더욱 깊어진 고객을 향한 시선에 자이만의 새로운 관점을 더해 달라진 주거의 의미와 고객이 추구하는 삶의 가치를 반영한 새로운 주거 경험을 만들어갑니다.<br />
+<a class="btn_start" href="/brand">둘러보기</a></p>
+</section>
+</div>';
 	
 	$output = $oDocumentController->insertDocument($obj, true);
 	if (!$output->toBool()) return $output;
 	
 	$document_srl = $output->get('document_srl');
-
-// 초기 공지사항들 생성
-	$notice_module_info = null;
-	foreach ($sitemap['GNB']['list'] as $menu_item) {
-		if ($menu_item['module_id'] === 'notice') {
-			$notice_module_info = $oModuleModel->getModuleInfoByMenuItemSrl($menu_item['menu_srl']);
-			break;
-		}
-	}
 	
-	if ($notice_module_info) {
-		$notice_posts = array(
-			array(
-				'title' => '사이트 오픈 안내',
-				'content' => '<p>안녕하세요. 저희 회사 홈페이지가 새롭게 오픈되었습니다.</p><p>많은 관심과 이용 부탁드립니다.</p>',
-				'is_notice' => 'Y'
-			),
-			array(
-				'title' => '고객지원 서비스 안내',
-				'content' => '<p>고객지원 게시판을 통해 문의사항을 남겨주세요.</p><p>빠른 시간 내에 답변드리겠습니다.</p>',
-				'is_notice' => 'Y'
-			),
-		);
-		
-		foreach ($notice_posts as $post) {
-			$obj = new stdClass();
-			$obj->module_srl = $notice_module_info->module_srl;
-			$obj->title = $post['title'];
-			$obj->content = $post['content'];
-			$obj->member_srl = $logged_info->member_srl;
-			$obj->user_id = htmlspecialchars_decode($logged_info->user_id);
-			$obj->nick_name = htmlspecialchars_decode($logged_info->nick_name);
-			$obj->email_address = $logged_info->email_address;
-			$obj->is_notice = $post['is_notice'];
-			
-			$output = $oDocumentController->insertDocument($obj, true);
-			if (!$output->toBool()) return $output;
-		}
-	}
-
-// 페이지 위젯 설정
+	unset($obj->document_srl);
+	$obj->title = 'Welcome to Mobile Rhymix';
+	$output = $oDocumentController->insertDocument($obj, true);
+	if (!$output->toBool()) return $output;
+	
+	// 페이지 위젯 설정
 	$oModuleController = getController('module');
 	$mdocument_srl = $document_srl; // 모바일도 동일한 문서 사용
 	$module_info = $oModuleModel->getModuleInfoByModuleSrl($module_srl);
@@ -266,19 +245,19 @@
 	$module_info->mcontent = '<img hasContent="true" class="zbxe_widget_output" widget="widgetContent" style="width: 100%; float: left;" body="" document_srl="' . $mdocument_srl . '" widget_padding_left="0" widget_padding_right="0" widget_padding_top="0" widget_padding_bottom="0"  />';
 	$output = $oModuleController->updateModule($module_info);
 	if (!$output->toBool()) return $output;
-
-// 도메인 기본 모듈 설정
+	
+	// 도메인 기본 모듈 설정
 	$domain_args = new stdClass();
 	$domain_args->domain_srl = 0;
 	$domain_args->index_module_srl = $module_srl;
 	executeQuery('module.updateDomain', $domain_args);
-
-// 관리자 즐겨찾기에 유용한 모듈들 추가
+	
+	// 관리자 즐겨찾기에 유용한 모듈들 추가
 	foreach (['board', 'member', 'layout', 'menu', 'module'] as $module_name) {
 		$oAdminController->_insertFavorite(0, $module_name);
 	}
-
-// 메뉴 캐시 생성
+	
+	// 메뉴 캐시 생성
 	$oMenuAdminController->makeXmlFile($menuSrl);
 	
 	/* End of file ko.install.php */
