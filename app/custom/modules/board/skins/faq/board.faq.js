@@ -246,3 +246,29 @@ jQuery(function($) {
     // 전역에서 접근 가능하도록 설정 (디버깅용)
     window.FAQAccordion = FAQAccordion;
 });
+
+// SNS post
+(function($) {
+  $.fn.snspost = function(opts) {
+    var loc = '';
+    opts = $.extend({}, {type:'twitter', event:'click', content:''}, opts);
+    opts.content = encodeURIComponent(opts.content);
+    switch(opts.type) {
+      case 'facebook':
+        loc = 'http://www.facebook.com/share.php?t='+opts.content+'&u='+encodeURIComponent(opts.url||location.href);
+        break;
+      case 'twitter':
+        loc = 'http://twitter.com/home?status='+opts.content;
+        break;
+    }
+    this.bind(opts.event, function() {
+      window.open(loc);
+      return false;
+    });
+  };
+  $.snspost = function(selectors, action) {
+    $.each(selectors, function(key,val) {
+      $(val).snspost( $.extend({}, action, {type:key}) );
+    });
+  };
+})(jQuery);

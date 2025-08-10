@@ -64,7 +64,6 @@
 			<ul class="sns">
 				<li class="twitter link"><a href="https://twitter.com/">Twitter</a></li>
 				<li class="facebook link"><a href="https://www.facebook.com/">Facebook</a></li>
-				<li class="delicious link"><a href="https://delicious.com/">Delicious</a></li>
 			</ul>
 			<script>
 				var sTitle = {json_encode($oDocument->getTitleText())};
@@ -75,10 +74,6 @@
 					});
 					$('.facebook>a').snspost({
 						type : 'facebook',
-						content : sTitle
-					});
-					$('.delicious>a').snspost({
-						type : 'delicious',
 						content : sTitle
 					});
 				});
@@ -98,6 +93,3 @@
 	</div>
 	<!-- /READ FOOTER -->
 </div>
-<block cond="$oDocument->allowTrackback()">
-	<include target="_trackback.html" />
-</block>
