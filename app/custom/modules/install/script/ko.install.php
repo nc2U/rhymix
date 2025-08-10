@@ -9,6 +9,65 @@
 	$oMenuAdminController = getAdminController('menu');
 	
 	// 커스텀 사이트맵 구조
+//	$sitemap = array(
+//		'GNB' => array(
+//			'title' => 'Main Menu',
+//			'list' => array(
+//				array(
+//					'menu_name' => 'Home',
+//					'module_type' => 'WIDGET',
+//					'module_id' => 'index',
+//				),
+//				array(
+//					'menu_name' => '사업 인내',
+//					'module_id' => 'about',
+//				),
+//				array(
+//					'menu_name' => '소통 공간',
+//					'module_id' => 'notice',
+//				),
+//				array(
+//					'menu_name' => '자료 공개',
+//					'module_id' => 'board1',
+//				),
+//				array(
+//					'menu_name' => '자주하는 질문',
+//					'module_type' => 'board',
+//					'module_id' => 'faq',
+//				),
+//			),
+//		),
+//		'UNB' => array(
+//			'title' => 'Utility Menu',
+//			'list' => array(
+//				array(
+//					'menu_name' => '로그인',
+//					'module_type' => 'member',
+//					'module_id' => 'login',
+//				),
+//				array(
+//					'menu_name' => '회원가입',
+//					'module_type' => 'member',
+//					'module_id' => 'signup',
+//				),
+//			),
+//		),
+//		'FNB' => array(
+//			'title' => 'Footer Menu',
+//			'list' => array(
+//				array(
+//					'menu_name' => '서비스 이용 약관',
+//					'module_type' => 'ARTICLE',
+//					'module_id' => 'terms',
+//				),
+//				array(
+//					'menu_name' => '개인정보처리방침',
+//					'module_type' => 'ARTICLE',
+//					'module_id' => 'privacy',
+//				),
+//			),
+//		),
+//	);
 	$sitemap = array(
 		'GNB' => array(
 			'title' => 'Main Menu',
@@ -20,15 +79,18 @@
 				),
 				array(
 					'menu_name' => '사업 인내',
-					'module_id' => 'about',
+					'module_type' => 'board',
+					'module_id' => 'board',
 				),
 				array(
 					'menu_name' => '소통 공간',
-					'module_id' => 'notice',
+					'module_type' => 'board',
+					'module_id' => 'qna',
 				),
 				array(
 					'menu_name' => '자료 공개',
-					'module_id' => 'board1',
+					'module_type' => 'board',
+					'module_id' => 'notice',
 				),
 				array(
 					'menu_name' => '자주하는 질문',
@@ -41,14 +103,16 @@
 			'title' => 'Utility Menu',
 			'list' => array(
 				array(
-					'menu_name' => '로그인',
-					'module_type' => 'member',
-					'module_id' => 'login',
+					'menu_name' => 'Rhymix Official Site',
+					'is_shortcut' => 'Y',
+					'open_window' => 'Y',
+					'shortcut_target' => 'https://rhymix.org/',
 				),
 				array(
-					'menu_name' => '회원가입',
-					'module_type' => 'member',
-					'module_id' => 'signup',
+					'menu_name' => 'Rhymix GitHub',
+					'is_shortcut' => 'Y',
+					'open_window' => 'Y',
+					'shortcut_target' => 'https://github.com/rhymix',
 				),
 			),
 		),
