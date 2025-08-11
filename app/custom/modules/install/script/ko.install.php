@@ -19,8 +19,8 @@
 				),
 				array(
 					'menu_name' => '사업 안내',
-					'module_type' => 'menu', // 메뉴 타입 추가
-					'module_id' => 'business', // 고유한 모듈 ID
+					'is_shortcut' => 'Y',
+					'shortcut_target' => '/overview',
 					'list' => array(
 						array( // 배열로 수정
 							'menu_name' => '사업 개요',
