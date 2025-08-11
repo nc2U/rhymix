@@ -22,7 +22,7 @@
 					'is_shortcut' => 'Y',
 					'shortcut_target' => '/overview',
 					'list' => array(
-						array( // 배열로 수정
+						array(
 							'menu_name' => '사업 개요',
 							'module_type' => 'board',
 							'module_id' => 'overview',
@@ -46,13 +46,122 @@
 				),
 				array(
 					'menu_name' => '소통 공간',
-					'module_type' => 'board',
-					'module_id' => 'notice',
+					'is_shortcut' => 'Y',
+					'shortcut_target' => '/notice',
+					'list' => array(
+						array(
+							'menu_name' => '공지 사항',
+							'module_type' => 'board',
+							'module_id' => 'notice',
+						),
+						array(
+							'menu_name' => '소식 게시판',
+							'module_type' => 'board',
+							'module_id' => 'news',
+						),
+						array(
+							'menu_name' => '질문 게시판',
+							'module_type' => 'board',
+							'module_id' => 'qna',
+						),
+						array(
+							'menu_name' => '자유 게시판',
+							'module_type' => 'board',
+							'module_id' => 'free',
+						),
+						array(
+							'menu_name' => '투표(설문) 코너',
+							'module_type' => 'board',
+							'module_id' => 'poll',
+						),
+						array(
+							'menu_name' => '조합원 인증 요청',
+							'module_type' => 'board',
+							'module_id' => 'askAuth',
+						),
+					)
 				),
 				array(
 					'menu_name' => '자료 공개',
-					'module_type' => 'board',
-					'module_id' => 'board1',
+					'is_shortcut' => 'Y',
+					'shortcut_target' => '/info_01',
+					'list' => array(
+						array(
+							'menu_name' => '조합규약 및 내규',
+							'module_type' => 'board',
+							'module_id' => 'info_01',
+						),
+						array(
+							'menu_name' => '공동사업주체와 체결한 협약서',
+							'module_type' => 'board',
+							'module_id' => 'info_02',
+						),
+						array(
+							'menu_name' => '설계자 등 용역업체 선정 계약서',
+							'module_type' => 'board',
+							'module_id' => 'info_03',
+						),
+						array(
+							'menu_name' => '조합총회 및 이사회 등의 의사록',
+							'module_type' => 'board',
+							'module_id' => 'info_04',
+						),
+						array(
+							'menu_name' => '사업시행계획서',
+							'module_type' => 'board',
+							'module_id' => 'info_05',
+						),
+						array(
+							'menu_name' => '조합사업의 시행에 관한 공문서',
+							'module_type' => 'board',
+							'module_id' => 'info_06',
+						),
+						array(
+							'menu_name' => '회계감사보고서',
+							'module_type' => 'board',
+							'module_id' => 'info_07',
+						),
+						array(
+							'menu_name' => '분기별 사업실적보고서',
+							'module_type' => 'board',
+							'module_id' => 'info_08',
+						),
+						array(
+							'menu_name' => '업무대행자가 제출한 실적보고서',
+							'module_type' => 'board',
+							'module_id' => 'info_09',
+						),
+						array(
+							'menu_name' => '연간 자금운용 계획서',
+							'module_type' => 'board',
+							'module_id' => 'info_10',
+						),
+						array(
+							'menu_name' => '월별 자금 입출금 명세서',
+							'module_type' => 'board',
+							'module_id' => 'info_11',
+						),
+						array(
+							'menu_name' => '월별 공사진행 상황에 관한 서류',
+							'module_type' => 'board',
+							'module_id' => 'info_12',
+						),
+						array(
+							'menu_name' => '분양신청에 관한 서류 및 관련 자료',
+							'module_type' => 'board',
+							'module_id' => 'info_13',
+						),
+						array(
+							'menu_name' => '조합원별 분담금 납부내역',
+							'module_type' => 'board',
+							'module_id' => 'info_14',
+						),
+						array(
+							'menu_name' => '조합원별 추가 분담금 산출내역',
+							'module_type' => 'board',
+							'module_id' => 'info_15',
+						),
+					)
 				),
 				array(
 					'menu_name' => '자주하는 질문',
