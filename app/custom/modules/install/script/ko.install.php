@@ -210,17 +210,7 @@
 		foreach ($list as $idx => &$item) {
 			Context::set('parent_srl', $parent_srl, TRUE);
 			Context::set('menu_name', $item['menu_name'], TRUE);
-			
-			// module_type이 설정되지 않은 경우 기본값 설정
-			if (empty($item['module_type'])) {
-				$item['module_type'] = 'WIDGET';
-			}
 			Context::set('module_type', $item['module_type'], TRUE);
-			
-			// module_id가 설정되지 않은 경우 기본값 설정
-			if (empty($item['module_id'])) {
-				$item['module_id'] = 'default_' . $idx;
-			}
 			Context::set('module_id', $item['module_id'], TRUE);
 			
 			if ($item['is_shortcut'] === 'Y') {
@@ -238,13 +228,7 @@
 			$menu_srl = $oMenuAdminController->get('menu_item_srl');
 			$item['menu_srl'] = $menu_srl;
 			
-			// 하위 메뉴가 배열인지 확인 후 처리
-			if (isset($item['list']) && is_array($item['list'])) {
-				$result = __makeMenu($item['list'], $menu_srl);
-				if ($result instanceof BaseObject && !$result->toBool()) {
-					return $result;
-				}
-			}
+			if ($item['list']) __makeMenu($item['list'], $menu_srl);
 		}
 		return true; // 성공 반환
 	}
