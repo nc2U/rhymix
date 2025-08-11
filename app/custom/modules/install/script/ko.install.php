@@ -341,6 +341,19 @@
 	$oAdminController = getAdminController('admin');
 	$oAdminController->makeDefaultDesignFile($designInfo, 0);
 	
+	// 개별 모듈 스킨 설정
+	/* @var $oModuleController moduleController */
+	$oModuleController = getController('module');
+	
+	// FAQ 게시판에 IBS FAQ 스킨 적용
+	$faq_module_info = $oModuleModel->getModuleInfoByMid('faq');
+	if ($faq_module_info) {
+		$faq_module_info->skin = 'faq'; // IBS FAQ 스킨 지정
+		$faq_module_info->mskin = 'faq'; // 모바일 스킨도 동일하게 설정
+		$output = $oModuleController->updateModule($faq_module_info);
+		if (!$output->toBool()) return $output;
+	}
+	
 	// Welcome 페이지 생성
 	$moduleInfo = $oModuleModel->getModuleInfoByMenuItemSrl($sitemap['GNB']['list'][0]['menu_srl']);
 	$module_srl = $moduleInfo->module_srl;
