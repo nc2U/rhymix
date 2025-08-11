@@ -19,8 +19,30 @@
 				),
 				array(
 					'menu_name' => '사업 안내',
-					'module_type' => 'board',
-					'module_id' => 'about',
+					'module_type' => 'menu', // 메뉴 타입 추가
+					'module_id' => 'business', // 고유한 모듈 ID
+					'list' => array(
+						array( // 배열로 수정
+							'menu_name' => '사업 개요',
+							'module_type' => 'board',
+							'module_id' => 'overview',
+						),
+						array(
+							'menu_name' => '브랜드 소개',
+							'module_type' => 'board',
+							'module_id' => 'brand',
+						),
+						array(
+							'menu_name' => '입지 환경',
+							'module_type' => 'board',
+							'module_id' => 'location',
+						),
+						array(
+							'menu_name' => '오시는 길',
+							'module_type' => 'board',
+							'module_id' => 'map',
+						)
+					)
 				),
 				array(
 					'menu_name' => '소통 공간',
@@ -79,8 +101,19 @@
 		foreach ($list as $idx => &$item) {
 			Context::set('parent_srl', $parent_srl, TRUE);
 			Context::set('menu_name', $item['menu_name'], TRUE);
+			
+			// module_type이 설정되지 않은 경우 기본값 설정
+			if (empty($item['module_type'])) {
+				$item['module_type'] = 'WIDGET';
+			}
 			Context::set('module_type', $item['module_type'], TRUE);
+			
+			// module_id가 설정되지 않은 경우 기본값 설정
+			if (empty($item['module_id'])) {
+				$item['module_id'] = 'default_' . $idx;
+			}
 			Context::set('module_id', $item['module_id'], TRUE);
+			
 			if ($item['is_shortcut'] === 'Y') {
 				Context::set('is_shortcut', $item['is_shortcut'], TRUE);
 				Context::set('shortcut_target', $item['shortcut_target'], TRUE);
@@ -96,8 +129,15 @@
 			$menu_srl = $oMenuAdminController->get('menu_item_srl');
 			$item['menu_srl'] = $menu_srl;
 			
-			if ($item['list']) __makeMenu($item['list'], $menu_srl);
+			// 하위 메뉴가 배열인지 확인 후 처리
+			if (isset($item['list']) && is_array($item['list'])) {
+				$result = __makeMenu($item['list'], $menu_srl);
+				if ($result instanceof BaseObject && !$result->toBool()) {
+					return $result;
+				}
+			}
 		}
+		return true; // 성공 반환
 	}
 	
 	// 사이트맵 생성
@@ -108,7 +148,10 @@
 		}
 		$val['menu_srl'] = $output->get('menuSrl');
 		
-		__makeMenu($val['list'], $val['menu_srl']);
+		$result = __makeMenu($val['list'], $val['menu_srl']);
+		if ($result instanceof BaseObject && !$result->toBool()) {
+			return $result;
+		}
 		
 		$oMenuAdminController->makeHomemenuCacheFile($val['menu_srl']);
 	}
@@ -261,6 +304,6 @@
 	}
 	
 	// 메뉴 캐시 생성
-	$oMenuAdminController->makeXmlFile($menuSrl);
+	$oMenuAdminController->makeXmlFile($sitemap['GNB']['menu_srl']); // $menuSrl -> $sitemap['GNB']['menu_srl']로 수정
 	
 	/* End of file ko.install.php */
