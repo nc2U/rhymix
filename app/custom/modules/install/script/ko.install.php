@@ -333,7 +333,8 @@
 	$faq_module_info = $oModuleModel->getModuleInfoByMid('faq');
 	if ($faq_module_info) {
 		$faq_module_info->skin = 'faq'; // IBS FAQ 스킨 지정
-		$faq_module_info->mskin = 'faq'; // 모바일 스킨도 동일하게 설정
+		$faq_module_info->mskin = '/USE_DEFAULT/'; // 모바일 스킨 기본값 사용
+		
 		$output = $oModuleController->updateModule($faq_module_info);
 		if (!$output->toBool()) return $output;
 	}
@@ -388,9 +389,6 @@
 	if (!$output->toBool()) return $output;
 	
 	// 페이지 위젯 설정
-	/* @var $oModuleController moduleController */
-	$oModuleController = getController('module');
-//	$mdocument_srl = $document_srl; // 모바일도 동일한 문서 사용
 	$mdocument_srl = $output->get('document_srl');
 	$module_info = $oModuleModel->getModuleInfoByModuleSrl($module_srl);
 	$module_info->content = '<img hasContent="true" class="zbxe_widget_output" widget="widgetContent" style="width: 100%; float: left;" body="" document_srl="' . $document_srl . '" widget_padding_left="0" widget_padding_right="0" widget_padding_top="0" widget_padding_bottom="0"  />';
