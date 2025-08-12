@@ -332,8 +332,10 @@
 	// FAQ 게시판에 IBS FAQ 스킨 적용
 	$faq_module_info = $oModuleModel->getModuleInfoByMid('faq');
 	if ($faq_module_info) {
-		$faq_module_info->skin = 'faq'; // IBS FAQ 스킨 지정
-		$faq_module_info->mskin = '/USE_DEFAULT/'; // 모바일 스킨 기본값 사용
+		// FAQ 게시판만 사이트 디자인을 사용하지 않도록 설정
+		$faq_module_info->is_skin_fix = 'Y';
+		$faq_module_info->skin = 'faq'; // IBS Faq 스킨으로 설정
+		$faq_module_info->mskin = '/USE_DEFAULT/'; // 모바일 스킨 기본값
 		
 		$output = $oModuleController->updateModule($faq_module_info);
 		if (!$output->toBool()) return $output;
