@@ -257,6 +257,12 @@
 	$extra_vars->GNB = $sitemap['GNB']['menu_srl'];
 	$extra_vars->UNB = $sitemap['UNB']['menu_srl'];
 	$extra_vars->FNB = $sitemap['FNB']['menu_srl'];
+	$extra_vars->logo_text = 'OOOO 지역주택조합';
+	$extra_vars->logo_url = '/';
+	$extra_vars->footer_logo_text = 'OOOO 지역주택조합';
+	$extra_vars->footer_logo_url = '/';
+	$extra_vars->footer_text = '이 사이트는 회원 가입후 인증절차를 거친 조합원(가입자)들에게 주택법 제12조(실적보고 및 관련자료의 공개)에 따른 사업 관련 자료를 공개 운영하고 있습니다.';
+	$extra_vars->footer_copyright = 'Powered by dyibs.com';
 	
 	$args = new stdClass();
 	$layout_srl = $args->layout_srl = getNextSequence();
