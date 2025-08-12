@@ -24,22 +24,22 @@
 					'list' => array(
 						array(
 							'menu_name' => '사업 개요',
-							'module_type' => 'board',
+							'module_type' => 'page',
 							'module_id' => 'overview',
 						),
 						array(
 							'menu_name' => '브랜드 소개',
-							'module_type' => 'board',
+							'module_type' => 'page',
 							'module_id' => 'brand',
 						),
 						array(
 							'menu_name' => '입지 환경',
-							'module_type' => 'board',
+							'module_type' => 'page',
 							'module_id' => 'location',
 						),
 						array(
 							'menu_name' => '오시는 길',
-							'module_type' => 'board',
+							'module_type' => 'page',
 							'module_id' => 'map',
 						)
 					)
