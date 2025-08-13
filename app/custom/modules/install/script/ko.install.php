@@ -6,6 +6,9 @@
 	$logged_info = Context::get('logged_info');
 	
 	$oMenuAdminController = getAdminController('menu');
+	$oModuleModel = getModel('module');
+	$oModuleController = getController('module');
+	$oDocumentController = getController('document');
 	
 	// 커스텀 사이트맵 구조
 	$sitemap = array(
@@ -313,8 +316,6 @@
 	
 	$designInfo->module = new stdClass();
 	
-	/* @var $oModuleModel moduleModel */
-	$oModuleModel = getModel('module');
 	foreach ($skinTypes as $key => $dir) {
 		$skinType = $key == 'skin' ? 'P' : 'M';
 		foreach ($moduleList as $moduleName) {
@@ -330,10 +331,6 @@
 	/* @var $oAdminController adminAdminController */
 	$oAdminController = getAdminController('admin');
 	$oAdminController->makeDefaultDesignFile($designInfo, 0);
-	
-	// 개별 모듈 스킨 설정
-	/* @var $oModuleController moduleController */
-	$oModuleController = getController('module');
 	
 	// FAQ 게시판에 IBS FAQ 스킨 적용
 	$faq_module_info = $oModuleModel->getModuleInfoByMid('faq');
