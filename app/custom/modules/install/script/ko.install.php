@@ -607,25 +607,6 @@
 	// 8. 공지사항 게시판에 공지사항 삽입
 	$notices = array(
 		array(
-			'title' => '[공지] 조합원 총회 개최 안내',
-			'content' => '
-			<div class="notice-content">
-				<h3>제1차 조합원 총회 개최 안내</h3>
-				<p>안녕하십니까? OO지역주택조합입니다.</p>
-				<p>조합 설립 후 첫 정기총회를 아래와 같이 개최하오니 조합원 여러분의 많은 참석 부탁드립니다.</p>
-				
-				<table class="table">
-					<tr><th>구분</th><th>내용</th></tr>
-					<tr><td>일시</td><td>2024년 4월 15일(월) 오후 7시</td></tr>
-					<tr><td>장소</td><td>OO구민회관 대강당</td></tr>
-					<tr><td>안건</td><td>사업시행인가 보고, 2024년도 사업계획 승인 등</td></tr>
-				</table>
-				
-				<p>감사합니다.</p>
-				<p>OO지역주택조합 이사장</p>
-			</div>'
-		),
-		array(
 			'title' => '[안내] 웹사이트 오픈 안내',
 			'content' => '
 			<div class="notice-content">
