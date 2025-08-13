@@ -376,11 +376,8 @@
 <div class="welcomeXE">
 <section class="intro"><span class="noti">BRAND STORY!</span>
 <h1 class="tit">변화하는 고객의 삶으로부터 새로운 자이가 시작됩니다</h1>
-
 <p class="cont">자이는 시대의 변화에 맞춰 대한민국 아파트 브랜드 역사의 변곡점마다 주목받는 족적을 납겨왔습니다.</p>
-
 <p class="cont">고유의 미학과 앞선 기술이 투영된 특별한 주거경험을 선보이며 새로운 라이프 스타일을 선도하는 대한민국 대표 아파트 브랜드로 자리매김해 왔습니다.</p>
-
 <p class="cont">이제, 자이가 또 한 번의 도약을 준비합니다. 더욱 깊어진 고객을 향한 시선에 자이만의 새로운 관점을 더해 달라진 주거의 의미와 고객이 추구하는 삶의 가치를 반영한 새로운 주거 경험을 만들어갑니다.<br />
 <a class="btn_start" href="/brand">둘러보기</a></p>
 </section>
@@ -417,5 +414,243 @@
 	
 	// 메뉴 캐시 생성
 	$oMenuAdminController->makeXmlFile($sitemap['GNB']['menu_srl']); // $menuSrl -> $sitemap['GNB']['menu_srl']로 수정
+	
+	// ========== rx_documents 테이블에 문서 데이터 삽입 예제 ==========
+	
+	// 방법 1: 특정 페이지(ARTICLE 모듈)에 문서 내용 삽입
+	function insertPageDocument($module_id, $title, $content, $logged_info)
+	{
+		$oModuleModel = getModel('module');
+		$oDocumentController = getController('document');
+		
+		// 모듈 정보 가져오기
+		$module_info = $oModuleModel->getModuleInfoByMid($module_id);
+		if (!$module_info) return false;
+		
+		// 문서 객체 생성
+		$obj = new stdClass();
+		$obj->module_srl = $module_info->module_srl;
+		$obj->member_srl = $logged_info->member_srl;
+		$obj->user_id = htmlspecialchars_decode($logged_info->user_id);
+		$obj->user_name = htmlspecialchars_decode($logged_info->user_name);
+		$obj->nick_name = htmlspecialchars_decode($logged_info->nick_name);
+		$obj->email_address = $logged_info->email_address;
+		$obj->title = $title;
+		$obj->content = $content;
+		$obj->status = 'PUBLIC'; // PUBLIC, PRIVATE, SECRET
+		$obj->comment_status = 'ALLOW'; // ALLOW, DENY
+		
+		// 문서 삽입
+		$output = $oDocumentController->insertDocument($obj, true);
+		if (!$output->toBool()) return false;
+		
+		return $output->get('document_srl');
+	}
+	
+	// 방법 2: 게시판에 문서(게시글) 삽입
+	function insertBoardDocument($module_id, $title, $content, $logged_info, $category_srl = 0)
+	{
+		$oModuleModel = getModel('module');
+		$oDocumentController = getController('document');
+		
+		// 모듈 정보 가져오기
+		$module_info = $oModuleModel->getModuleInfoByMid($module_id);
+		if (!$module_info) return false;
+		
+		// 문서 객체 생성
+		$obj = new stdClass();
+		$obj->module_srl = $module_info->module_srl;
+		$obj->category_srl = $category_srl; // 카테고리 번호 (0이면 미분류)
+		$obj->member_srl = $logged_info->member_srl;
+		$obj->user_id = htmlspecialchars_decode($logged_info->user_id);
+		$obj->user_name = htmlspecialchars_decode($logged_info->user_name);
+		$obj->nick_name = htmlspecialchars_decode($logged_info->nick_name);
+		$obj->email_address = $logged_info->email_address;
+		$obj->title = $title;
+		$obj->content = $content;
+		$obj->status = 'PUBLIC';
+		$obj->comment_status = 'ALLOW';
+		$obj->notify_message = 'N'; // 알림 메시지 여부
+		
+		// 문서 삽입
+		$output = $oDocumentController->insertDocument($obj, true);
+		if (!$output->toBool()) return false;
+		
+		return $output->get('document_srl');
+	}
+	
+	// 실제 문서 삽입 예제들
+	
+	// 1. terms 내용 삽입
+	$terms_content = 'asdfasd';
+	$terms_doc_srl = insertPageDocument('terms', '서비스 이용 약관', $terms_content, $logged_info);
+	
+	// 2. privacy 내용 삽입
+	$privacy_content = 'asdfasdfddd';
+	$privacy_doc_srl = insertPageDocument('privacy', '개인정보처리방침', $privacy_content, $logged_info);
+	
+	// 3. 사업 개요 페이지에 내용 삽입
+	$overview_content = '
+	<div class="page-content">
+		<h2>사업 개요</h2>
+		<p>본 사업은 주택법에 따라 설립된 지역주택조합이 시행하는 공동주택 건설사업입니다.</p>
+		<ul>
+			<li>사업 위치: OO시 OO구 OO동 일원</li>
+			<li>사업 규모: 지하 2층, 지상 15층, 총 200세대</li>
+			<li>사업 기간: 2024년 ~ 2027년 (예정)</li>
+			<li>시행사: OO지역주택조합</li>
+		</ul>
+		<h3>사업 추진 경과</h3>
+		<table class="table">
+			<tr><th>일자</th><th>내용</th></tr>
+			<tr><td>2024.01.15</td><td>조합 설립 인가</td></tr>
+			<tr><td>2024.03.20</td><td>사업시행인가 신청</td></tr>
+			<tr><td>2024.06.10</td><td>사업시행인가 승인</td></tr>
+		</table>
+	</div>';
+	
+	$overview_doc_srl = insertPageDocument('overview', '사업 개요', $overview_content, $logged_info);
+	
+	// 4. 브랜드 소개 페이지에 내용 삽입
+	$brand_content = '
+	<div class="brand-intro">
+		<h2>브랜드 소개</h2>
+		<div class="brand-story">
+			<h3>우리의 비전</h3>
+			<p>품질 높은 주거공간을 통해 조합원 여러분의 꿈을 실현합니다.</p>
+			
+			<h3>브랜드 가치</h3>
+			<ul>
+				<li><strong>신뢰</strong>: 투명한 사업 진행과 정확한 정보 공개</li>
+				<li><strong>품질</strong>: 우수한 시공사 및 설계업체와의 협력</li>
+				<li><strong>소통</strong>: 조합원과의 지속적인 소통과 참여</li>
+			</ul>
+		</div>
+	</div>';
+	
+	$brand_doc_srl = insertPageDocument('brand', '브랜드 소개', $brand_content, $logged_info);
+	
+	// 5. 입지 환경 페이지에 내용 삽입
+	$location_content = '
+	<div class="location-info">
+		<h2>입지 환경</h2>
+		<div class="location-advantages">
+			<h3>교통 접근성</h3>
+			<ul>
+				<li>지하철 1호선 OO역 도보 5분</li>
+				<li>버스정류장 도보 2분 (간선 3개 노선, 지선 5개 노선)</li>
+				<li>고속도로 IC 차량 10분 거리</li>
+			</ul>
+			
+			<h3>생활 편의시설</h3>
+			<ul>
+				<li>대형마트: 롯데마트, 이마트 차량 5분</li>
+				<li>병원: OO종합병원 도보 10분</li>
+				<li>학교: OO초등학교 도보 8분, OO중학교 도보 12분</li>
+			</ul>
+		</div>
+	</div>';
+	
+	$location_doc_srl = insertPageDocument('location', '입지 환경', $location_content, $logged_info);
+	
+	// 7. FAQ 게시판에 자주 묻는 질문들 삽입
+	$faq_questions = array(
+		array(
+			'title' => '조합원 가입 조건은 무엇인가요?',
+			'content' => '
+			<div class="faq-answer">
+				<p><strong>답변:</strong></p>
+				<p>조합원 가입을 위해서는 다음 조건을 충족해야 합니다:</p>
+				<ul>
+					<li>무주택 세대주 또는 세대원</li>
+					<li>해당 지역 거주 조건 충족</li>
+					<li>소득 기준 충족</li>
+					<li>가입비 및 1차 분담금 납부</li>
+				</ul>
+				<p>자세한 사항은 조합 사무실로 문의하시기 바랍니다.</p>
+			</div>'
+		),
+		array(
+			'title' => '분담금은 언제, 얼마를 납부해야 하나요?',
+			'content' => '
+			<div class="faq-answer">
+				<p><strong>답변:</strong></p>
+				<p>분담금 납부 일정은 다음과 같습니다:</p>
+				<table class="table">
+					<tr><th>차수</th><th>납부 시기</th><th>금액</th></tr>
+					<tr><td>1차</td><td>조합원 가입 시</td><td>1,000만원</td></tr>
+					<tr><td>2차</td><td>착공 전</td><td>2,000만원</td></tr>
+					<tr><td>3차</td><td>중간금</td><td>2,000만원</td></tr>
+					<tr><td>잔금</td><td>입주 시</td><td>나머지 금액</td></tr>
+				</table>
+				<p>※ 상기 일정 및 금액은 사업 진행에 따라 변동될 수 있습니다.</p>
+			</div>'
+		),
+		array(
+			'title' => '입주 예정 시기는 언제인가요?',
+			'content' => '
+			<div class="faq-answer">
+				<p><strong>답변:</strong></p>
+				<p>현재 계획으로는 2027년 하반기 입주 예정입니다.</p>
+				<ul>
+					<li>착공: 2024년 하반기 예정</li>
+					<li>공사 기간: 약 30개월</li>
+					<li>입주: 2027년 하반기 예정</li>
+				</ul>
+				<p>※ 인허가 및 공사 진행 상황에 따라 일정이 변경될 수 있으며, 변경 시 즉시 공지해드리겠습니다.</p>
+			</div>'
+		)
+	);
+	
+	// FAQ 게시글들 삽입
+	foreach ($faq_questions as $faq) {
+		insertBoardDocument('faq', $faq['title'], $faq['content'], $logged_info);
+	}
+	
+	// 8. 공지사항 게시판에 공지사항 삽입
+	$notices = array(
+		array(
+			'title' => '[공지] 조합원 총회 개최 안내',
+			'content' => '
+			<div class="notice-content">
+				<h3>제1차 조합원 총회 개최 안내</h3>
+				<p>안녕하십니까? OO지역주택조합입니다.</p>
+				<p>조합 설립 후 첫 정기총회를 아래와 같이 개최하오니 조합원 여러분의 많은 참석 부탁드립니다.</p>
+				
+				<table class="table">
+					<tr><th>구분</th><th>내용</th></tr>
+					<tr><td>일시</td><td>2024년 4월 15일(월) 오후 7시</td></tr>
+					<tr><td>장소</td><td>OO구민회관 대강당</td></tr>
+					<tr><td>안건</td><td>사업시행인가 보고, 2024년도 사업계획 승인 등</td></tr>
+				</table>
+				
+				<p>감사합니다.</p>
+				<p>OO지역주택조합 이사장</p>
+			</div>'
+		),
+		array(
+			'title' => '[안내] 웹사이트 오픈 안내',
+			'content' => '
+			<div class="notice-content">
+				<h3>조합 공식 웹사이트 오픈</h3>
+				<p>조합원 여러분께 사업 진행 상황과 각종 공지사항을 신속하고 투명하게 전달하기 위해 공식 웹사이트를 오픈하였습니다.</p>
+				
+				<h4>주요 기능</h4>
+				<ul>
+					<li>사업 진행 현황 실시간 업데이트</li>
+					<li>각종 공지사항 및 안내사항</li>
+					<li>주택법에 따른 정보공개 자료</li>
+					<li>조합원 간 소통 공간</li>
+				</ul>
+				
+				<p>조합원 인증 후 모든 자료를 열람하실 수 있습니다.</p>
+			</div>'
+		)
+	);
+	
+	// 공지사항 게시글들 삽입
+	foreach ($notices as $notice) {
+		insertBoardDocument('notice', $notice['title'], $notice['content'], $logged_info);
+	}
 	
 	/* End of file ko.install.php */
