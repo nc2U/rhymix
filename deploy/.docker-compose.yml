@@ -26,6 +26,7 @@ services:
       - ../app:/var/www/html
       # bind mount 추가: 레이아웃/스킨 연결
       - ../app/custom/layouts/ibs_layout:/var/www/html/_rhymix/layouts/ibs_layout
+      - ../app/custom/modules/install/script:/var/www/html/_rhymix/modules/install/script
       - ../app/custom/modules/board/skins/faq:/var/www/html/_rhymix/modules/board/skins/faq
       - ./docker/php/php-logging.conf:/usr/local/etc/php-fpm.d/zz-log.conf
     environment:
@@ -48,6 +49,7 @@ services:
       - ../app:/var/www/html
       # bind mount 추가: 레이아웃/스킨 연결
       - ../app/custom/layouts/ibs_layout:/var/www/html/_rhymix/layouts/ibs_layout
+      - ../app/custom/modules/install/script:/var/www/html/_rhymix/modules/install/script
       - ../app/custom/modules/board/skins/faq:/var/www/html/_rhymix/modules/board/skins/faq
       - ./docker/nginx/snippets:/etc/nginx/snippets
       - ./docker/nginx/conf.d:/etc/nginx/conf.d
