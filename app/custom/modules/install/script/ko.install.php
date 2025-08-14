@@ -41,9 +41,9 @@
 							'module_id' => 'location',
 						),
 						array(
-							'menu_name' => '오시는 길',
-							'module_type' => 'ARTICLE',
-							'module_id' => 'map',
+						'menu_name' => '오시는 길',
+						'module_type' => 'ARTICLE',
+						'module_id' => 'contact',
 						)
 					)
 				),
@@ -369,8 +369,8 @@
 	
 	// 커스텀 Welcome 콘텐츠 (필요시 별도 템플릿 파일 생성)
 	$obj->content = '
-<link href="./layouts/ibs_layout/css/welcome.css" rel="stylesheet" />
-<div class="welcomeXE">
+	<link href="./layouts/ibs_layout/css/welcome.css" rel="stylesheet" />
+	<div class="welcomeXE">
 <section class="intro"><span class="noti">BRAND STORY!</span>
 <h1 class="tit">변화하는 고객의 삶으로부터 새로운 자이가 시작됩니다</h1>
 <p class="cont">자이는 시대의 변화에 맞춰 대한민국 아파트 브랜드 역사의 변곡점마다 주목받는 족적을 납겨왔습니다.</p>
@@ -405,17 +405,15 @@
 	executeQuery('module.updateDomain', $domain_args);
 	
 	// 관리자 즐겨찾기에 유용한 모듈들 추가
-	foreach (['advanced_mailer', 'ncenterlite'] as $module_name) {
+	foreach (['advanced_mailer', 'ncenterlite'] as $module_name)
 		$oAdminController->_insertFavorite(0, $module_name);
-	}
+	
 	
 	// 메뉴 캐시 생성
 	$oMenuAdminController->makeXmlFile($sitemap['GNB']['menu_srl']); // $menuSrl -> $sitemap['GNB']['menu_srl']로 수정
 	
 	// ========== rx_documents 테이블에 문서 데이터 삽입 예제 ==========
-	
-	// 방법 1: 특정 페이지(ARTICLE 모듈)에 문서 내용 삽입
-	function insertPageDocument($module_id, $title, $content, $logged_info)
+	function insertCustomDocument($module_id, $title, $content, $logged_info, $sort = 'page', $category_srl = 0)
 	{
 		$oModuleModel = getModel('module');
 		$oModuleController = getController('module');
@@ -434,9 +432,35 @@
 		$obj->nick_name = htmlspecialchars_decode($logged_info->nick_name);
 		$obj->email_address = $logged_info->email_address;
 		$obj->title = $title;
-		$obj->content = $content;
+		// blade.php 파일 경로 확인 (현재 스크립트 파일과 같은 경로)
+		$script_dir = dirname(__FILE__);
+		$blade_file = $script_dir . '/' . $module_id . '.blade.php';
+		
+		// 디버그용 로그 (실제 운영 시 제거)
+		error_log("[DEBUG] Module ID: {$module_id}");
+		error_log("[DEBUG] Blade file path: {$blade_file}");
+		error_log("[DEBUG] File exists: " . (file_exists($blade_file) ? 'YES' : 'NO'));
+		
+		// blade.php 파일이 있으면 해당 내용을 사용, 없으면 $content 사용
+		if (file_exists($blade_file)) {
+			$file_content = file_get_contents($blade_file);
+			if ($file_content !== false && trim($file_content) !== '') {
+				$obj->content = $file_content;
+				error_log("[DEBUG] Using blade file content for {$module_id}");
+			} else {
+				$obj->content = $content;
+				error_log("[DEBUG] Blade file empty, using default content for {$module_id}");
+			}
+		} else {
+			$obj->content = $content;
+			error_log("[DEBUG] Blade file not found, using default content for {$module_id}");
+		}
 		$obj->status = 'PUBLIC'; // PUBLIC, PRIVATE, SECRET
 		$obj->comment_status = 'ALLOW'; // ALLOW, DENY
+		if ($sort == 'board') {
+			$obj->category_srl = $category_srl; // 카테고리 번호 (0이면 미분류)
+			$obj->notify_message = 'N'; // 알림 메시지 여부
+		}
 		
 		// 문서 삽입
 		$output = $oDocumentController->insertDocument($obj, true);
@@ -444,625 +468,46 @@
 		
 		$document_srl = $output->get('document_srl');
 		
-		// ★ 핵심: ARTICLE 모듈에 문서 연결 ★
-		$module_info->document_srl = $document_srl;
-		
-		// 모듈 정보 업데이트
-		$update_output = $oModuleController->updateModule($module_info);
-		if (!$update_output->toBool()) {
-			// 업데이트 실패 시 로그 기록
-			FileHandler::writeFile(RX_BASEDIR . 'files/debug.log', 
-				date('Y-m-d H:i:s') . " - Module update failed for " . $module_id . ": " . $update_output->getMessage() . "\n", 'a');
-			return false;
+		if ($sort == 'page') { // $sort = 'page', 'board'
+			// ★ 핵심: ARTICLE 모듈에 문서 연결 ★
+			$module_info->document_srl = $document_srl;
+			
+			// 모듈 정보 업데이트
+			$update_output = $oModuleController->updateModule($module_info);
+			if (!$update_output->toBool()) return false;
 		}
-		
-		// 성공 로그
-		FileHandler::writeFile(RX_BASEDIR . 'files/debug.log', 
-			date('Y-m-d H:i:s') . " - Module " . $module_id . " connected to document_srl: " . $document_srl . "\n", 'a');
-		
 		return $document_srl;
 	}
 	
-	// 방법 2: 게시판에 문서(게시글) 삽입
-	function insertBoardDocument($module_id, $title, $content, $logged_info, $category_srl = 0)
-	{
-		$oModuleModel = getModel('module');
-		$oDocumentController = getController('document');
-		
-		// 모듈 정보 가져오기
-		$module_info = $oModuleModel->getModuleInfoByMid($module_id);
-		if (!$module_info) return false;
-		
-		// 문서 객체 생성
-		$obj = new stdClass();
-		$obj->module_srl = $module_info->module_srl;
-		$obj->category_srl = $category_srl; // 카테고리 번호 (0이면 미분류)
-		$obj->member_srl = $logged_info->member_srl;
-		$obj->user_id = htmlspecialchars_decode($logged_info->user_id);
-		$obj->user_name = htmlspecialchars_decode($logged_info->user_name);
-		$obj->nick_name = htmlspecialchars_decode($logged_info->nick_name);
-		$obj->email_address = $logged_info->email_address;
-		$obj->title = $title;
-		$obj->content = $content;
-		$obj->status = 'PUBLIC';
-		$obj->comment_status = 'ALLOW';
-		$obj->notify_message = 'N'; // 알림 메시지 여부
-		
-		// 문서 삽입
-		$output = $oDocumentController->insertDocument($obj, true);
-		if (!$output->toBool()) return false;
-		
-		return $output->get('document_srl');
-	}
+	// 실제 문서 삽입 예제
+	$page_list = array(
+		array( // 1. terms 내용 삽입
+			'module_id' => 'terms',
+			'title' => '서비스 이용 약관',
+		),
+		array( // 2. privacy 내용 삽입
+			'module_id' => 'privacy',
+			'title' => '개인정보처리방침',
+		),
+		array( // 3. 사업 개요 페이지에 내용 삽입
+			'module_id' => 'overview',
+			'title' => '사업 개요',
+		),
+		array( // 4. 브랜드 소개 페이지에 내용 삽입
+			'module_id' => 'brand',
+			'title' => '브랜드 소개',
+		),
+		array( // 5. 입지 환경 페이지에 내용 삽입
+			'module_id' => 'location',
+			'title' => '입지 환경',
+		),
+		array( // 6. 오시는 길 페이지에 내용 삽입
+			'module_id' => 'contact',
+			'title' => '오시는 길',
+		),
+	);
 	
-	// 실제 문서 삽입 예제들
-	
-	// 1. terms 내용 삽입
-	$terms_content = '
-<p data-end="226" data-start="105">&nbsp;</p>
-
-<p data-end="226" data-start="105"><span style="color:#666666;"><strong data-end="117" data-start="105">제1조 (목적)</strong><br data-end="120" data-start="117" />
-이 약관은 ○○○지역주택조합(이하 &quot;조합&quot;)이 운영하는 온라인 커뮤니티(이하 &quot;서비스&quot;)의 이용조건 및 절차, 회원과 조합 간의 권리 및 의무, 기타 필요한 사항을 규정함을 목적으로 합니다.</span></p>
-
-<p data-end="226" data-start="105">&nbsp;</p>
-
-<p><span style="color:#666666;"><strong data-end="245" data-start="233">제2조 (정의)</strong></span></p>
-
-<ol data-end="423" data-start="248">
-	<li data-end="308" data-start="248">
-	<p data-end="308" data-start="251"><span style="color:#666666;">&quot;서비스&quot;라 함은 조합이 제공하는 커뮤니티, 게시판, 공지사항, 자료실, 알림 기능 등을 말합니다.</span></p>
-	</li>
-	<li data-end="367" data-start="309">
-	<p data-end="367" data-start="312"><span style="color:#666666;">&quot;회원&quot;이라 함은 본 약관에 동의하고 서비스에 가입하여 이용 자격을 부여받은 조합원을 말합니다.</span></p>
-	</li>
-	<li data-end="423" data-start="368">
-	<p data-end="423" data-start="371"><span style="color:#666666;">&quot;운영자&quot;란 조합 또는 조합이 위임한 자로, 서비스의 전반적인 운영을 담당하는 자를 말합니다.</span></p>
-	</li>
-</ol>
-
-<p data-end="423" data-start="371">&nbsp;</p>
-
-<p data-end="453" data-start="430"><span style="color:#666666;"><strong data-end="451" data-start="430">제3조 (약관의 효력 및 변경)</strong></span></p>
-
-<ol data-end="628" data-start="454">
-	<li data-end="491" data-start="454">
-	<p data-end="491" data-start="457"><span style="color:#666666;">본 약관은 회원이 가입 시 동의함으로써 효력이 발생합니다.</span></p>
-	</li>
-	<li data-end="576" data-start="492">
-	<p data-end="576" data-start="495"><span style="color:#666666;">조합은 필요 시 관련 법령을 위배하지 않는 범위에서 약관을 개정할 수 있으며, 변경된 약관은 홈페이지 또는 앱에 공지함으로써 효력을 가집니다.</span></p>
-	</li>
-	<li data-end="628" data-start="577">
-	<p data-end="628" data-start="580"><span style="color:#666666;">회원이 개정된 약관에 동의하지 않을 경우, 서비스 이용을 중단하고 탈퇴할 수 있습니다.</span></p>
-	</li>
-</ol>
-
-<p>&nbsp;</p>
-
-<p>&nbsp;</p>
-
-<p data-end="657" data-start="635"><span style="color:#666666;"><strong data-end="655" data-start="635">제4조 (이용 자격 및 제한)</strong></span></p>
-
-<ol data-end="798" data-start="658">
-	<li data-end="714" data-start="658">
-	<p data-end="714" data-start="661"><span style="color:#666666;">본 서비스는 ○○○지역주택조합의 <strong data-end="695" data-start="679">조합원 자격을 가진 자</strong>만 가입 및 이용이 가능합니다.</span></p>
-	</li>
-	<li data-end="750" data-start="715">
-	<p data-end="750" data-start="718"><span style="color:#666666;">조합원 지위 상실 시, 서비스 이용 자격도 종료됩니다.</span></p>
-	</li>
-	<li data-end="798" data-start="751">
-	<p data-end="798" data-start="754"><span style="color:#666666;">동일인이 중복 가입한 경우, 조합은 해당 계정을 통합하거나 삭제할 수 있습니다.</span></p>
-	</li>
-</ol>
-
-<p>&nbsp;</p>
-
-<p data-end="823" data-start="805"><span style="color:#666666;"><strong data-end="821" data-start="805">제5조 (회원의 의무)</strong></span></p>
-
-<ol data-end="1011" data-start="824">
-	<li data-end="869" data-start="824">
-	<p data-end="869" data-start="827"><span style="color:#666666;">회원은 본인의 정보를 정확하게 기재하고, 변경 시 즉시 수정해야 합니다.</span></p>
-	</li>
-	<li data-end="1011" data-start="870">
-	<p data-end="902" data-start="873"><span style="color:#666666;">회원은 다음 각 호의 행위를 하여서는 안 됩니다:</span></p>
-
-	<ul data-end="1011" data-start="906">
-		<li data-end="921" data-start="906">
-		<p data-end="921" data-start="908"><span style="color:#666666;">타인의 개인정보 도용</span></p>
-		</li>
-		<li data-end="962" data-start="925">
-		<p data-end="962" data-start="927"><span style="color:#666666;">비방, 욕설, 허위사실 유포 등 커뮤니티 질서를 해치는 행위</span></p>
-		</li>
-		<li data-end="984" data-start="966">
-		<p data-end="984" data-start="968"><span style="color:#666666;">조합 내부자료의 무단 배포</span></p>
-		</li>
-		<li data-end="1011" data-start="988">
-		<p data-end="1011" data-start="990"><span style="color:#666666;">기타 법령 및 공공질서에 위반되는 행위</span></p>
-		</li>
-	</ul>
-	</li>
-</ol>
-
-<p>&nbsp;</p>
-
-<p data-end="1036" data-start="1018"><span style="color:#666666;"><strong data-end="1034" data-start="1018">제6조 (조합의 의무)</strong></span></p>
-
-<ol data-end="1173" data-start="1037">
-	<li data-end="1072" data-start="1037">
-	<p data-end="1072" data-start="1040"><span style="color:#666666;">조합은 안정적인 서비스 제공을 위하여 최선을 다합니다.</span></p>
-	</li>
-	<li data-end="1121" data-start="1073">
-	<p data-end="1121" data-start="1076"><span style="color:#666666;">회원의 개인정보 보호를 위해 보안 시스템을 유지하며, 외부 유출을 방지합니다.</span></p>
-	</li>
-	<li data-end="1173" data-start="1122">
-	<p data-end="1173" data-start="1125"><span style="color:#666666;">조합은 공정한 운영을 위하여 게시글 관리 및 커뮤니티 운영 지침을 수립할 수 있습니다.</span></p>
-	</li>
-</ol>
-
-<p>&nbsp;</p>
-
-<p data-end="1203" data-start="1180"><span style="color:#666666;"><strong data-end="1201" data-start="1180">제7조 (게시물 관리 및 권리)</strong></span></p>
-
-<ol data-end="1385" data-start="1204">
-	<li data-end="1272" data-start="1204">
-	<p data-end="1272" data-start="1207"><span style="color:#666666;">회원이 서비스에 게시한 자료의 저작권은 회원에게 있으며, 조합은 커뮤니티 운영 목적으로 이를 사용할 수 있습니다.</span></p>
-	</li>
-	<li data-end="1385" data-start="1273">
-	<p data-end="1316" data-start="1276"><span style="color:#666666;">다음과 같은 게시물은 사전 통보 없이 삭제되거나 제한될 수 있습니다:</span></p>
-
-	<ul data-end="1385" data-start="1320">
-		<li data-end="1338" data-start="1320">
-		<p data-end="1338" data-start="1322"><span style="color:#666666;">허위 사실, 명예훼손 내용</span></p>
-		</li>
-		<li data-end="1358" data-start="1342">
-		<p data-end="1358" data-start="1344"><span style="color:#666666;">광고성 글, 반복 도배</span></p>
-		</li>
-		<li data-end="1385" data-start="1362">
-		<p data-end="1385" data-start="1364"><span style="color:#666666;">조합 운영에 중대한 영향을 미치는 내용</span></p>
-		</li>
-	</ul>
-	</li>
-</ol>
-
-<p>&nbsp;</p>
-
-<p data-end="1418" data-start="1392"><span style="color:#666666;"><strong data-end="1416" data-start="1392">제8조 (서비스 이용 제한 및 탈퇴)</strong></span></p>
-
-<ol data-end="1564" data-start="1419">
-	<li data-end="1485" data-start="1419">
-	<p data-end="1485" data-start="1422"><span style="color:#666666;">회원이 본 약관 또는 커뮤니티 운영 방침을 위반한 경우, 조합은 이용 제한 또는 탈퇴 조치를 할 수 있습니다.</span></p>
-	</li>
-	<li data-end="1534" data-start="1486">
-	<p data-end="1534" data-start="1489"><span style="color:#666666;">회원이 자발적으로 탈퇴하고자 할 경우, 별도 절차를 통해 요청할 수 있습니다.</span></p>
-	</li>
-	<li data-end="1564" data-start="1535">
-	<p data-end="1564" data-start="1538"><span style="color:#666666;">탈퇴 후에도 작성된 게시물은 삭제되지 않습니다.</span></p>
-	</li>
-</ol>
-
-<p>&nbsp;</p>
-
-<p data-end="1588" data-start="1571"><span style="color:#666666;"><strong data-end="1586" data-start="1571">제9조 (면책 조항)</strong></span></p>
-
-<ol data-end="1701" data-start="1589">
-	<li data-end="1646" data-start="1589">
-	<p data-end="1646" data-start="1592"><span style="color:#666666;">조합은 천재지변, 시스템 장애 등 불가항력적 사유로 인한 서비스 중단에 책임을 지지 않습니다.</span></p>
-	</li>
-	<li data-end="1701" data-start="1647">
-	<p data-end="1701" data-start="1650"><span style="color:#666666;">회원 간 또는 회원과 제3자 간 분쟁에 대해 조합은 개입하지 않으며, 책임을 지지 않습니다.</span></p>
-	</li>
-</ol>
-
-<p>&nbsp;</p>
-
-<p data-end="1731" data-start="1708"><span style="color:#666666;"><strong data-end="1729" data-start="1708">제10조 (준거법 및 관할법원)</strong></span></p>
-
-<ol data-end="1838" data-start="1732">
-	<li data-end="1766" data-start="1732">
-	<p data-end="1766" data-start="1735"><span style="color:#666666;">본 약관은 대한민국 법령에 따라 해석 및 적용됩니다.</span></p>
-	</li>
-	<li data-end="1838" data-start="1767">
-	<p data-end="1838" data-start="1770"><span style="color:#666666;">서비스 이용과 관련하여 조합과 회원 간 발생한 분쟁에 대해서는 조합의 소재지를 관할하는 법원을 1심 관할 법원으로 합니다.</span></p>
-	</li>
-</ol>
-
-<p>&nbsp;</p>
-
-<p data-end="1853" data-start="1845"><span style="color:#666666;"><strong data-end="1851" data-start="1845">부칙</strong></span></p>
-
-<ul data-end="1882" data-start="1854">
-	<li data-end="1882" data-start="1854">
-	<p data-end="1882" data-start="1856"><span style="color:#666666;">본 약관은 20OO년 O월 O일부터 시행합니다.</span></p>
-	</li>
-</ul>
-';
-	$terms_doc_srl = insertPageDocument('terms', '서비스 이용 약관', $terms_content, $logged_info);
-	
-	// 2. privacy 내용 삽입
-	$privacy_content = '
-<p data-end="295" data-start="182">&nbsp;</p>
-
-<p data-end="295" data-start="182"><span style="color:#666666;"><strong data-end="195" data-start="182">○○○지역주택조합</strong>(이하 &quot;조합&quot;)은 「개인정보 보호법」 등 관련 법령에 따라 조합원 커뮤니티 이용자의 개인정보를 보호하고, 권익을 보호하기 위해 다음과 같이 개인정보처리방침을 수립하여 공개합니다.</span></p>
-
-<p data-end="295" data-start="182">&nbsp;</p>
-
-<h3 data-end="331" data-start="302"><span style="color:#666666;">제1조 (개인정보의 수집 항목 및 수집 방법)</span></h3>
-
-<p data-end="376" data-start="333"><span style="color:#666666;">조합은 다음의 항목을 수집하며, 수집 목적 이외의 용도로는 사용하지 않습니다.</span></p>
-
-<table border="1" cellpadding="0" cellspacing="0" style="margin: 5px 0 5px 0">
-	<thead>
-		<tr style="padding-left: 10px;">
-			<td style="text-align: center;"><span style="color:#666666;"><strong>수집 항목</strong></span></td>
-			<td style="text-align: center;"><span style="color:#666666;"><strong>수집 목적</strong></span></td>
-			<td style="text-align: center;"><span style="color:#666666;"><strong>수집 방법</strong></span></td>
-		</tr>
-	</thead>
-	<tbody>
-		<tr>
-			<td>
-			<p style="margin-left: 40px;"><span style="color:#666666;">성명</span></p>
-			</td>
-			<td>
-			<p style="margin-left: 40px;"><span style="color:#666666;">본인 확인</span></p>
-			</td>
-			<td>
-			<p style="margin-left: 40px;"><span style="color:#666666;">회원 가입 시</span></p>
-			</td>
-		</tr>
-		<tr>
-			<td>
-			<p style="margin-left: 40px;"><span style="color:#666666;">생년월일</span></p>
-			</td>
-			<td>
-			<p style="margin-left: 40px;"><span style="color:#666666;">본인 식별 및 연령 확인</span></p>
-			</td>
-			<td>
-			<p style="margin-left: 40px;"><span style="color:#666666;">회원 가입 시</span></p>
-			</td>
-		</tr>
-		<tr>
-			<td>
-			<p style="margin-left: 40px;"><span style="color:#666666;">휴대전화번호</span></p>
-			</td>
-			<td>
-			<p style="margin-left: 40px;"><span style="color:#666666;">본인 확인, 알림 문자 발송</span></p>
-			</td>
-			<td>
-			<p style="margin-left: 40px;"><span style="color:#666666;">회원 가입 시</span></p>
-			</td>
-		</tr>
-		<tr>
-			<td>
-			<p style="margin-left: 40px;"><span style="color:#666666;">이메일 주소</span></p>
-			</td>
-			<td>
-			<p style="margin-left: 40px;"><span style="color:#666666;">공지사항 발송, 문의 응답</span></p>
-			</td>
-			<td>
-			<p style="margin-left: 40px;"><span style="color:#666666;">회원 가입 시</span></p>
-			</td>
-		</tr>
-		<tr>
-			<td>
-			<p style="margin-left: 40px;"><span style="color:#666666;">주소 (선택)</span></p>
-			</td>
-			<td>
-			<p style="margin-left: 40px; margin-right: 40px;"><span style="color:#666666;">거주자 구분 및 우편 발송 목적</span></p>
-			</td>
-			<td>
-			<p style="margin-left: 40px;"><span style="color:#666666;">선택 입력 시</span></p>
-			</td>
-		</tr>
-		<tr>
-			<td>
-			<p style="margin-left: 40px; margin-right: 40px;"><span style="color:#666666;">조합원 번호 (선택/필수)</span></p>
-			</td>
-			<td>
-			<p style="margin-left: 40px;"><span style="color:#666666;">조합원 확인</span></p>
-			</td>
-			<td>
-			<p style="margin-left: 40px; margin-right: 40px;"><span style="color:#666666;">오프라인/온라인 수기</span></p>
-			</td>
-		</tr>
-	</tbody>
-</table>
-
-<p><span style="color:#666666;">※ 서비스 이용 과정에서 서비스 이용기록, 접속로그, 쿠키, IP 주소 등 비식별 정보가 자동 수집될 수 있습니다.</span></p>
-
-<p>&nbsp;</p>
-
-<h3 data-end="985" data-start="964"><span style="color:#666666;">제2조 (개인정보의 이용 목적)</span></h3>
-
-<p data-end="1012" data-start="987"><span style="color:#666666;">수집된 개인정보는 다음의 목적에만 사용됩니다.</span></p>
-
-<ol data-end="1147" data-start="1014">
-	<li data-end="1036" data-start="1014">
-	<p data-end="1036" data-start="1017"><span style="color:#666666;">조합원 본인 인증 및 자격 확인</span></p>
-	</li>
-	<li data-end="1072" data-start="1037">
-	<p data-end="1072" data-start="1040"><span style="color:#666666;">커뮤니티 서비스 제공 (게시글, 공지, 자료 열람 등)</span></p>
-	</li>
-	<li data-end="1095" data-start="1073">
-	<p data-end="1095" data-start="1076"><span style="color:#666666;">알림 문자, 이메일, 푸시 발송</span></p>
-	</li>
-	<li data-end="1116" data-start="1096">
-	<p data-end="1116" data-start="1099"><span style="color:#666666;">민원 처리 및 공지사항 전달</span></p>
-	</li>
-	<li data-end="1147" data-start="1117">
-	<p data-end="1147" data-start="1120"><span style="color:#666666;">조합 총회, 회의, 분양 관련 고지 및 참여 확인</span></p>
-	</li>
-</ol>
-
-<p data-end="1147" data-start="1120">&nbsp;</p>
-
-<h3 data-end="1179" data-start="1154"><span style="color:#666666;">제3조 (개인정보의 보유 및 이용기간)</span></h3>
-
-<table border="1" cellpadding="0" cellspacing="0" style="margin: 5px 0 5px 0">
-	<thead>
-		<tr>
-			<th scope="col"><span style="color:#666666;"><strong>항목</strong></span></th>
-			<th scope="col"><span style="color:#666666;"><strong>보유기간</strong></span></th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr>
-			<td>
-			<p style="margin-left: 40px; margin-right: 40px;"><span style="color:#666666;">회원가입 정보</span></p>
-			</td>
-			<td>
-			<p style="margin-left: 40px; margin-right: 40px;"><span style="color:#666666;">조합원 자격 유지 기간 + 3년 이내</span></p>
-			</td>
-		</tr>
-		<tr>
-			<td>
-			<p style="margin-left: 40px;"><span style="color:#666666;">민원/문의 기록</span></p>
-			</td>
-			<td>
-			<p style="margin-left: 40px;"><span style="color:#666666;">민원처리 완료 후 3년</span></p>
-			</td>
-		</tr>
-		<tr>
-			<td>
-			<p style="margin-left: 40px;"><span style="color:#666666;">서비스 이용기록</span></p>
-			</td>
-			<td>
-			<p style="margin-left: 40px;"><span style="color:#666666;">서비스 종료 또는 탈퇴 시 즉시 파기</span></p>
-			</td>
-		</tr>
-	</tbody>
-</table>
-
-<p><span style="color:#666666;">※ 법령에 따라 보관이 필요한 경우 해당 법령에 따릅니다. (예: 전자상거래법, 국세기본법 등)</span></p>
-
-<p data-end="1466" data-start="1413">&nbsp;</p>
-
-<h3 data-end="1494" data-start="1473"><span style="color:#666666;">제4조 (개인정보 제3자 제공)</span></h3>
-
-<p data-end="1551" data-start="1496"><span style="color:#666666;">조합은 원칙적으로 이용자의 개인정보를 외부에 제공하지 않습니다. 다만 다음의 경우는 예외로 합니다.</span></p>
-
-<ol data-end="1637" data-start="1553">
-	<li data-end="1573" data-start="1553">
-	<p data-end="1573" data-start="1556"><span style="color:#666666;">정보주체의 동의가 있는 경우</span></p>
-	</li>
-	<li data-end="1597" data-start="1574">
-	<p data-end="1597" data-start="1577"><span style="color:#666666;">법령에 의해 제공이 요구되는 경우</span></p>
-	</li>
-	<li data-end="1637" data-start="1598">
-	<p data-end="1637" data-start="1601"><span style="color:#666666;">총회 진행 등을 위해 사전에 고지된 협력사에 필요한 범위 내 제공</span></p>
-	</li>
-</ol>
-
-<p data-end="1637" data-start="1601">&nbsp;</p>
-
-<h3 data-end="1665" data-start="1644"><span style="color:#666666;">제5조 (개인정보의 처리 위탁)</span></h3>
-
-<p data-end="1714" data-start="1667"><span style="color:#666666;">조합은 원활한 서비스 제공을 위하여 다음과 같이 개인정보 처리를 위탁할 수 있습니다.</span></p>
-
-<table border="1" cellpadding="5" cellspacing="0" style="margin: 5px 0 5px 0">
-	<thead>
-		<tr>
-			<th scope="col"><span style="color:#666666;"><strong>수탁업체</strong></span></th>
-			<th scope="col"><span style="color:#666666;"><strong>위탁 업무 내용</strong></span></th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr>
-			<td>
-			<p style="margin-left: 40px; margin-right: 40px;"><span style="color:#666666;">커뮤니티 플랫폼 운영사</span></p>
-			</td>
-			<td>
-			<p style="margin-left: 40px; margin-right: 40px;"><span style="color:#666666;">시스템 운영, 유지보수, 문자 발송 등</span></p>
-			</td>
-		</tr>
-		<tr>
-			<td>
-			<p style="margin-left: 40px;"><span style="color:#666666;">문자 발송 대행사</span></p>
-			</td>
-			<td>
-			<p style="margin-left: 40px;"><span style="color:#666666;">알림 문자, 공지 발송</span></p>
-			</td>
-		</tr>
-	</tbody>
-</table>
-
-<p data-end="1936" data-start="1897"><span style="color:#666666;">※ 위탁계약 시 개인정보 보호를 위한 안전 조치를 계약서에 명시합니다.</span></p>
-
-<p data-end="1936" data-start="1897">&nbsp;</p>
-
-<h3 data-end="1968" data-start="1943"><span style="color:#666666;">제6조 (정보주체의 권리와 행사 방법)</span></h3>
-
-<p data-end="2000" data-start="1970"><span style="color:#666666;">정보주체는 언제든지 다음의 권리를 행사할 수 있습니다.</span></p>
-
-<ul data-end="2057" data-start="2002">
-	<li data-end="2021" data-start="2002">
-	<p data-end="2021" data-start="2004"><span style="color:#666666;">개인정보 열람 및 수정 요청</span></p>
-	</li>
-	<li data-end="2044" data-start="2022">
-	<p data-end="2044" data-start="2024"><span style="color:#666666;">수집&middot;이용&middot;제공에 대한 동의 철회</span></p>
-	</li>
-	<li data-end="2057" data-start="2045">
-	<p data-end="2057" data-start="2047"><span style="color:#666666;">개인정보 삭제 요청</span></p>
-	</li>
-</ul>
-
-<p data-end="2096" data-start="2059"><span style="color:#666666;">위 요청은 조합 커뮤니티 또는 조합 사무실을 통해 신청 가능합니다.</span></p>
-
-<p data-end="2096" data-start="2059">&nbsp;</p>
-
-<h3 data-end="2129" data-start="2103"><span style="color:#666666;">제7조 (개인정보의 파기 절차 및 방법)</span></h3>
-
-<ol data-end="2236" data-start="2131">
-	<li data-end="2178" data-start="2131">
-	<p data-end="2178" data-start="2134"><span style="color:#666666;"><strong data-end="2143" data-start="2134">파기 절차</strong>: 보유기간이 경과하거나 처리 목적이 달성된 경우 즉시 파기</span></p>
-	</li>
-	<li data-end="2236" data-start="2179">
-	<p data-end="2236" data-start="2182"><span style="color:#666666;"><strong data-end="2191" data-start="2182">파기 방법</strong>: 전자적 파일은 복구 불가능한 방법으로 영구 삭제, 종이 문서는 분쇄 또는 소각</span></p>
-	</li>
-</ol>
-
-<p data-end="2236" data-start="2182">&nbsp;</p>
-
-<h3 data-end="2268" data-start="2243"><span style="color:#666666;">제8조 (개인정보의 안전성 확보 조치)</span></h3>
-
-<p data-end="2302" data-start="2270"><span style="color:#666666;">조합은 개인정보 보호를 위해 다음과 같은 조치를 취합니다.</span></p>
-
-<ul data-end="2393" data-start="2304">
-	<li data-end="2322" data-start="2304">
-	<p data-end="2322" data-start="2306"><span style="color:#666666;">개인정보 접근 권한 최소화</span></p>
-	</li>
-	<li data-end="2345" data-start="2323">
-	<p data-end="2345" data-start="2325"><span style="color:#666666;">비밀번호 및 인증정보 암호화 저장</span></p>
-	</li>
-	<li data-end="2366" data-start="2346">
-	<p data-end="2366" data-start="2348"><span style="color:#666666;">정기적 백업 및 보안 업데이트</span></p>
-	</li>
-	<li data-end="2393" data-start="2367">
-	<p data-end="2393" data-start="2369"><span style="color:#666666;">보안 위반 시 내부 보고 및 통지 체계 운영</span></p>
-	</li>
-</ul>
-
-<p data-end="2393" data-start="2369">&nbsp;</p>
-
-<h3 data-end="2420" data-start="2400"><span style="color:#666666;">제9조 (개인정보 보호책임자)</span></h3>
-
-<table border="1" cellpadding="1" cellspacing="0" style="margin: 5px 0 5px 0">
-	<thead>
-		<tr>
-			<th scope="col"><span style="color:#666666;"><strong>구분</strong></span></th>
-			<th scope="col"><span style="color:#666666;"><strong>정보</strong></span></th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr>
-			<td>
-			<p style="margin-left: 40px; margin-right: 40px;"><span style="color:#666666;">개인정보보호책임자</span></p>
-			</td>
-			<td>
-			<p style="margin-left: 40px; margin-right: 40px;"><span style="color:#666666;">합장 또는 위임 받은 실무책임자</span></p>
-			</td>
-		</tr>
-		<tr>
-			<td>
-			<p style="margin-left: 40px;"><span style="color:#666666;">연락처</span></p>
-			</td>
-			<td>
-			<p style="margin-left: 40px; margin-right: 40px;"><span style="color:#666666;">000-0000-0000 / </span><a data-end="2601" data-start="2584" rel="noopener"><span style="color:#666666;">admin@example.com</span></a></p>
-			</td>
-		</tr>
-	</tbody>
-</table>
-
-<p>&nbsp;</p>
-
-<h3 data-end="2630" data-start="2610"><span style="color:#666666;">제10조 (권익침해 구제방법)</span></h3>
-
-<p data-end="2683" data-start="2632"><span style="color:#666666;">정보주체는 개인정보 침해로 인한 신고나 상담이 필요한 경우 아래 기관에 문의할 수 있습니다.</span></p>
-
-<ul data-end="2825" data-start="2685">
-	<li data-end="2736" data-start="2685">
-	<p data-end="2736" data-start="2687"><span style="color:#666666;">개인정보침해신고센터 (</span><a data-end="2725" data-start="2699" rel="noopener" target="_new"><span style="color:#666666;">https://privacy.kisa.or.kr</span></a><span style="color:#666666;"> / ☎ 118)</span></p>
-	</li>
-	<li data-end="2777" data-start="2737">
-	<p data-end="2777" data-start="2739"><span style="color:#666666;">대검찰청 사이버수사과 (</span><a data-end="2765" data-start="2752" rel="noopener" target="_new"><span style="color:#666666;">www.spo.go.kr</span></a><span style="color:#666666;"> / ☎ 1301)</span></p>
-	</li>
-	<li data-end="2825" data-start="2778">
-	<p data-end="2825" data-start="2780"><span style="color:#666666;">경찰청 사이버안전국 (</span><a data-end="2824" data-start="2792" rel="noopener" target="_new"><span style="color:#666666;">https://cyberbureau.police.go.kr</span></a><span style="color:#666666;">)</span></p>
-	</li>
-</ul>
-
-<p data-end="2825" data-start="2780">&nbsp;</p>
-
-<h3 data-end="2855" data-start="2832"><span style="color:#666666;">제11조 (개인정보처리방침의 변경)</span></h3>
-
-<p data-end="2913" data-start="2857"><span style="color:#666666;">본 방침은 20OO년 O월 O일부터 적용되며, 내용 변경 시 커뮤니티 및 홈페이지에 사전 고지합니다.</span></p>
-';
-	$privacy_doc_srl = insertPageDocument('privacy', '개인정보처리방침', $privacy_content, $logged_info);
-	
-	// 3. 사업 개요 페이지에 내용 삽입
-	$overview_content = '
-	<div class="page-content">
-		<p>본 사업은 주택법에 따라 설립된 지역주택조합이 시행하는 공동주택 건설사업입니다.</p>
-		<ul>
-			<li>사업 위치: OO시 OO구 OO동 일원</li>
-			<li>사업 규모: 지하 2층, 지상 15층, 총 200세대</li>
-			<li>사업 기간: 2024년 ~ 2027년 (예정)</li>
-			<li>시행사: OO지역주택조합</li>
-		</ul>
-		<h3 style="padding-top: 30px">사업 추진 경과</h3>
-		<table class="table">
-			<tr><th>일자</th><th>내용</th></tr>
-			<tr><td>2024.01.15</td><td>조합 설립 인가</td></tr>
-			<tr><td>2024.03.20</td><td>사업시행인가 신청</td></tr>
-			<tr><td>2024.06.10</td><td>사업시행인가 승인</td></tr>
-		</table>
-	</div>';
-	
-	$overview_doc_srl = insertPageDocument('overview', '사업 개요', $overview_content, $logged_info);
-	
-	// 4. 브랜드 소개 페이지에 내용 삽입
-	$brand_content = '
-	<div class="brand-intro">
-		<div class="brand-story">
-			<h3>우리의 비전</h3>
-			<p>품질 높은 주거공간을 통해 조합원 여러분의 꿈을 실현합니다.</p>
-			
-			<h3 style="padding-top: 30px">브랜드 가치</h3>
-			<ul>
-				<li><strong>신뢰</strong>: 투명한 사업 진행과 정확한 정보 공개</li>
-				<li><strong>품질</strong>: 우수한 시공사 및 설계업체와의 협력</li>
-				<li><strong>소통</strong>: 조합원과의 지속적인 소통과 참여</li>
-			</ul>
-		</div>
-	</div>';
-	
-	$brand_doc_srl = insertPageDocument('brand', '브랜드 소개', $brand_content, $logged_info);
-	
-	// 5. 입지 환경 페이지에 내용 삽입
-	$location_content = '
-	<div class="location-info">
-		<div class="location-advantages">
-			<h3>교통 접근성</h3>
-			<ul>
-				<li>지하철 1호선 OO역 도보 5분</li>
-				<li>버스정류장 도보 2분 (간선 3개 노선, 지선 5개 노선)</li>
-				<li>고속도로 IC 차량 10분 거리</li>
-			</ul>
-			
-			<h3 style="padding-top: 30px">생활 편의시설</h3>
-			<ul>
-				<li>대형마트: 롯데마트, 이마트 차량 5분</li>
-				<li>병원: OO종합병원 도보 10분</li>
-				<li>학교: OO초등학교 도보 8분, OO중학교 도보 12분</li>
-			</ul>
-		</div>
-	</div>';
-	
-	$location_doc_srl = insertPageDocument('location', '입지 환경', $location_content, $logged_info);
-	
-	// 6. 오시는 길 페이지에 내용 삽입
-	$location_content = 'aaa';
-	
-	$location_doc_srl = insertPageDocument('location', '입지 환경', $location_content, $logged_info);
+	foreach ($page_list as $page) insertCustomDocument($page['module_id'], $page['title'], '', $logged_info);
 	
 	// 7. FAQ 게시판에 자주 묻는 질문들 삽입
 	$faq_questions = array(
@@ -1146,7 +591,7 @@
 	);
 	
 	// FAQ 게시글들 삽입
-	foreach ($faq_questions as $faq) insertBoardDocument('faq', $faq['title'], $faq['content'], $logged_info);
+	foreach ($faq_questions as $faq) insertCustomDocument('faq', $faq['title'], $faq['content'], $logged_info, 'board');
 	
 	// 8. 공지사항 게시판에 공지사항 삽입
 	$notices = array(
@@ -1171,6 +616,6 @@
 	);
 	
 	// 공지사항 게시글들 삽입
-	foreach ($notices as $notice) insertBoardDocument('notice', $notice['title'], $notice['content'], $logged_info);
+	foreach ($notices as $notice) insertCustomDocument('notice', $notice['title'], $notice['content'], $logged_info, 'board');
 	
 	/* End of file ko.install.php */
