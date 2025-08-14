@@ -584,22 +584,55 @@
 	// 8. 공지사항 게시판에 공지사항 삽입
 	$notices = array(
 		array(
-			'title' => '[안내] 웹사이트 오픈 안내',
+			'title' => '[안내] 조합 홈페이지 오픈 안내',
 			'content' => '
-			<div class="notice-content">
-				<h3>조합 공식 웹사이트 오픈</h3>
-				<p>조합원 여러분께 사업 진행 상황과 각종 공지사항을 신속하고 투명하게 전달하기 위해 공식 웹사이트를 오픈하였습니다.</p>
-				
-				<h4>주요 기능</h4>
-				<ul>
-					<li>사업 진행 현황 실시간 업데이트</li>
-					<li>각종 공지사항 및 안내사항</li>
-					<li>주택법에 따른 정보공개 자료</li>
-					<li>조합원 간 소통 공간</li>
-				</ul>
-				
-				<p>조합원 인증 후 모든 자료를 열람하실 수 있습니다.</p>
-			</div>'
+			<p>&nbsp;</p>
+			<h2><b>조합 공식 홈페이지 오픈 안내</b></h2>
+			<p>&nbsp;</p>
+			<p><span style="font-size:15px;">안녕하세요, 조합원 여러분.</span></p>
+			<p><span style="font-size:15px;">조합의 사업 진행 상황과 각종 소식을 보다 <b>신속하고 투명하게</b> 전달해 드리기 위해 <b>조합 공식 홈페이지</b>를 새롭게 오픈하였습니다.</span></p>
+			<p>&nbsp;</p>
+			<p>&nbsp;</p>
+			<h3><span style="font-size:15px;"><b>주요 기능 안내</b></span></h3>
+			<p>&nbsp;</p>
+			<ul>
+				<li>
+					<p><span style="font-size:15px;"><b>사업 진행 현황 실시간 업데이트</b></span></p>
+					<p><span style="font-size:15px;">진행 중인 사업의 최신 소식을 빠르게 확인하실 수 있습니다.</span></p>
+				</li>
+				<li>
+					<p><span style="font-size:15px;"><b>공지사항 및 안내사항 게시</b></span></p>
+					<p><span style="font-size:15px;">중요한 일정과 변경 사항을 놓치지 않도록 안내드립니다.</span></p>
+				</li>
+				<li>
+					<p><span style="font-size:15px;"><b>법정 공개 자료 열람</b></span></p>
+					<p><span style="font-size:15px;">주택법 등 관련 법규에 따라 공개해야 하는 자료를 열람하실 수 있습니다.</span></p>
+				</li>
+				<li>
+					<p><span style="font-size:15px;"><b>커뮤니티 게시판 운영</b></span></p>
+					<p><span style="font-size:15px;">조합원 간 자유로운 의견 교환이 가능한 자유게시판과 질문게시판을 제공합니다.</span></p>
+				</li>
+			</ul>
+			<p>&nbsp;</p>
+			<p>&nbsp;</p>
+			<h3><span style="font-size:15px;"><b>조합원 인증 안내</b></span></h3>
+			<p>&nbsp;</p>
+			<ul>
+				<li>
+					<p><span style="font-size:15px;"><b>조합원 전용 콘텐츠</b>는 인증된 조합원만 열람할 수 있습니다.</span></p>
+				</li>
+				<li>
+					<p><span style="font-size:15px;">인증을 원하시는 경우 <b>&lsquo;조합원 인증 요청&rsquo; 게시판</b>에서 안내 절차에 따라 신청해 주세요.</span></p>
+				</li>
+				<li>
+					<p><span style="font-size:15px;">인증이 완료되면 모든 자료를 열람하고, 게시판에 자유롭게 글을 작성하실 수 있습니다.</span></p>
+				</li>
+			</ul>
+			<p>&nbsp;</p>
+			<p>&nbsp;</p>
+			<p><span style="font-size:15px;">조합 공식 홈페이지가 조합원 여러분과의 소통 창구가 되어,</span></p>
+			<p><span style="font-size:15px;">사업 진행의 모든 과정을 투명하고 편리하게 공유할 수 있도록 노력하겠습니다.</span></p>
+			<p><span style="font-size:15px;">많은 방문과 이용 부탁드립니다.</span></p>'
 		)
 	);
 	
