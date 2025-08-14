@@ -41,9 +41,9 @@
 							'module_id' => 'location',
 						),
 						array(
-						'menu_name' => '오시는 길',
-						'module_type' => 'ARTICLE',
-						'module_id' => 'contact',
+							'menu_name' => '오시는 길',
+							'module_type' => 'ARTICLE',
+							'module_id' => 'contact',
 						)
 					)
 				),
@@ -413,7 +413,7 @@
 	$oMenuAdminController->makeXmlFile($sitemap['GNB']['menu_srl']); // $menuSrl -> $sitemap['GNB']['menu_srl']로 수정
 	
 	// ========== rx_documents 테이블에 문서 데이터 삽입 예제 ==========
-	function insertCustomDocument($module_id, $title, $content, $logged_info, $sort = 'page', $category_srl = 0)
+	function insertCustomDocument($module_id, $title, $content, $logged_info, $sort = 'page', $is_notice = 'N', $category_srl = 0)
 	{
 		$oModuleModel = getModel('module');
 		$oModuleController = getController('module');
@@ -436,30 +436,18 @@
 		$script_dir = dirname(__FILE__);
 		$blade_file = $script_dir . '/' . $module_id . '.blade.php';
 		
-		// 디버그용 로그 (실제 운영 시 제거)
-		error_log("[DEBUG] Module ID: {$module_id}");
-		error_log("[DEBUG] Blade file path: {$blade_file}");
-		error_log("[DEBUG] File exists: " . (file_exists($blade_file) ? 'YES' : 'NO'));
-		
 		// blade.php 파일이 있으면 해당 내용을 사용, 없으면 $content 사용
 		if (file_exists($blade_file)) {
 			$file_content = file_get_contents($blade_file);
-			if ($file_content !== false && trim($file_content) !== '') {
-				$obj->content = $file_content;
-				error_log("[DEBUG] Using blade file content for {$module_id}");
-			} else {
-				$obj->content = $content;
-				error_log("[DEBUG] Blade file empty, using default content for {$module_id}");
-			}
-		} else {
-			$obj->content = $content;
-			error_log("[DEBUG] Blade file not found, using default content for {$module_id}");
-		}
+			if ($file_content !== false && trim($file_content) !== '') $obj->content = $file_content;
+			else $obj->content = $content;
+		} else $obj->content = $content;
+		
 		$obj->status = 'PUBLIC'; // PUBLIC, PRIVATE, SECRET
 		$obj->comment_status = 'ALLOW'; // ALLOW, DENY
 		if ($sort == 'board') {
 			$obj->category_srl = $category_srl; // 카테고리 번호 (0이면 미분류)
-			$obj->notify_message = 'N'; // 알림 메시지 여부
+			$obj->is_notice = $is_notice; // 알림 메시지 여부
 		}
 		
 		// 문서 삽입
@@ -616,6 +604,6 @@
 	);
 	
 	// 공지사항 게시글들 삽입
-	foreach ($notices as $notice) insertCustomDocument('notice', $notice['title'], $notice['content'], $logged_info, 'board');
+	foreach ($notices as $notice) insertCustomDocument('notice', $notice['title'], $notice['content'], $logged_info, 'board', 'Y');
 	
 	/* End of file ko.install.php */
