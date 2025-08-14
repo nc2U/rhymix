@@ -252,7 +252,7 @@
 		$oMenuAdminController->makeHomemenuCacheFile($val['menu_srl']);
 	}
 	
-	// editor 모듈의 기본 config 조회
+	// editor 모듈의 기본 config 조회 및 기본 글꼴 변경
 	$editor_config = $oModuleModel->getModuleConfig('editor') ?: new stdClass();
 	$editor_config->content_font_size = '15px';
 	$oModuleController->insertModuleConfig('editor', $editor_config);
@@ -591,53 +591,52 @@
 		array(
 			'title' => '[안내] 조합 홈페이지 오픈 안내',
 			'content' => '
-			<p>&nbsp;</p>
 			<h2><b>조합 공식 홈페이지 오픈 안내</b></h2>
 			<p>&nbsp;</p>
-			<p><span style="font-size:15px;">안녕하세요, 조합원 여러분.</span></p>
-			<p><span style="font-size:15px;">조합의 사업 진행 상황과 각종 소식을 보다 <b>신속하고 투명하게</b> 전달해 드리기 위해 <b>조합 공식 홈페이지</b>를 새롭게 오픈하였습니다.</span></p>
+			<p>안녕하세요, 조합원 여러분.</p>
+			<p>조합의 사업 진행 상황과 각종 소식을 보다&nbsp;<b>신속하고 투명하게</b>&nbsp;전달해 드리기 위해&nbsp;<b>조합 공식 홈페이지</b>를 새롭게 오픈하였습니다.</p>
 			<p>&nbsp;</p>
 			<p>&nbsp;</p>
-			<h3><span style="font-size:15px;"><b>주요 기능 안내</b></span></h3>
+			<h3><b>주요 기능 안내</b></h3>
 			<p>&nbsp;</p>
 			<ul>
 				<li>
-					<p><span style="font-size:15px;"><b>사업 진행 현황 실시간 업데이트</b></span></p>
-					<p><span style="font-size:15px;">진행 중인 사업의 최신 소식을 빠르게 확인하실 수 있습니다.</span></p>
+				<p><b>사업 진행 현황 실시간 업데이트</b></p>
+				<p>진행 중인 사업의 최신 소식을 빠르게 확인하실 수 있습니다.</p>
 				</li>
 				<li>
-					<p><span style="font-size:15px;"><b>공지사항 및 안내사항 게시</b></span></p>
-					<p><span style="font-size:15px;">중요한 일정과 변경 사항을 놓치지 않도록 안내드립니다.</span></p>
+				<p><b>공지사항 및 안내사항 게시</b></p>
+				<p>중요한 일정과 변경 사항을 놓치지 않도록 안내드립니다.</p>
 				</li>
 				<li>
-					<p><span style="font-size:15px;"><b>법정 공개 자료 열람</b></span></p>
-					<p><span style="font-size:15px;">주택법 등 관련 법규에 따라 공개해야 하는 자료를 열람하실 수 있습니다.</span></p>
+				<p><b>법정 공개 자료 열람</b></p>
+				<p>주택법 등 관련 법규에 따라 공개해야 하는 자료를 열람하실 수 있습니다.</p>
 				</li>
 				<li>
-					<p><span style="font-size:15px;"><b>커뮤니티 게시판 운영</b></span></p>
-					<p><span style="font-size:15px;">조합원 간 자유로운 의견 교환이 가능한 자유게시판과 질문게시판을 제공합니다.</span></p>
+				<p><b>커뮤니티 게시판 운영</b></p>
+				<p>조합원 간 자유로운 의견 교환이 가능한 자유게시판과 질문게시판을 제공합니다.</p>
 				</li>
 			</ul>
 			<p>&nbsp;</p>
 			<p>&nbsp;</p>
-			<h3><span style="font-size:15px;"><b>조합원 인증 안내</b></span></h3>
+			<h3><b>조합원 인증 안내</b></h3>
 			<p>&nbsp;</p>
 			<ul>
 				<li>
-					<p><span style="font-size:15px;"><b>조합원 전용 콘텐츠</b>는 인증된 조합원만 열람할 수 있습니다.</span></p>
+				<p><b>조합원 전용 콘텐츠</b>는 인증된 조합원만 열람할 수 있습니다.</p>
 				</li>
 				<li>
-					<p><span style="font-size:15px;">인증을 원하시는 경우 <b>&lsquo;조합원 인증 요청&rsquo; 게시판</b>에서 안내 절차에 따라 신청해 주세요.</span></p>
+				<p>인증을 원하시는 경우&nbsp;<b>&lsquo;조합원 인증 요청&rsquo; 게시판</b>에서 안내 절차에 따라 신청해 주세요.</p>
 				</li>
 				<li>
-					<p><span style="font-size:15px;">인증이 완료되면 모든 자료를 열람하고, 게시판에 자유롭게 글을 작성하실 수 있습니다.</span></p>
+				<p>인증이 완료되면 모든 자료를 열람하고, 게시판에 자유롭게 글을 작성하실 수 있습니다.</p>
 				</li>
 			</ul>
 			<p>&nbsp;</p>
 			<p>&nbsp;</p>
-			<p><span style="font-size:15px;">조합 공식 홈페이지가 조합원 여러분과의 소통 창구가 되어,</span></p>
-			<p><span style="font-size:15px;">사업 진행의 모든 과정을 투명하고 편리하게 공유할 수 있도록 노력하겠습니다.</span></p>
-			<p><span style="font-size:15px;">많은 방문과 이용 부탁드립니다.</span></p>'
+			<p>조합 공식 홈페이지가 조합원 여러분과의 소통 창구가 되어,</p>
+			<p>사업 진행의 모든 과정을 투명하고 편리하게 공유할 수 있도록 노력하겠습니다.</p>
+			<p>많은 방문과 이용 부탁드립니다.<a href="https://www.facebook.com/"><i></i></a></p>'
 		)
 	);
 	
