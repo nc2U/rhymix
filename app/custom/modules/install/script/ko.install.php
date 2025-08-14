@@ -1146,9 +1146,7 @@
 	);
 	
 	// FAQ 게시글들 삽입
-	foreach ($faq_questions as $faq) {
-		insertBoardDocument('faq', $faq['title'], $faq['content'], $logged_info);
-	}
+	foreach ($faq_questions as $faq) insertBoardDocument('faq', $faq['title'], $faq['content'], $logged_info);
 	
 	// 8. 공지사항 게시판에 공지사항 삽입
 	$notices = array(
@@ -1173,8 +1171,6 @@
 	);
 	
 	// 공지사항 게시글들 삽입
-	foreach ($notices as $notice) {
-		insertBoardDocument('notice', $notice['title'], $notice['content'], $logged_info);
-	}
+	foreach ($notices as $notice) insertBoardDocument('notice', $notice['title'], $notice['content'], $logged_info);
 	
 	/* End of file ko.install.php */
