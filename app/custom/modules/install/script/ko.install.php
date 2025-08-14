@@ -252,6 +252,11 @@
 		$oMenuAdminController->makeHomemenuCacheFile($val['menu_srl']);
 	}
 	
+	// editor 모듈의 기본 config 조회
+	$editor_config = $oModuleModel->getModuleConfig('editor') ?: new stdClass();
+	$editor_config->content_font_size = '15px';
+	$oModuleController->insertModuleConfig('editor', $editor_config);
+	
 	// 커스텀 레이아웃 생성
 	$extra_vars = new stdClass();
 	$extra_vars->use_demo = 'Y';
