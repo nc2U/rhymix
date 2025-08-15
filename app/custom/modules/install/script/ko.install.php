@@ -289,21 +289,6 @@
 	$args->extra_vars = serialize($extra_vars);
 	$output = $oLayoutAdminController->updateLayout($args);
 	if (!$output->toBool()) return $output;
-
-//	// 모바일 레이아웃 생성
-//	$mlayout_srl = $args->layout_srl = getNextSequence();
-//	$args->layout = 'default';
-//	$args->title = 'welcome_mobile_layout';
-//	$args->layout_type = 'M';
-//	$extra_vars->main_menu = $sitemap['GNB']['menu_srl'];
-//
-//	$output = $oLayoutAdminController->insertLayout($args);
-//	if (!$output->toBool()) return $output;
-//
-//	// 모바일 레이아웃 업데이트
-//	$args->extra_vars = serialize($extra_vars);
-//	$output = $oLayoutAdminController->updateLayout($args);
-//	if (!$output->toBool()) return $output;
 	
 	// 디자인 파일 생성
 	$siteDesignPath = RX_BASEDIR . 'files/site_design/';
@@ -311,7 +296,6 @@
 	
 	$designInfo = new stdClass();
 	$designInfo->layout_srl = $layout_srl;
-//	$designInfo->mlayout_srl = $mlayout_srl;
 	
 	
 	$moduleList = array('page', 'board', 'editor');
@@ -379,14 +363,14 @@
 	$obj->content = '
 	<link href="./layouts/ibs_layout/css/welcome.css" rel="stylesheet" />
 	<div class="welcomeXE">
-<section class="intro"><span class="noti">BRAND STORY!</span>
-<h1 class="tit">변화하는 고객의 삶으로부터 새로운 자이가 시작됩니다</h1>
-<p class="cont">자이는 시대의 변화에 맞춰 대한민국 아파트 브랜드 역사의 변곡점마다 주목받는 족적을 납겨왔습니다.</p>
-<p class="cont">고유의 미학과 앞선 기술이 투영된 특별한 주거경험을 선보이며 새로운 라이프 스타일을 선도하는 대한민국 대표 아파트 브랜드로 자리매김해 왔습니다.</p>
-<p class="cont">이제, 자이가 또 한 번의 도약을 준비합니다. 더욱 깊어진 고객을 향한 시선에 자이만의 새로운 관점을 더해 달라진 주거의 의미와 고객이 추구하는 삶의 가치를 반영한 새로운 주거 경험을 만들어갑니다.<br />
-<a class="btn_start" href="/brand">둘러보기</a></p>
-</section>
-</div>';
+	<section class="intro"><span class="noti">BRAND STORY!</span>
+	<h1 class="tit">변화하는 고객의 삶으로부터 새로운 자이가 시작됩니다</h1>
+	<p class="cont">자이는 시대의 변화에 맞춰 대한민국 아파트 브랜드 역사의 변곡점마다 주목받는 족적을 납겨왔습니다.</p>
+	<p class="cont">고유의 미학과 앞선 기술이 투영된 특별한 주거경험을 선보이며 새로운 라이프 스타일을 선도하는 대한민국 대표 아파트 브랜드로 자리매김해 왔습니다.</p>
+	<p class="cont">이제, 자이가 또 한 번의 도약을 준비합니다. 더욱 깊어진 고객을 향한 시선에 자이만의 새로운 관점을 더해 달라진 주거의 의미와 고객이 추구하는 삶의 가치를 반영한 새로운 주거 경험을 만들어갑니다.<br />
+	<a class="btn_start" href="/brand">둘러보기</a></p>
+	</section>
+	</div>';
 	
 	$output = $oDocumentController->insertDocument($obj, true);
 	if (!$output->toBool()) return $output;
