@@ -289,21 +289,21 @@
 	$args->extra_vars = serialize($extra_vars);
 	$output = $oLayoutAdminController->updateLayout($args);
 	if (!$output->toBool()) return $output;
-	
-	// 모바일 레이아웃 생성
-	$mlayout_srl = $args->layout_srl = getNextSequence();
-	$args->layout = 'default';
-	$args->title = 'welcome_mobile_layout';
-	$args->layout_type = 'M';
-	$extra_vars->main_menu = $sitemap['GNB']['menu_srl'];
-	
-	$output = $oLayoutAdminController->insertLayout($args);
-	if (!$output->toBool()) return $output;
-	
-	// 모바일 레이아웃 업데이트
-	$args->extra_vars = serialize($extra_vars);
-	$output = $oLayoutAdminController->updateLayout($args);
-	if (!$output->toBool()) return $output;
+
+//	// 모바일 레이아웃 생성
+//	$mlayout_srl = $args->layout_srl = getNextSequence();
+//	$args->layout = 'default';
+//	$args->title = 'welcome_mobile_layout';
+//	$args->layout_type = 'M';
+//	$extra_vars->main_menu = $sitemap['GNB']['menu_srl'];
+//
+//	$output = $oLayoutAdminController->insertLayout($args);
+//	if (!$output->toBool()) return $output;
+//
+//	// 모바일 레이아웃 업데이트
+//	$args->extra_vars = serialize($extra_vars);
+//	$output = $oLayoutAdminController->updateLayout($args);
+//	if (!$output->toBool()) return $output;
 	
 	// 디자인 파일 생성
 	$siteDesignPath = RX_BASEDIR . 'files/site_design/';
