@@ -5,10 +5,12 @@
 	$lang = Context::getLangType();
 	$logged_info = Context::get('logged_info');
 	
-	$oMenuAdminController = getAdminController('menu');
-	$oModuleModel = getModel('module');
-	$oModuleController = getController('module');
-	$oDocumentController = getController('document');
+	$oFileModel = getModel('file'); // 파일 모델
+	$oModuleModel = getModel('module'); // 모듈 모델
+	$oMenuAdminController = getAdminController('menu'); // 어드민 컨트롤러
+	$oModuleController = getController('module'); // 모듈 컨트롤러
+	$oDocumentController = getController('document'); // 문서 컨트롤러
+	$oFileController = getController('file'); // 파일 컨트롤러
 	
 	// 커스텀 사이트맵 구조
 	$sitemap = array(
@@ -413,9 +415,48 @@
 	foreach (['advanced_mailer', 'ncenterlite'] as $module_name)
 		$oAdminController->_insertFavorite(0, $module_name);
 	
-	
 	// 메뉴 캐시 생성
 	$oMenuAdminController->makeXmlFile($sitemap['GNB']['menu_srl']); // $menuSrl -> $sitemap['GNB']['menu_srl']로 수정
+	
+	// ---- [시작] 파비콘, 모바일 아이콘, 대표 이미지 자동 등록 코드 ----
+	// 파비콘 및 모바일 아이콘 자동 등록
+	$script_dir = dirname(__FILE__);
+	$identity_dir = $script_dir . '/identity_files';
+	
+	// 파비콘 파일 경로
+	$favicon_source = $identity_dir . '/favicon.png';
+	$mobile_icon_source = $identity_dir . '/mobile_icon.png';
+	
+	if (file_exists($favicon_source) || file_exists($mobile_icon_source)) {
+		// 라이믹스 아이콘 디렉터리 생성
+		$icon_dir = RX_BASEDIR . 'files/attach/xeicon';
+		FileHandler::makeDir($icon_dir);
+		
+		// 파비콘 업로드 (favicon.ico 또는 favicon.png)
+		if (file_exists($favicon_source)) {
+			$favicon_dest = $icon_dir . '/favicon.ico'; // 라이믹스는 favicon.ico를 기대
+			
+			// PNG를 ICO로 변환하거나 그냥 복사 (브라우저는 PNG도 지원)
+			if (copy($favicon_source, $favicon_dest)) {
+				// 성공적으로 복사됨
+				echo "Favicon uploaded successfully.\n";
+			}
+		}
+		
+		// 모바일 아이콘 업로드 (mobicon.png)
+		if (file_exists($mobile_icon_source)) {
+			$mobicon_dest = $icon_dir . '/mobicon.png'; // 라이믹스는 mobicon.png를 기대
+			
+			if (copy($mobile_icon_source, $mobicon_dest)) {
+				// 성공적으로 복사됨
+				echo "Mobile icon uploaded successfully.\n";
+			}
+		}
+		
+		// 라이믹스 Icon 모델 사용하려면 (PHP 7.4+ 필요)
+		// Rhymix\Modules\Admin\Models\Icon::saveIcon(0, 'favicon.ico', $file_info);
+	}
+	// ---- [끝] 파비콘, 모바일 아이콘, 대표 이미지 자동 등록 코드 ----
 	
 	// ========== rx_documents 테이블에 문서 데이터 삽입 예제 ==========
 	function insertCustomDocument($module_id, $title, $content, $logged_info, $sort = 'page', $is_notice = 'N', $category_srl = 0)
