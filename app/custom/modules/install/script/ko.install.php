@@ -313,6 +313,7 @@
 	$designInfo->layout_srl = $layout_srl;
 //	$designInfo->mlayout_srl = $mlayout_srl;
 	
+	
 	$moduleList = array('page', 'board', 'editor');
 	$moutput = ModuleHandler::triggerCall('menu.getModuleListInSitemap', 'after', $moduleList);
 	if ($moutput->toBool()) {
