@@ -9,7 +9,9 @@
 	$oModuleModel = getModel('module'); // 모듈 모델
 	$oDocumentModel = getModel('document'); // 문서 모델
 	
-	$oMenuAdminController = getAdminController('menu'); // 어드민 컨트롤러
+	$oMenuAdminController = getAdminController('menu'); // 메뉴 어드민 컨트롤러
+	$oLayoutAdminController = getAdminController('layout'); // 레이아웃 어드민 컨트롤러
+	
 	$oModuleController = getController('module'); // 모듈 컨트롤러
 	$oDocumentController = getController('document'); // 문서 컨트롤러
 	$oFileController = getController('file'); // 파일 컨트롤러
@@ -263,6 +265,16 @@
 	$oModuleController->insertModuleConfig('editor', $editor_config);
 	
 	// 커스텀 레이아웃 생성
+	$args = new stdClass();
+	$layout_srl = $args->layout_srl = getNextSequence();
+	$args->site_srl = 0;
+	$args->layout = 'ibs_layout';  // 커스텀 레이아웃명
+	$args->title = 'IBS_Edition';
+	$args->layout_type = 'P';
+	$output = $oLayoutAdminController->insertLayout($args);
+	if (!$output->toBool()) return $output;
+	
+	// PC 레이아웃 업데이트
 	$extra_vars = new stdClass();
 	$extra_vars->use_demo = 'Y';
 	$extra_vars->use_ncenter_widget = 'Y';
@@ -277,18 +289,6 @@
 	$extra_vars->footer_text = '이 사이트는 회원 가입후 인증절차를 거친 조합원(가입자)들에게 주택법 제12조(실적보고 및 관련자료의 공개)에 따른 사업 관련 자료를 공개 운영하고 있습니다.';
 	$extra_vars->footer_copyright = 'Powered by dyibs.com';
 	
-	$args = new stdClass();
-	$layout_srl = $args->layout_srl = getNextSequence();
-	$args->site_srl = 0;
-	// 커스텀 레이아웃 사용 (app/custom/layouts/에 있는 레이아웃)
-	$args->layout = 'ibs_layout';  // 커스텀 레이아웃명
-	$args->title = 'IBS_Edition';
-	$args->layout_type = 'P';
-	$oLayoutAdminController = getAdminController('layout');
-	$output = $oLayoutAdminController->insertLayout($args);
-	if (!$output->toBool()) return $output;
-	
-	// PC 레이아웃 업데이트
 	$args->extra_vars = serialize($extra_vars);
 	$output = $oLayoutAdminController->updateLayout($args);
 	if (!$output->toBool()) return $output;
@@ -678,14 +678,14 @@
 	$member_config->enable_confirm = 'Y';
 	
 	// ========== 회원 가입 폼 항목 설정 ==========
-	// 기본 가입 폼 항목 설정 (없으면 기본값 생성)
-	if (!isset($member_config->signupForm) || !is_array($member_config->signupForm))
-		$member_config->signupForm = array();
-	
-	// 항목별 설정 (없으면 생성, 있으면 덮어쓰기)
-//	$member_config->signupForm['homepage'] = array('isUse' => 'N');
-//	$member_config->signupForm['blog'] = array('isUse' => 'N');
-//	$member_config->signupForm['birthday'] = array('isUse' => 'N');
+	// signupForm에서 homepage, blog, birthday 항목의 isUse 비활성화
+	if (isset($member_config->signupForm) && is_array($member_config->signupForm)) {
+		foreach ($member_config->signupForm as &$form_item) {
+			if (in_array($form_item->name, ['homepage', 'blog', 'birthday'])) {
+				$form_item->isUse = false;
+			}
+		}
+	}
 	
 	// 회원 모듈 설정 저장
 	$output = $oModuleController->insertModuleConfig('member', $member_config);
