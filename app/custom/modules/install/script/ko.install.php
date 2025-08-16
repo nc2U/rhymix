@@ -7,10 +7,13 @@
 	
 	$oFileModel = getModel('file'); // 파일 모델
 	$oModuleModel = getModel('module'); // 모듈 모델
+	$oDocumentModel = getModel('document'); // 문서 모델
+	
 	$oMenuAdminController = getAdminController('menu'); // 어드민 컨트롤러
 	$oModuleController = getController('module'); // 모듈 컨트롤러
 	$oDocumentController = getController('document'); // 문서 컨트롤러
 	$oFileController = getController('file'); // 파일 컨트롤러
+	$oAdminController = getAdminController('admin'); // 어드민 컨트롤러
 	
 	// 커스텀 사이트맵 구조
 	$sitemap = array(
@@ -300,9 +303,7 @@
 	
 	$moduleList = array('page', 'board', 'editor');
 	$moutput = ModuleHandler::triggerCall('menu.getModuleListInSitemap', 'after', $moduleList);
-	if ($moutput->toBool()) {
-		$moduleList = array_unique($moduleList);
-	}
+	if ($moutput->toBool()) $moduleList = array_unique($moduleList);
 	
 	$skinTypes = array('skin' => 'skins/', 'mskin' => 'm.skins/');
 	
@@ -321,7 +322,6 @@
 	$designInfo->module->editor->skin = 'ckeditor';
 	
 	/* @var $oAdminController adminAdminController */
-	$oAdminController = getAdminController('admin');
 	$oAdminController->makeDefaultDesignFile($designInfo, 0);
 	
 	// FAQ 게시판에 IBS FAQ 스킨 적용
@@ -342,13 +342,8 @@
 	
 	// insert PageContents - widget
 	$oTemplateHandler = TemplateHandler::getInstance();
-	/* @var $oDocumentModel documentModel */
-	$oDocumentModel = getModel('document');
-	/* @var $oDocumentController documentController */
-	$oDocumentController = getController('document');
 	
 	$obj = new stdClass();
-	
 	$obj->member_srl = $logged_info->member_srl;
 	$obj->user_id = htmlspecialchars_decode($logged_info->user_id);
 	$obj->user_name = htmlspecialchars_decode($logged_info->user_name);
@@ -674,5 +669,26 @@
 	
 	// 공지사항 게시글들 삽입
 	foreach ($notices as $notice) insertCustomDocument('notice', $notice['title'], $notice['content'], $logged_info, 'board', 'Y');
+	
+	// ========== 회원 가입 폼 항목 설정 (안전한 방식으로 수정) ==========
+	// 회원 모듈 기본 설정 가져오기
+	$member_config = $oModuleModel->getModuleConfig('member') ?? new stdClass();
+	
+	// 이메일 인증 활성화
+	$member_config->enable_confirm = 'Y';
+	
+	// ========== 회원 가입 폼 항목 설정 ==========
+	// 기본 가입 폼 항목 설정 (없으면 기본값 생성)
+	if (!isset($member_config->signupForm) || !is_array($member_config->signupForm))
+		$member_config->signupForm = array();
+	
+	// 항목별 설정 (없으면 생성, 있으면 덮어쓰기)
+//	$member_config->signupForm['homepage'] = array('isUse' => 'N');
+//	$member_config->signupForm['blog'] = array('isUse' => 'N');
+//	$member_config->signupForm['birthday'] = array('isUse' => 'N');
+	
+	// 회원 모듈 설정 저장
+	$output = $oModuleController->insertModuleConfig('member', $member_config);
+	if (!$output->toBool()) return $output;
 	
 	/* End of file ko.install.php */
