@@ -671,4 +671,147 @@
 	$output = $oModuleController->insertModuleConfig('member', $member_config);
 	if (!$output->toBool()) return $output;
 	
+	// ========== 게시판 권한 설정 함수 ==========
+	function setBoardPermissions($module_id, $permissions = array())
+	{
+		$oModuleModel = getModel('module');
+		$oModuleController = getController('module');
+		
+		// 모듈 정보 가져오기
+		$module_info = $oModuleModel->getModuleInfoByMid($module_id);
+		if (!$module_info) return false;
+		
+		// 기본 권한 설정
+		$default_permissions = array(
+			'access' => array(-1),              // 로그인 회원만 접근 가능
+			'list' => array(-1),                // 로그인 회원만 목록 보기 가능
+			'view' => array(-1),                // 로그인 회원만 보기 가능
+			'write_document' => array(-1),      // 로그인 회원만 글쓰기 가능
+			'write_comment' => array(-1),       // 로그인 회원만 댓글 쓰기 가능
+			'vote_log_view' => array(-1),       // 로그인 회원만 추천인 보기 가능
+			'update_view' => array(-1),         // 로그인 회원만 수정 내역 보기 가능
+			'consultation_read' => array(-3),   // 관리자만 상담글 열람 가능
+			'manager' => array(-3)              // 관리자만 관리 가능
+		);
+		
+		// 사용자 권한과 기본 권한 병합
+		$final_permissions = array_merge($default_permissions, $permissions);
+		
+		// grants 설정
+		$grants = new stdClass();
+		foreach ($final_permissions as $grant_name => $grant_groups)
+			$grants->{$grant_name} = $grant_groups;
+		
+		// 모듈 정보에 권한 추가
+		$module_info->grants = serialize($grants);
+		
+		// 모듈 업데이트
+		$output = $oModuleController->updateModule($module_info);
+		if (!$output->toBool()) {
+			error_log("게시판 '{$module_id}' 권한 설정 실패: " . $output->getMessage());
+			return false;
+		}
+		return true;
+	}
+	
+	// ========== 게시판별 권한 설정 적용 ==========
+	// 사이트맵에서 board 타입 게시판들에 권한 설정 적용
+	function applyBoardPermissions($sitemap_list, $parent_name = '')
+	{
+		foreach ($sitemap_list as $item) {
+			// board 모듈인 경우 권한 설정
+			if (isset($item['module_type']) && $item['module_type'] === 'board') {
+				$module_id = $item['module_id'];
+				
+				// 게시판별 맞춤 권한 설정
+				$permissions = array();
+				
+				switch ($module_id) {
+					case 'notice':  // 공지사항 - 관리자만 글쓰기
+					case 'poll':    // 투표(설문) - 관리자만 글쓰기
+						$permissions = array(
+							'access' => array(-1),             // 로그인 회원만 접근 가능
+							'list' => array(4),                // 정회원만 목록 보기 가능
+							'view' => array(4),                // 정회원만 보기 가능
+							'write_document' => array(-3),     // 관리자만 글쓰기 가능
+							'write_comment' => array(4),       // 정회원만 댓글 쓰기 가능
+							'vote_log_view' => array(4),       // 정회원만 추천인 보기 가능
+							'update_view' => array(-3),        // 관리자만 수정 내역 보기 가능
+						);
+						break;
+					
+					case 'askAuth':  // 조합원 인증 요청 - 로그인 회원만 보기/쓰기
+						$permissions = array(
+							'access' => array(-1),              // 로그인 회원만 접근 가능
+							'list' => array(-1),                // 로그인 회원만 목록 보기 가능
+							'view' => array(-1),                // 로그인 회원만 보기 가능
+							'write_document' => array(-1),      // 로그인 회원만 글쓰기 가능
+							'write_comment' => array(-1),       // 로그인 회원만 댓글 쓰기 가능
+							'vote_log_view' => array(-1),       // 로그인 회원만 추천인 보기 가능
+							'update_view' => array(-1),         // 로그인 회원만 수정 내역 보기 가능
+						);
+						break;
+					
+					case 'info_01':
+					case 'info_02':
+					case 'info_03':
+					case 'info_04':
+					case 'info_05':
+					case 'info_06':
+					case 'info_07':
+					case 'info_08':
+					case 'info_09':
+					case 'info_10':
+					case 'info_11':
+					case 'info_12':
+					case 'info_13':
+					case 'info_14':
+					case 'info_15':  // 자료공개 게시판들 - 인증된 조합원만 (그룹 4번이라고 가정)
+						$permissions = array(
+							'access' => array(4),              // 정회원만 접근 가능
+							'list' => array(4),                // 정회원만 목록 보기 가능
+							'view' => array(4),                // 정회원만 보기 가능
+							'write_document' => array(-3),     // 관리자만 글쓰기 가능
+							'write_comment' => array(4),       // 정회원만 댓글 쓰기 가능
+							'vote_log_view' => array(4),       // 정회원만 추천인 보기 가능
+							'update_view' => array(-3),        // 관리자만 수정 내역 보기 가능
+						);
+						break;
+					
+					case 'faq':  // FAQ - 모든 사용자 보기, 관리자만 글쓰기
+						$permissions = array(
+							'access' => array(0),               // 모든 방문자 접근 가능
+							'list' => array(0),                 // 모든 방문자 목록 보기 가능
+							'write_document' => array(-3),      // 관리자만 글쓰기 가능
+							'write_comment' => array(-3),       // 관리자만 댓글 쓰기 가능
+							'vote_log_view' => array(-3),       // 관리자만 추천인 보기 가능
+							'update_view' => array(-3),         // 관리자만 수정 내역 보기 가능
+						);
+						break;
+					
+					default:  // 기타 게시판들 (news, qna, free 등) - 기본 권한
+						$permissions = array(
+							'access' => array(-1),               // 로그인 회원만 접근 가능
+							'list' => array(4),                  // 정회원만 목록 보기 가능
+							'view' => array(4),                  // 정회원만 보기 가능
+							'write_document' => array(4),        // 정회원만 글쓰기 가능
+							'write_comment' => array(4),         // 정회원만 댓글 쓰기 가능
+						);
+						break;
+				}
+				// 권한 설정 적용
+				setBoardPermissions($module_id, $permissions);
+			}
+			
+			// 하위 메뉴가 있으면 재귀 호출
+			if (isset($item['list']) && is_array($item['list']))
+				applyBoardPermissions($item['list'], $parent_name . '/' . ($item['menu_name'] ?? ''));
+		}
+	}
+	
+	// 게시판 권한 설정 실행
+	foreach ($sitemap as $menu_id => $menu_data)
+		if (isset($menu_data['list']) && is_array($menu_data['list']))
+			applyBoardPermissions($menu_data['list'], $menu_id);
+	
 	/* End of file ko.install.php */
