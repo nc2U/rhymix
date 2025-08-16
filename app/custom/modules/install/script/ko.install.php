@@ -415,26 +415,14 @@
 		// 파비콘 업로드 (favicon.ico 또는 favicon.png)
 		if (file_exists($favicon_source)) {
 			$favicon_dest = $icon_dir . '/favicon.ico'; // 라이믹스는 favicon.ico를 기대
-			
-			// PNG를 ICO로 변환하거나 그냥 복사 (브라우저는 PNG도 지원)
-			if (copy($favicon_source, $favicon_dest)) {
-				// 성공적으로 복사됨
-				echo "Favicon uploaded successfully.\n";
-			}
+			if (copy($favicon_source, $favicon_dest)) echo "Favicon uploaded successfully.\n"; // 성공적으로 복사됨
 		}
 		
 		// 모바일 아이콘 업로드 (mobicon.png)
 		if (file_exists($mobile_icon_source)) {
 			$mobicon_dest = $icon_dir . '/mobicon.png'; // 라이믹스는 mobicon.png를 기대
-			
-			if (copy($mobile_icon_source, $mobicon_dest)) {
-				// 성공적으로 복사됨
-				echo "Mobile icon uploaded successfully.\n";
-			}
+			if (copy($mobile_icon_source, $mobicon_dest)) echo "Mobile icon uploaded successfully.\n"; // 성공적으로 복사됨
 		}
-		
-		// 라이믹스 Icon 모델 사용하려면 (PHP 7.4+ 필요)
-		// Rhymix\Modules\Admin\Models\Icon::saveIcon(0, 'favicon.ico', $file_info);
 	}
 	// ---- [끝] 파비콘, 모바일 아이콘, 대표 이미지 자동 등록 코드 ----
 	
