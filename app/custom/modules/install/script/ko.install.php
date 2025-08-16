@@ -679,13 +679,9 @@
 	
 	// ========== 회원 가입 폼 항목 설정 ==========
 	// signupForm에서 homepage, blog, birthday 항목의 isUse 비활성화
-	if (isset($member_config->signupForm) && is_array($member_config->signupForm)) {
-		foreach ($member_config->signupForm as &$form_item) {
-			if (in_array($form_item->name, ['homepage', 'blog', 'birthday'])) {
-				$form_item->isUse = false;
-			}
-		}
-	}
+	if (isset($member_config->signupForm) && is_array($member_config->signupForm))
+		foreach ($member_config->signupForm as &$form_item)
+			if (in_array($form_item->name, ['homepage', 'blog', 'birthday'])) $form_item->isUse = false;
 	
 	// 회원 모듈 설정 저장
 	$output = $oModuleController->insertModuleConfig('member', $member_config);
