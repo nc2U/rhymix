@@ -232,9 +232,8 @@
 			}
 			
 			$output = $oMenuAdminController->procMenuAdminInsertItem();
-			if ($output instanceof BaseObject && !$output->toBool()) {
-				return $output;
-			}
+			if ($output instanceof BaseObject && !$output->toBool()) return $output;
+			
 			$menu_srl = $oMenuAdminController->get('menu_item_srl');
 			$item['menu_srl'] = $menu_srl;
 			
@@ -246,15 +245,12 @@
 	// 사이트맵 생성
 	foreach ($sitemap as $id => &$val) {
 		$output = $oMenuAdminController->addMenu($val['title']);
-		if (!$output->toBool()) {
-			return $output;
-		}
+		if (!$output->toBool()) return $output;
+		
 		$val['menu_srl'] = $output->get('menuSrl');
 		
 		$result = __makeMenu($val['list'], $val['menu_srl']);
-		if ($result instanceof BaseObject && !$result->toBool()) {
-			return $result;
-		}
+		if ($result instanceof BaseObject && !$result->toBool()) return $result;
 		
 		$oMenuAdminController->makeHomemenuCacheFile($val['menu_srl']);
 	}
