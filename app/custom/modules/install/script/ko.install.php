@@ -258,7 +258,7 @@
 	// editor 모듈의 기본 config 조회 및 기본 글꼴 변경
 	$editor_config = $oModuleModel->getModuleConfig('editor') ?: new stdClass();
 	$editor_config->content_font_size = '15px';
-	$oModuleController->insertModuleConfig('editor', $editor_config);
+	$oModuleController->updateModuleConfig('editor', $editor_config);
 	
 	// 커스텀 레이아웃 생성
 	$args = new stdClass();
@@ -431,7 +431,7 @@
 		foreach ($member_config->signupForm as &$form_item)
 			if (in_array($form_item->name, ['homepage', 'blog', 'birthday'])) $form_item->isUse = false;
 	
-	$oModuleController->insertModuleConfig('member', $member_config);
+	$oModuleController->updateModuleConfig('member', $member_config);
 	
 	// ========== .env 파일 설정 로드 ==========
 	// 현재 스크립트 디렉터리의 .env 파일 읽기
@@ -481,7 +481,7 @@
 	$mail_config->wordwrap = 0;
 	$mail_config->html_mail = 'Y';
 	$mail_config->use_advanced_mailer = 'Y';
-	$oModuleController->insertModuleConfig('mail', $mail_config);
+	$oModuleController->updateModuleConfig('mail', $mail_config);
 	
 	// ========== Advanced Mailer 모듈 설정 (.env에서 로드) ==========
 	$advanced_mailer_config = new stdClass();
@@ -489,7 +489,7 @@
 	$advanced_mailer_config->sender_email = $env_vars['SENDER_EMAIL'] ?? 'noreply@yourdomain.com';
 	$advanced_mailer_config->force_sender = true;
 	$advanced_mailer_config->reply_to = $env_vars['REPLY_TO_EMAIL'] ?? 'your-id@mail.com';
-	$oModuleController->insertModuleConfig('advanced_mailer', $advanced_mailer_config);
+	$oModuleController->updateModuleConfig('advanced_mailer', $advanced_mailer_config);
 	
 	// ========== rx_documents 테이블에 문서 데이터 삽입 예제 ==========
 	function insertCustomDocument($module_id, $title, $content, $logged_info, $sort = 'page', $is_notice = 'N', $category_srl = 0)
