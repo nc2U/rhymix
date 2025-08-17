@@ -477,7 +477,7 @@
 		return $document_srl;
 	}
 	
-	// 실제 문서 삽입 예제
+	// 실제 문서 삽입 코드
 	$page_list = array(
 		array( // 1. terms 내용 삽입
 			'module_id' => 'terms',
@@ -679,7 +679,12 @@
 		
 		// 모듈 정보 가져오기
 		$module_info = $oModuleModel->getModuleInfoByMid($module_id);
-		if (!$module_info) return false;
+		if (!$module_info) {
+			echo "[$module_id] 모듈을 찾을 수 없습니다.\n";
+			return false;
+		}
+		
+		echo "[$module_id] 권한 설정 중... (module_srl: {$module_info->module_srl})\n";
 		
 		// 기본 권한 설정
 		$default_permissions = array(
@@ -697,20 +702,37 @@
 		// 사용자 권한과 기본 권한 병합
 		$final_permissions = array_merge($default_permissions, $permissions);
 		
-		// grants 설정
+		// 새 권한 정보 삽입
+		foreach ($final_permissions as $grant_name => $grant_groups) {
+			foreach ($grant_groups as $group_srl) {
+				$grant_args = new stdClass();
+				$grant_args->module_srl = $module_info->module_srl;
+				$grant_args->name = $grant_name;
+				$grant_args->group_srl = $group_srl;
+				
+				$output = executeQuery('module.insertModuleGrant', $grant_args);
+				if (!$output->toBool()) {
+					echo "[$module_id] 권한 '{$grant_name}' 설정 실패: " . $output->getMessage() . "\n";
+					return false;
+				}
+			}
+		}
+		
+		// grants 설정을 모듈 정보에도 저장 (캐시용)
 		$grants = new stdClass();
 		foreach ($final_permissions as $grant_name => $grant_groups)
 			$grants->{$grant_name} = $grant_groups;
 		
-		// 모듈 정보에 권한 추가
 		$module_info->grants = serialize($grants);
 		
 		// 모듈 업데이트
 		$output = $oModuleController->updateModule($module_info);
 		if (!$output->toBool()) {
-			error_log("게시판 '{$module_id}' 권한 설정 실패: " . $output->getMessage());
+			echo "[$module_id] 모듈 업데이트 실패: " . $output->getMessage() . "\n";
 			return false;
 		}
+		
+		echo "[$module_id] 권한 설정 완료\n";
 		return true;
 	}
 	
@@ -722,9 +744,10 @@
 			// board 모듈인 경우 권한 설정
 			if (isset($item['module_type']) && $item['module_type'] === 'board') {
 				$module_id = $item['module_id'];
-				
-				// 게시판별 맞춤 권한 설정
-				$permissions = array();
+				echo "  -> {$parent_name}:{$module_id} 게시판 권한 적용 중...\n";
+
+//				// 게시판별 맞춤 권한 설정
+//				$permissions = array();
 				
 				switch ($module_id) {
 					case 'notice':  // 공지사항 - 관리자만 글쓰기
@@ -782,6 +805,7 @@
 						$permissions = array(
 							'access' => array(0),               // 모든 방문자 접근 가능
 							'list' => array(0),                 // 모든 방문자 목록 보기 가능
+							'view' => array(0),                 // 모든 방문자 보기 가능
 							'write_document' => array(-3),      // 관리자만 글쓰기 가능
 							'write_comment' => array(-3),       // 관리자만 댓글 쓰기 가능
 							'vote_log_view' => array(-3),       // 관리자만 추천인 보기 가능
@@ -800,7 +824,8 @@
 						break;
 				}
 				// 권한 설정 적용
-				setBoardPermissions($module_id, $permissions);
+				$result = setBoardPermissions($module_id, $permissions);
+				echo "     권한 적용 결과: " . ($result ? "성공" : "실패") . "\n";
 			}
 			
 			// 하위 메뉴가 있으면 재귀 호출
@@ -810,8 +835,10 @@
 	}
 	
 	// 게시판 권한 설정 실행
+	echo "\n========== 게시판 권한 설정 시작 ==========\n";
 	foreach ($sitemap as $menu_id => $menu_data)
 		if (isset($menu_data['list']) && is_array($menu_data['list']))
 			applyBoardPermissions($menu_data['list'], $menu_id);
+	echo "========== 게시판 권한 설정 완료 ==========\n\n";
 	
 	/* End of file ko.install.php */
