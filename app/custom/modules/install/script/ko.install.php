@@ -487,7 +487,7 @@
 	$advanced_mailer_config = new stdClass();
 	$advanced_mailer_config->sender_name = 'OOOO 지역주택조합';
 	$advanced_mailer_config->sender_email = $env_vars['SENDER_EMAIL'] ?? 'noreply@yourdomain.com';
-	$advanced_mailer_config->force_sender = 'Y';
+	$advanced_mailer_config->force_sender = true;
 	$advanced_mailer_config->reply_to = $env_vars['REPLY_TO_EMAIL'] ?? 'your-id@mail.com';
 	$oModuleController->insertModuleConfig('advanced_mailer', $advanced_mailer_config);
 	
