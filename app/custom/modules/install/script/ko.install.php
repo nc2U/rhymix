@@ -433,6 +433,8 @@
 	
 	$oModuleController->updateModuleConfig('member', $member_config);
 	
+	// ---- [시작] SMTP 및 이메일 자동 설정 코드 ----
+	
 	// ========== .env 파일 설정 로드 ==========
 	// 현재 스크립트 디렉터리의 .env 파일 읽기
 	function loadEnvFile($filePath)
@@ -490,6 +492,8 @@
 	$advanced_mailer_config->force_sender = true;
 	$advanced_mailer_config->reply_to = $env_vars['REPLY_TO_EMAIL'] ?? 'your-id@mail.com';
 	$oModuleController->updateModuleConfig('advanced_mailer', $advanced_mailer_config);
+	
+	// ---- [끝] SMTP 및 이메일 자동 설정 코드 ----
 	
 	// ========== rx_documents 테이블에 문서 데이터 삽입 예제 ==========
 	function insertCustomDocument($module_id, $title, $content, $logged_info, $sort = 'page', $is_notice = 'N', $category_srl = 0)
