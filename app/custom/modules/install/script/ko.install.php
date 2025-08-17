@@ -679,12 +679,7 @@
 		
 		// 모듈 정보 가져오기
 		$module_info = $oModuleModel->getModuleInfoByMid($module_id);
-		if (!$module_info) {
-			echo "[$module_id] 모듈을 찾을 수 없습니다.\n";
-			return false;
-		}
-		
-		echo "[$module_id] 권한 설정 중... (module_srl: {$module_info->module_srl})\n";
+		if (!$module_info) return false;
 		
 		// 기본 권한 설정
 		$default_permissions = array(
@@ -711,10 +706,7 @@
 				$grant_args->group_srl = $group_srl;
 				
 				$output = executeQuery('module.insertModuleGrant', $grant_args);
-				if (!$output->toBool()) {
-					echo "[$module_id] 권한 '{$grant_name}' 설정 실패: " . $output->getMessage() . "\n";
-					return false;
-				}
+				if (!$output->toBool()) return false;
 			}
 		}
 		
@@ -727,12 +719,8 @@
 		
 		// 모듈 업데이트
 		$output = $oModuleController->updateModule($module_info);
-		if (!$output->toBool()) {
-			echo "[$module_id] 모듈 업데이트 실패: " . $output->getMessage() . "\n";
-			return false;
-		}
+		if (!$output->toBool()) return false;
 		
-		echo "[$module_id] 권한 설정 완료\n";
 		return true;
 	}
 	
@@ -744,21 +732,17 @@
 			// board 모듈인 경우 권한 설정
 			if (isset($item['module_type']) && $item['module_type'] === 'board') {
 				$module_id = $item['module_id'];
-				echo "  -> {$parent_name}:{$module_id} 게시판 권한 적용 중...\n";
-
-//				// 게시판별 맞춤 권한 설정
-//				$permissions = array();
 				
 				switch ($module_id) {
 					case 'notice':  // 공지사항 - 관리자만 글쓰기
 					case 'poll':    // 투표(설문) - 관리자만 글쓰기
 						$permissions = array(
 							'access' => array(-1),             // 로그인 회원만 접근 가능
-							'list' => array(4),                // 정회원만 목록 보기 가능
-							'view' => array(4),                // 정회원만 보기 가능
+							'list' => array(2, 4),             // 정회원만 목록 보기 가능
+							'view' => array(2, 4),             // 정회원만 보기 가능
 							'write_document' => array(-3),     // 관리자만 글쓰기 가능
-							'write_comment' => array(4),       // 정회원만 댓글 쓰기 가능
-							'vote_log_view' => array(4),       // 정회원만 추천인 보기 가능
+							'write_comment' => array(2, 4),    // 정회원만 댓글 쓰기 가능
+							'vote_log_view' => array(2, 4),    // 정회원만 추천인 보기 가능
 							'update_view' => array(-3),        // 관리자만 수정 내역 보기 가능
 						);
 						break;
@@ -791,12 +775,12 @@
 					case 'info_14':
 					case 'info_15':  // 자료공개 게시판들 - 인증된 조합원만 (그룹 4번이라고 가정)
 						$permissions = array(
-							'access' => array(4),              // 정회원만 접근 가능
-							'list' => array(4),                // 정회원만 목록 보기 가능
-							'view' => array(4),                // 정회원만 보기 가능
+							'access' => array(2, 4),           // 관리자, 정회원만 접근 가능
+							'list' => array(2, 4),             // 관리자, 정회원만 목록 보기 가능
+							'view' => array(2, 4),             // 관리자, 정회원만 보기 가능
 							'write_document' => array(-3),     // 관리자만 글쓰기 가능
-							'write_comment' => array(4),       // 정회원만 댓글 쓰기 가능
-							'vote_log_view' => array(4),       // 정회원만 추천인 보기 가능
+							'write_comment' => array(2, 4),    // 관리자, 정회원만 댓글 쓰기 가능
+							'vote_log_view' => array(2, 4),    // 관리자, 정회원만 추천인 보기 가능
 							'update_view' => array(-3),        // 관리자만 수정 내역 보기 가능
 						);
 						break;
@@ -816,16 +800,15 @@
 					default:  // 기타 게시판들 (news, qna, free 등) - 기본 권한
 						$permissions = array(
 							'access' => array(-1),               // 로그인 회원만 접근 가능
-							'list' => array(4),                  // 정회원만 목록 보기 가능
-							'view' => array(4),                  // 정회원만 보기 가능
-							'write_document' => array(4),        // 정회원만 글쓰기 가능
-							'write_comment' => array(4),         // 정회원만 댓글 쓰기 가능
+							'list' => array(2, 4),               // 관리자, 정회원만 목록 보기 가능
+							'view' => array(2, 4),               // 관리자, 정회원만 보기 가능
+							'write_document' => array(2, 4),     // 관리자, 정회원만 글쓰기 가능
+							'write_comment' => array(2, 4),      // 관리자, 정회원만 댓글 쓰기 가능
 						);
 						break;
 				}
 				// 권한 설정 적용
-				$result = setBoardPermissions($module_id, $permissions);
-				echo "     권한 적용 결과: " . ($result ? "성공" : "실패") . "\n";
+				setBoardPermissions($module_id, $permissions);
 			}
 			
 			// 하위 메뉴가 있으면 재귀 호출
@@ -835,10 +818,8 @@
 	}
 	
 	// 게시판 권한 설정 실행
-	echo "\n========== 게시판 권한 설정 시작 ==========\n";
 	foreach ($sitemap as $menu_id => $menu_data)
 		if (isset($menu_data['list']) && is_array($menu_data['list']))
 			applyBoardPermissions($menu_data['list'], $menu_id);
-	echo "========== 게시판 권한 설정 완료 ==========\n\n";
 	
 	/* End of file ko.install.php */
