@@ -471,20 +471,20 @@
 	// ========== Advanced Mailer 모듈 설정 (.env에서 로드) ==========
 	$advanced_mailer_config = new stdClass();
 	$advanced_mailer_config->sender_name = 'OOOO 지역주택조합';
-	$advanced_mailer_config->sender_email = isset($env_vars['SENDER_EMAIL']) ? $env_vars['SENDER_EMAIL'] : 'abc@union.com';
+	$advanced_mailer_config->sender_email = $env_vars['SENDER_EMAIL'] ?? 'noreply@yourdomain.com';
 	$advanced_mailer_config->force_sender = 'Y';
-	$advanced_mailer_config->reply_to = isset($env_vars['REPLY_TO_EMAIL']) ? $env_vars['REPLY_TO_EMAIL'] : 'abc@union.com';
+	$advanced_mailer_config->reply_to = $env_vars['REPLY_TO_EMAIL'] ?? 'your-id@mail.com';
 	$oModuleController->insertModuleConfig('advanced_mailer', $advanced_mailer_config);
 	
 	// ========== SMTP 메일 설정 (.env에서 로드) ==========
 	$mail_config = new stdClass();
 	$mail_config->type = 'smtp';
-	$mail_config->smtp_host = isset($env_vars['SMTP_HOST']) ? $env_vars['SMTP_HOST'] : 'smtp.gmail.com';
-	$mail_config->smtp_secure = isset($env_vars['SMTP_SECURE']) ? $env_vars['SMTP_SECURE'] : 'tls';
+	$mail_config->smtp_host = $env_vars['SMTP_HOST'] ?? 'smtp.gmail.com';
+	$mail_config->smtp_secure = $env_vars['SMTP_SECURE'] ?? 'tls';
 	$mail_config->smtp_port = isset($env_vars['SMTP_PORT']) ? (int)$env_vars['SMTP_PORT'] : 587;
-	$mail_config->smtp_auth = isset($env_vars['SMTP_AUTH']) ? $env_vars['SMTP_AUTH'] : 'Y';
-	$mail_config->smtp_username = isset($env_vars['SMTP_USERNAME']) ? $env_vars['SMTP_USERNAME'] : 'my_account';
-	$mail_config->smtp_password = isset($env_vars['SMTP_PASSWORD']) ? $env_vars['SMTP_PASSWORD'] : 'my_password';;
+	$mail_config->smtp_auth = $env_vars['SMTP_AUTH'] ?? 'Y';
+	$mail_config->smtp_username = $env_vars['SMTP_USERNAME'] ?? 'your_account';
+	$mail_config->smtp_password = $env_vars['SMTP_PASSWORD'] ?? 'your_password';
 	$mail_config->encoding = 'UTF-8';
 	$mail_config->wordwrap = 0;
 	$mail_config->html_mail = 'Y';
