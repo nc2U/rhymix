@@ -654,23 +654,6 @@
 	// 공지사항 게시글들 삽입
 	foreach ($notices as $notice) insertCustomDocument('notice', $notice['title'], $notice['content'], $logged_info, 'board', 'Y');
 	
-	// ========== 회원 가입 폼 항목 설정 (안전한 방식으로 수정) ==========
-	// 회원 모듈 기본 설정 가져오기
-	$member_config = $oModuleModel->getModuleConfig('member') ?? new stdClass();
-	
-	// 이메일 인증 활성화
-	$member_config->enable_confirm = 'Y';
-	
-	// ========== 회원 가입 폼 항목 설정 ==========
-	// signupForm에서 homepage, blog, birthday 항목의 isUse 비활성화
-	if (isset($member_config->signupForm) && is_array($member_config->signupForm))
-		foreach ($member_config->signupForm as &$form_item)
-			if (in_array($form_item->name, ['homepage', 'blog', 'birthday'])) $form_item->isUse = false;
-	
-	// 회원 모듈 설정 저장
-	$output = $oModuleController->insertModuleConfig('member', $member_config);
-	if (!$output->toBool()) return $output;
-	
 	// ========== 게시판 권한 설정 함수 ==========
 	function setBoardPermissions($module_id, $permissions = array())
 	{
@@ -821,5 +804,84 @@
 	foreach ($sitemap as $menu_id => $menu_data)
 		if (isset($menu_data['list']) && is_array($menu_data['list']))
 			applyBoardPermissions($menu_data['list'], $menu_id);
+	
+	// ========== Advanced Mailer 모듈 설정 ==========
+	// 발신자 정보 설정 (rx_module_config 테이블에 저장됨)
+	$advanced_mailer_config = new stdClass();
+	$advanced_mailer_config->sender_name = 'OOOO 지역주택조합';  // 기본 발신자 이름
+	$advanced_mailer_config->sender_email = 'info@dyibs.com';  // 기본 발신자 이메일
+	$advanced_mailer_config->force_sender = true;  // 발신자 강제 사용
+	$advanced_mailer_config->reply_to = 'info@dyibs.com';  // 답장 받을 이메일
+	
+	// Advanced Mailer 설정 저장
+	$oModuleController->insertModuleConfig('advanced_mailer', $advanced_mailer_config);
+	
+	// ========== SMTP 메일 설정 ==========
+	// 라이믹스 메일 모듈 기본 설정
+	$mail_config = new stdClass();
+	
+	// SMTP 연결 설정
+	$mail_config->type = 'smtp';  // 'mail', 'sendmail', 'smtp' 중 선택
+	$mail_config->smtp_host = 'dyibs.synology.me';  // SMTP 서버 주소
+	$mail_config->smtp_port = 587;  // SMTP 포트 (587: TLS, 465: SSL, 25: 일반)
+	$mail_config->smtp_auth = 'Y';  // SMTP 인증 사용
+	$mail_config->smtp_secure = 'tls';  // 'tls', 'ssl', '' 중 선택
+	$mail_config->smtp_username = 'austin';  // SMTP 사용자명
+	$mail_config->smtp_password = '$Sc1965112';  // SMTP 패스워드
+	
+	// 메일 기본 설정
+	$mail_config->encoding = 'UTF-8';  // 인코딩
+	$mail_config->wordwrap = 0;  // 자동 줄바꿈 (0: 사용안함)
+	$mail_config->html_mail = 'Y';  // HTML 메일 허용
+	
+	// 라이믹스 메일 설정 저장
+	$oModuleController->insertModuleConfig('mail', $mail_config);
+	
+	// ========== 회원 모듈 이메일 인증 설정 ==========
+	// 회원 모듈 설정 수정 (이메일 인증 등)
+	$member_config = $oModuleModel->getModuleConfig('member') ?? new stdClass();
+	
+	// 이메일 인증 및 알림 설정
+	$member_config->enable_confirm = 'Y';  // 이메일 인증 사용
+	$member_config->mail_default_value = 'Y';  // 메일 수신 기본값
+	$member_config->webmaster_name = 'OOOO 지역주택조합';  // 웹마스터 이름
+	$member_config->webmaster_email = 'info@dyibs.com';  // 웹마스터 이메일
+	
+	// signupForm에서 homepage, blog, birthday 항목의 isUse 비활성화
+	if (isset($member_config->signupForm) && is_array($member_config->signupForm))
+		foreach ($member_config->signupForm as &$form_item)
+			if (in_array($form_item->name, ['homepage', 'blog', 'birthday'])) $form_item->isUse = false;
+	
+	// 회원 모듈 설정 저장
+	$oModuleController->insertModuleConfig('member', $member_config);
+	
+	// ========== 게시판 알림 설정 ==========
+	// 댓글 모듈 설정
+	$comment_config = new stdClass();
+	$comment_config->email_notify = 'Y';  // 댓글 이메일 알림
+	$oModuleController->insertModuleConfig('comment', $comment_config);
+	
+	// 각 게시판에 이메일 알림 설정 적용
+	function setBoardEmailNotification($module_id, $enable_notify = true)
+	{
+		$oModuleModel = getModel('module');
+		$oModuleController = getController('module');
+		
+		$module_info = $oModuleModel->getModuleInfoByMid($module_id);
+		if (!$module_info) return false;
+		
+		// 게시판 이메일 알림 설정
+		$module_info->email_notify = $enable_notify ? 'Y' : 'N';
+		$module_info->admin_mail = 'info@dyibs.com';  // 관리자 이메일
+		
+		$output = $oModuleController->updateModule($module_info);
+		return $output->toBool();
+	}
+	
+	// 주요 게시판들에 이메일 알림 설정
+	$boards_with_notification = ['notice', 'askAuth', 'qna'];  // 알림이 필요한 게시판들
+	foreach ($boards_with_notification as $board_id) {
+		setBoardEmailNotification($board_id, true);
+	}
 	
 	/* End of file ko.install.php */
