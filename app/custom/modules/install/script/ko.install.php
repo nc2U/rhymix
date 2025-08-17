@@ -468,14 +468,6 @@
 	$env_file = $script_dir . '/.env';
 	$env_vars = loadEnvFile($env_file);
 	
-	// ========== Advanced Mailer 모듈 설정 (.env에서 로드) ==========
-	$advanced_mailer_config = new stdClass();
-	$advanced_mailer_config->sender_name = 'OOOO 지역주택조합';
-	$advanced_mailer_config->sender_email = $env_vars['SENDER_EMAIL'] ?? 'noreply@yourdomain.com';
-	$advanced_mailer_config->force_sender = 'Y';
-	$advanced_mailer_config->reply_to = $env_vars['REPLY_TO_EMAIL'] ?? 'your-id@mail.com';
-	$oModuleController->insertModuleConfig('advanced_mailer', $advanced_mailer_config);
-	
 	// ========== SMTP 메일 설정 (.env에서 로드) ==========
 	$mail_config = new stdClass();
 	$mail_config->type = 'smtp';
@@ -488,7 +480,16 @@
 	$mail_config->encoding = 'UTF-8';
 	$mail_config->wordwrap = 0;
 	$mail_config->html_mail = 'Y';
+	$mail_config->use_advanced_mailer = 'Y';
 	$oModuleController->insertModuleConfig('mail', $mail_config);
+	
+	// ========== Advanced Mailer 모듈 설정 (.env에서 로드) ==========
+	$advanced_mailer_config = new stdClass();
+	$advanced_mailer_config->sender_name = 'OOOO 지역주택조합';
+	$advanced_mailer_config->sender_email = $env_vars['SENDER_EMAIL'] ?? 'noreply@yourdomain.com';
+	$advanced_mailer_config->force_sender = 'Y';
+	$advanced_mailer_config->reply_to = $env_vars['REPLY_TO_EMAIL'] ?? 'your-id@mail.com';
+	$oModuleController->insertModuleConfig('advanced_mailer', $advanced_mailer_config);
 	
 	// ========== rx_documents 테이블에 문서 데이터 삽입 예제 ==========
 	function insertCustomDocument($module_id, $title, $content, $logged_info, $sort = 'page', $is_notice = 'N', $category_srl = 0)
