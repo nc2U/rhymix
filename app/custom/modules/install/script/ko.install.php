@@ -422,6 +422,74 @@
 	}
 	// ---- [끝] 파비콘, 모바일 아이콘, 대표 이미지 자동 등록 코드 ----
 	
+	// ========== 회원 모듈 이메일 인증 설정 (.env에서 로드) ==========
+	$member_config = $oModuleModel->getModuleConfig('member') ?? new stdClass();
+	$member_config->enable_confirm = 'Y';
+	
+	// signupForm에서 homepage, blog, birthday 항목의 isUse 비활성화
+	if (isset($member_config->signupForm) && is_array($member_config->signupForm))
+		foreach ($member_config->signupForm as &$form_item)
+			if (in_array($form_item->name, ['homepage', 'blog', 'birthday'])) $form_item->isUse = false;
+	
+	$oModuleController->insertModuleConfig('member', $member_config);
+	
+	// ========== .env 파일 설정 로드 ==========
+	// 현재 스크립트 디렉터리의 .env 파일 읽기
+	function loadEnvFile($filePath)
+	{
+		$envVars = array();
+		if (!file_exists($filePath)) return $envVars;
+		
+		$lines = file($filePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+		foreach ($lines as $line) {
+			// 주석 제거
+			if (strpos(trim($line), '#') === 0) continue;
+			
+			// KEY=VALUE 형태로 파싱
+			if (strpos($line, '=') !== false) {
+				list($key, $value) = explode('=', $line, 2);
+				$key = trim($key);
+				$value = trim($value);
+				
+				// 따옴표 제거
+				if ((substr($value, 0, 1) === '"' && substr($value, -1) === '"') ||
+					(substr($value, 0, 1) === "'" && substr($value, -1) === "'")) {
+					$value = substr($value, 1, -1);
+				}
+				
+				$envVars[$key] = $value;
+			}
+		}
+		return $envVars;
+	}
+	
+	// .env 파일 로드
+	$script_dir = dirname(__FILE__);
+	$env_file = $script_dir . '/.env';
+	$env_vars = loadEnvFile($env_file);
+	
+	// ========== Advanced Mailer 모듈 설정 (.env에서 로드) ==========
+	$advanced_mailer_config = new stdClass();
+	$advanced_mailer_config->sender_name = 'OOOO 지역주택조합';
+	$advanced_mailer_config->sender_email = isset($env_vars['SENDER_EMAIL']) ? $env_vars['SENDER_EMAIL'] : 'abc@union.com';
+	$advanced_mailer_config->force_sender = 'Y';
+	$advanced_mailer_config->reply_to = isset($env_vars['REPLY_TO_EMAIL']) ? $env_vars['REPLY_TO_EMAIL'] : 'abc@union.com';
+	$oModuleController->insertModuleConfig('advanced_mailer', $advanced_mailer_config);
+	
+	// ========== SMTP 메일 설정 (.env에서 로드) ==========
+	$mail_config = new stdClass();
+	$mail_config->type = 'smtp';
+	$mail_config->smtp_host = isset($env_vars['SMTP_HOST']) ? $env_vars['SMTP_HOST'] : 'smtp.gmail.com';
+	$mail_config->smtp_secure = isset($env_vars['SMTP_SECURE']) ? $env_vars['SMTP_SECURE'] : 'tls';
+	$mail_config->smtp_port = isset($env_vars['SMTP_PORT']) ? (int)$env_vars['SMTP_PORT'] : 587;
+	$mail_config->smtp_auth = isset($env_vars['SMTP_AUTH']) ? $env_vars['SMTP_AUTH'] : 'Y';
+	$mail_config->smtp_username = isset($env_vars['SMTP_USERNAME']) ? $env_vars['SMTP_USERNAME'] : 'my_account';
+	$mail_config->smtp_password = isset($env_vars['SMTP_PASSWORD']) ? $env_vars['SMTP_PASSWORD'] : 'my_password';;
+	$mail_config->encoding = 'UTF-8';
+	$mail_config->wordwrap = 0;
+	$mail_config->html_mail = 'Y';
+	$oModuleController->insertModuleConfig('mail', $mail_config);
+	
 	// ========== rx_documents 테이블에 문서 데이터 삽입 예제 ==========
 	function insertCustomDocument($module_id, $title, $content, $logged_info, $sort = 'page', $is_notice = 'N', $category_srl = 0)
 	{
@@ -804,102 +872,5 @@
 	foreach ($sitemap as $menu_id => $menu_data)
 		if (isset($menu_data['list']) && is_array($menu_data['list']))
 			applyBoardPermissions($menu_data['list'], $menu_id);
-	
-	// ========== .env 파일 설정 로드 ==========
-	// 현재 스크립트 디렉터리의 .env 파일 읽기
-	function loadEnvFile($filePath)
-	{
-		$envVars = array();
-		if (!file_exists($filePath)) return $envVars;
-		
-		$lines = file($filePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-		foreach ($lines as $line) {
-			// 주석 제거
-			if (strpos(trim($line), '#') === 0) continue;
-			
-			// KEY=VALUE 형태로 파싱
-			if (strpos($line, '=') !== false) {
-				list($key, $value) = explode('=', $line, 2);
-				$key = trim($key);
-				$value = trim($value);
-				
-				// 따옴표 제거
-				if ((substr($value, 0, 1) === '"' && substr($value, -1) === '"') ||
-					(substr($value, 0, 1) === "'" && substr($value, -1) === "'")) {
-					$value = substr($value, 1, -1);
-				}
-				
-				$envVars[$key] = $value;
-			}
-		}
-		return $envVars;
-	}
-	
-	// .env 파일 로드
-	$script_dir = dirname(__FILE__);
-	$env_file = $script_dir . '/.env';
-	$env_vars = loadEnvFile($env_file);
-	
-	// ========== Advanced Mailer 모듈 설정 (.env에서 로드) ==========
-	$advanced_mailer_config = new stdClass();
-	$advanced_mailer_config->sender_name = 'OOOO 지역주택조합';
-	$advanced_mailer_config->sender_email = isset($env_vars['SENDER_EMAIL']) ? $env_vars['SENDER_EMAIL'] : 'abc@union.com';
-	$advanced_mailer_config->force_sender = true;
-	$advanced_mailer_config->reply_to = isset($env_vars['REPLY_TO_EMAIL']) ? $env_vars['REPLY_TO_EMAIL'] : 'abc@union.com';
-	$oModuleController->insertModuleConfig('advanced_mailer', $advanced_mailer_config);
-	
-	// ========== SMTP 메일 설정 (.env에서 로드) ==========
-	$mail_config = new stdClass();
-	$mail_config->type = 'smtp';
-	$mail_config->smtp_host = isset($env_vars['SMTP_HOST']) ? $env_vars['SMTP_HOST'] : 'smtp.gmail.com';
-	$mail_config->smtp_secure = isset($env_vars['SMTP_SECURE']) ? $env_vars['SMTP_SECURE'] : 'tls';
-	$mail_config->smtp_port = isset($env_vars['SMTP_PORT']) ? (int)$env_vars['SMTP_PORT'] : 587;
-	$mail_config->smtp_auth = isset($env_vars['SMTP_AUTH']) ? $env_vars['SMTP_AUTH'] : 'Y';
-	$mail_config->smtp_username = isset($env_vars['SMTP_USERNAME']) ? $env_vars['SMTP_USERNAME'] : 'my_account';
-	$mail_config->smtp_password = isset($env_vars['SMTP_PASSWORD']) ? $env_vars['SMTP_PASSWORD'] : 'my_password';;
-	$mail_config->encoding = 'UTF-8';
-	$mail_config->wordwrap = 0;
-	$mail_config->html_mail = 'Y';
-	$oModuleController->insertModuleConfig('mail', $mail_config);
-	
-	// ========== 회원 모듈 이메일 인증 설정 (.env에서 로드) ==========
-	$member_config = $oModuleModel->getModuleConfig('member') ?? new stdClass();
-	$member_config->enable_confirm = 'Y';
-//	$member_config->mail_default_value = 'Y';
-//	$member_config->webmaster_name = isset($env_vars['WEBMASTER_NAME']) ? $env_vars['WEBMASTER_NAME'] : 'OOOO 지역주택조합';
-//	$member_config->webmaster_email = isset($env_vars['WEBMASTER_EMAIL']) ? $env_vars['WEBMASTER_EMAIL'] : 'abc@union.com';
-	
-	// signupForm에서 homepage, blog, birthday 항목의 isUse 비활성화
-	if (isset($member_config->signupForm) && is_array($member_config->signupForm))
-		foreach ($member_config->signupForm as &$form_item)
-			if (in_array($form_item->name, ['homepage', 'blog', 'birthday'])) $form_item->isUse = false;
-	
-	$oModuleController->insertModuleConfig('member', $member_config);
-	
-	// ========== 게시판 알림 설정 (.env에서 로드) ==========
-	$comment_config = new stdClass();
-	$comment_config->email_notify = 'Y';
-	$oModuleController->insertModuleConfig('comment', $comment_config);
-	
-	function setBoardEmailNotification($module_id, $enable_notify = true, $admin_email = 'abc@union.com')
-	{
-		$oModuleModel = getModel('module');
-		$oModuleController = getController('module');
-		
-		$module_info = $oModuleModel->getModuleInfoByMid($module_id);
-		if (!$module_info) return false;
-		
-		$module_info->email_notify = $enable_notify ? 'Y' : 'N';
-		$module_info->admin_mail = $admin_email;
-		
-		$output = $oModuleController->updateModule($module_info);
-		return $output->toBool();
-	}
-	
-	// 주요 게시판들에 이메일 알림 설정
-	$admin_email = isset($env_vars['SENDER_EMAIL']) ? $env_vars['SENDER_EMAIL'] : 'abc@union.com';
-	$boards_with_notification = ['notice', 'askAuth', 'qna'];
-	foreach ($boards_with_notification as $board_id)
-		setBoardEmailNotification($board_id, true, $admin_email);
 	
 	/* End of file ko.install.php */
