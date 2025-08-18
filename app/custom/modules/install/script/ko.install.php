@@ -491,7 +491,7 @@
 	$mail_config->use_advanced_mailer = 'Y';
 	$output = $oModuleController->updateModuleConfig('mail', $mail_config);
 	if (!$output->toBool()) return $output;
-	
+
 	// ========== Advanced Mailer 모듈 설정 (.env에서 로드) ==========
 	$advanced_mailer_config = new stdClass();
 	$advanced_mailer_config->sender_name = 'OOOO 지역주택조합';
@@ -503,11 +503,11 @@
 	
 	// Rhymix Configuration API를 사용하여 mail 설정 업데이트 (config.php)
 	$mail_settings = array(
-		'type' => 'smtp',
 		'default_name' => 'OOOO 지역주택조합',
 		'default_from' => $env_vars['SENDER_EMAIL'] ?? 'noreply@yourdomain.com',
 		'default_force' => true,
 		'default_reply_to' => $env_vars['REPLY_TO_EMAIL'] ?? 'your-id@mail.com',
+		'type' => 'smtp',
 		'smtp' => array(
 			'smtp_host' => $env_vars['SMTP_HOST'] ?? 'smtp.gmail.com',
 			'smtp_security' => $env_vars['SMTP_SECURE'] ?? 'tls',
@@ -520,16 +520,16 @@
 	// config.php에 mail 설정 저장
 	Rhymix\Framework\Config::set('mail', $mail_settings);
 	Rhymix\Framework\Config::save();
-	
-	// 모든 관련 캐시 삭제 (관리자 페이지 반영을 위해)
-	Rhymix\Framework\Cache::delete('module_config:mail');
-	Rhymix\Framework\Cache::delete('module_config:advanced_mailer');
-	Rhymix\Framework\Cache::clearGroup('config');
-	Rhymix\Framework\Cache::clearGroup('module');
-	
-	// 추가로 opcache도 클리어 (PHP 캐시)
-	if (function_exists('opcache_reset')) opcache_reset();
-	
+//
+//	// 모든 관련 캐시 삭제 (관리자 페이지 반영을 위해)
+//	Rhymix\Framework\Cache::delete('module_config:mail');
+//	Rhymix\Framework\Cache::delete('module_config:advanced_mailer');
+//	Rhymix\Framework\Cache::clearGroup('config');
+//	Rhymix\Framework\Cache::clearGroup('module');
+//
+//	// 추가로 opcache도 클리어 (PHP 캐시)
+//	if (function_exists('opcache_reset')) opcache_reset();
+//
 	// ========== 회원 모듈 webmaster 정보 업데이트 (.env 값으로) ==========
 	$member_config = $oModuleModel->getModuleConfig('member') ?? new stdClass();
 	$member_config->webmaster_name = 'OOOO 지역주택조합';
