@@ -10,3 +10,4 @@ mysql
 
 # settings
 .env
+firebase-key.json
