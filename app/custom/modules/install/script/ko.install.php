@@ -680,20 +680,8 @@
 		// 현재 use_status 가져오기
 		$current_status = explode('|@|', $module_info->use_status ?? 'PUBLIC');
 		if (!in_array('SECRET', $current_status)) $current_status[] = 'SECRET'; // SECRET 상태가 없으면 추가하여 비밀글 옵션 활성화
-
-//		// 기본값으로 SECRET을 설정하는 경우, SECRET을 첫 번째로 이동
-//		if ($is_default) {
-//			$current_status = array_diff($current_status, ['SECRET']);
-//			array_unshift($current_status, 'SECRET');
-//
-//			// 추가 설정: 모듈별 기본 상태값 저장
-//			$module_info->default_status = 'SECRET';
-//		}
-		
 		$module_info->use_status = implode('|@|', $current_status); // use_status 업데이트
-		
-		// 모듈 업데이트
-		$output = $oModuleController->updateModule($module_info);
+		$output = $oModuleController->updateModule($module_info); // 모듈 업데이트
 		if (!$output->toBool()) return false;
 		
 		// JavaScript 기반 클라이언트 사이드 해결책 추가
@@ -818,13 +806,28 @@ if (typeof jQuery !== 'undefined')
 				$module_id = $item['module_id'];
 				
 				$permissions = match ($module_id) {
-					'notice', 'poll' => array(
+					'askAuth' => array(),
+					'faq' => array(
+						'access' => array(0),               // 모든 방문자 접근 가능
+						'list' => array(0),                 // 모든 방문자 목록 보기 가능
+						'view' => array(0),                 // 모든 방문자 보기 가능
+						'write_document' => array(-3),      // 관리자만 글쓰기 가능
+						'write_comment' => array(-3),       // 관리자만 댓글 쓰기 가능
+						'vote_log_view' => array(-3),       // 관리자만 추천인 보기 가능
+						'update_view' => array(-3),         // 관리자만 수정 내역 보기 가능
+					),
+					'notice' => array(
+						'write_document' => array(-3),     // 관리자만 글쓰기 가능
+						'write_comment' => array(2, 4),    // 관리자, 정회원만 댓글 쓰기 가능
+						'update_view' => array(-3),        // 관리자만 수정 내역 보기 가능
+					),
+					'poll' => array(
+						'list' => array(2, 4),             // 관리자, 정회원만 목록 보기 가능
 						'view' => array(2, 4),             // 관리자, 정회원만 보기 가능
 						'write_document' => array(-3),     // 관리자만 글쓰기 가능
 						'write_comment' => array(2, 4),    // 관리자, 정회원만 댓글 쓰기 가능
 						'update_view' => array(-3),        // 관리자만 수정 내역 보기 가능
 					),
-					'askAuth' => array(),
 					'info_01', 'info_02', 'info_03', 'info_04', 'info_05',
 					'info_06', 'info_07', 'info_08', 'info_09', 'info_10',
 					'info_11', 'info_12', 'info_13', 'info_14', 'info_15' => array(
@@ -835,16 +838,8 @@ if (typeof jQuery !== 'undefined')
 						'write_comment' => array(2, 4),    // 관리자, 정회원만 댓글 쓰기 가능
 						'update_view' => array(-3),        // 관리자만 수정 내역 보기 가능
 					),
-					'faq' => array(
-						'access' => array(0),               // 모든 방문자 접근 가능
-						'list' => array(0),                 // 모든 방문자 목록 보기 가능
-						'view' => array(0),                 // 모든 방문자 보기 가능
-						'write_document' => array(-3),      // 관리자만 글쓰기 가능
-						'write_comment' => array(-3),       // 관리자만 댓글 쓰기 가능
-						'vote_log_view' => array(-3),       // 관리자만 추천인 보기 가능
-						'update_view' => array(-3),         // 관리자만 수정 내역 보기 가능
-					),
 					default => array(
+						'list' => array(2, 4),               // 관리자, 정회원만 목록 보기 가능
 						'view' => array(2, 4),               // 관리자, 정회원만 보기 가능
 						'write_document' => array(2, 4),     // 관리자, 정회원만 글쓰기 가능
 						'write_comment' => array(2, 4),      // 관리자, 정회원만 댓글 쓰기 가능
