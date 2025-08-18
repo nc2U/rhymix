@@ -156,6 +156,7 @@
 <!--// JS -->
 <load cond="$_enable_slide" target="./js/idangerous.swiper.min.js" />
 <load target="./js/layout.js" />
+<load target="../../files/cache/js/secret_defaults.js" cond="file_exists(RX_BASEDIR . 'files/cache/js/secret_defaults.js')" />
 <load cond="$layout_info->use_demo ==='Y'" target="./js/welcome.js" />
 <load target="./js/jquery.parallax-scroll.min.js" />
 

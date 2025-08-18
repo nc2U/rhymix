@@ -667,8 +667,8 @@
 		createInitDocument($post['module_id'], $post['title'], $logged_info, 'board', $is_notice);
 	}
 	
-	// ========== 게시판 비밀글 기능 설정 함수 ==========
-	function setBoardSecretStatus($module_id): bool
+	// ========== 게시판 비밀글 기능 및 기본값 설정 함수 ==========
+	function setBoardSecretStatus($module_id, $is_default = false): bool
 	{
 		$oModuleModel = getModel('module');
 		$oModuleController = getController('module');
@@ -680,11 +680,78 @@
 		// 현재 use_status 가져오기
 		$current_status = explode('|@|', $module_info->use_status ?? 'PUBLIC');
 		if (!in_array('SECRET', $current_status)) $current_status[] = 'SECRET'; // SECRET 상태가 없으면 추가하여 비밀글 옵션 활성화
+
+//		// 기본값으로 SECRET을 설정하는 경우, SECRET을 첫 번째로 이동
+//		if ($is_default) {
+//			$current_status = array_diff($current_status, ['SECRET']);
+//			array_unshift($current_status, 'SECRET');
+//
+//			// 추가 설정: 모듈별 기본 상태값 저장
+//			$module_info->default_status = 'SECRET';
+//		}
+		
 		$module_info->use_status = implode('|@|', $current_status); // use_status 업데이트
 		
 		// 모듈 업데이트
 		$output = $oModuleController->updateModule($module_info);
 		if (!$output->toBool()) return false;
+		
+		// JavaScript 기반 클라이언트 사이드 해결책 추가
+		if ($is_default) {
+			$js_dir = RX_BASEDIR . 'files/cache/js/';
+			FileHandler::makeDir($js_dir);
+			
+			$js_content = "
+// 비밀글 기본 선택 스크립트 for {$module_id}
+jQuery(document).ready(function($) {
+	// 현재 모듈이 {$module_id}이고 새 글 작성 페이지인지 확인
+	var currentMid = $('input[name=\"mid\"]').val() || '{$module_id}';
+	var isWritePage = location.search.includes('act=dispBoardWrite') || 
+	                  $('body').hasClass('act-dispBoardWrite') || 
+	                  $('#fo_insert_document').length > 0;
+	var isNewDocument = !location.search.includes('document_srl=');
+	
+	if (currentMid === '{$module_id}' && isWritePage && isNewDocument) {
+		// 페이지 로드 후 약간의 지연을 두고 실행
+		setTimeout(function() {
+			var secretRadio = $('input[name=\"status\"][value=\"SECRET\"]');
+			var publicRadio = $('input[name=\"status\"][value=\"PUBLIC\"]');
+			
+			if (secretRadio.length > 0) {
+				secretRadio.prop('checked', true);
+				publicRadio.prop('checked', false);
+				console.log('{$module_id}: SECRET 기본 선택 적용됨');
+			}
+		}, 200);
+		
+		// 추가: 폼 리셋 이벤트 처리
+		$('#fo_insert_document, form[id*=\"insert\"]').on('reset', function() {
+			setTimeout(function() {
+				$('input[name=\"status\"][value=\"SECRET\"]').prop('checked', true);
+				$('input[name=\"status\"][value=\"PUBLIC\"]').prop('checked', false);
+			}, 10);
+		});
+	}
+});";
+			
+			$js_file = $js_dir . 'secret_default_' . $module_id . '.js';
+			FileHandler::writeFile($js_file, $js_content);
+			
+			// 레이아웃에서 JavaScript 파일 자동 로드하도록 설정
+			$layout_js_path = RX_BASEDIR . 'files/cache/js/secret_defaults.js';
+			$load_script = "
+// 비밀글 기본값 스크립트들 로드
+if (typeof jQuery !== 'undefined')
+	jQuery.getScript('./files/cache/js/secret_default_{$module_id}.js');";
+			
+			// 기존 내용이 있으면 추가, 없으면 새로 생성
+			$existing_content = '';
+			if (file_exists($layout_js_path))
+				$existing_content = file_get_contents($layout_js_path);
+			
+			if (!str_contains($existing_content, "secret_default_{$module_id}.js"))
+				FileHandler::writeFile($layout_js_path, $existing_content . $load_script);
+		}
 		
 		return true;
 	}
@@ -788,7 +855,12 @@
 				
 				// 특정 게시판에 비밀글 기능 활성화 (필요한 게시판 ID 추가 가능)
 				$secret_enabled_boards = ['askAuth', 'qna']; // 조합원 인증 요청, 질문 게시판
-				if (in_array($module_id, $secret_enabled_boards)) setBoardSecretStatus($module_id);
+				$secret_default_boards = ['askAuth']; // 비밀글이 기본값인 게시판
+				
+				if (in_array($module_id, $secret_enabled_boards)) {
+					$is_default = in_array($module_id, $secret_default_boards);
+					setBoardSecretStatus($module_id, $is_default);
+				}
 			}
 			
 			// 하위 메뉴가 있으면 재귀 호출
