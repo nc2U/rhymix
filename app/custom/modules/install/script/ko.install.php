@@ -70,14 +70,14 @@
 							'module_id' => 'news',
 						),
 						array(
-							'menu_name' => '질문 게시판',
-							'module_type' => 'board',
-							'module_id' => 'qna',
-						),
-						array(
 							'menu_name' => '자유 게시판',
 							'module_type' => 'board',
 							'module_id' => 'free',
+						),
+						array(
+							'menu_name' => '질문 게시판',
+							'module_type' => 'board',
+							'module_id' => 'qna',
 						),
 						array(
 							'menu_name' => '투표(설문) 코너',
@@ -390,9 +390,6 @@
 	foreach (['advanced_mailer', 'ncenterlite'] as $module_name)
 		$oAdminController->_insertFavorite(0, $module_name);
 	
-	// 메뉴 캐시 생성
-	$oMenuAdminController->makeXmlFile($sitemap['GNB']['menu_srl']); // $menuSrl -> $sitemap['GNB']['menu_srl']로 수정
-	
 	// ---- [시작] 파비콘, 모바일 아이콘, 대표 이미지 자동 등록 코드 ----
 	// 파비콘 및 모바일 아이콘 자동 등록
 	$script_dir = dirname(__FILE__);
@@ -641,12 +638,12 @@
 			'title' => '✨ 조합 소식 게시판 이용 안내 ✨'
 		),
 		array(
-			'module_id' => 'qna',
-			'title' => '질문 게시판 이용 안내'
-		),
-		array(
 			'module_id' => 'free',
 			'title' => '자유 게시판 이용 안내'
+		),
+		array(
+			'module_id' => 'qna',
+			'title' => '질문 게시판 이용 안내'
 		),
 		array(
 			'module_id' => 'poll',
@@ -868,5 +865,8 @@ if (typeof jQuery !== 'undefined')
 	foreach ($sitemap as $menu_id => $menu_data)
 		if (isset($menu_data['list']) && is_array($menu_data['list']))
 			applyBoardPermissions($menu_data['list'], $menu_id);
+	
+	// 메뉴 캐시 생성
+	$oMenuAdminController->makeXmlFile($sitemap['GNB']['menu_srl']); // $menuSrl -> $sitemap['GNB']['menu_srl']로 수정
 	
 	/* End of file ko.install.php */
