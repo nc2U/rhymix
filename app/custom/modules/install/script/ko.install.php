@@ -422,14 +422,17 @@
 	}
 	// ---- [끝] 파비콘, 모바일 아이콘, 대표 이미지 자동 등록 코드 ----
 	
-	// ========== 회원 모듈 이메일 인증 설정 (.env에서 로드) ==========
+	// ========== 회원 모듈 이메일 인증 설정 (메일 설정 이후에 실행) ==========
 	$member_config = $oModuleModel->getModuleConfig('member') ?? new stdClass();
 	$member_config->enable_confirm = 'Y';
 	
 	// signupForm에서 homepage, blog, birthday 항목의 isUse 비활성화
 	if (isset($member_config->signupForm) && is_array($member_config->signupForm))
 		foreach ($member_config->signupForm as &$form_item)
-			if (in_array($form_item->name, ['homepage', 'blog', 'birthday'])) $form_item->isUse = false;
+			if (in_array($form_item->name, ['homepage', 'blog', 'birthday'])) {
+				$form_item->isUse = false;
+				$form_item->isPublic = false;
+			}
 	
 	$oModuleController->updateModuleConfig('member', $member_config);
 	
@@ -471,6 +474,7 @@
 	$env_vars = loadEnvFile($env_file);
 	
 	// ========== SMTP 메일 설정 (.env에서 로드) ==========
+	// 데이터베이스 모듈 설정 (관리자 페이지 표시용)
 	$mail_config = new stdClass();
 	$mail_config->type = 'smtp';
 	$mail_config->smtp_host = $env_vars['SMTP_HOST'] ?? 'smtp.gmail.com';
@@ -479,11 +483,14 @@
 	$mail_config->smtp_auth = $env_vars['SMTP_AUTH'] ?? 'Y';
 	$mail_config->smtp_username = $env_vars['SMTP_USERNAME'] ?? 'your_account';
 	$mail_config->smtp_password = $env_vars['SMTP_PASSWORD'] ?? 'your_password';
+	$mail_config->sender_name = 'OOOO 지역주택조합';
+	$mail_config->sender_email = $env_vars['SENDER_EMAIL'] ?? 'noreply@yourdomain.com';
 	$mail_config->encoding = 'UTF-8';
 	$mail_config->wordwrap = 0;
 	$mail_config->html_mail = 'Y';
 	$mail_config->use_advanced_mailer = 'Y';
-	$oModuleController->updateModuleConfig('mail', $mail_config);
+	$output = $oModuleController->updateModuleConfig('mail', $mail_config);
+	if (!$output->toBool()) return $output;
 	
 	// ========== Advanced Mailer 모듈 설정 (.env에서 로드) ==========
 	$advanced_mailer_config = new stdClass();
@@ -491,7 +498,44 @@
 	$advanced_mailer_config->sender_email = $env_vars['SENDER_EMAIL'] ?? 'noreply@yourdomain.com';
 	$advanced_mailer_config->force_sender = true;
 	$advanced_mailer_config->reply_to = $env_vars['REPLY_TO_EMAIL'] ?? 'your-id@mail.com';
-	$oModuleController->updateModuleConfig('advanced_mailer', $advanced_mailer_config);
+	$output = $oModuleController->updateModuleConfig('advanced_mailer', $advanced_mailer_config);
+	if (!$output->toBool()) return $output;
+	
+	// Rhymix Configuration API를 사용하여 mail 설정 업데이트 (config.php)
+	$mail_settings = array(
+		'type' => 'smtp',
+		'default_name' => 'OOOO 지역주택조합',
+		'default_from' => $env_vars['SENDER_EMAIL'] ?? 'noreply@yourdomain.com',
+		'default_force' => true,
+		'default_reply_to' => $env_vars['REPLY_TO_EMAIL'] ?? 'your-id@mail.com',
+		'smtp' => array(
+			'smtp_host' => $env_vars['SMTP_HOST'] ?? 'smtp.gmail.com',
+			'smtp_security' => $env_vars['SMTP_SECURE'] ?? 'tls',
+			'smtp_port' => isset($env_vars['SMTP_PORT']) ? (int)$env_vars['SMTP_PORT'] : 587,
+			'smtp_user' => $env_vars['SMTP_USERNAME'] ?? 'your_account',
+			'smtp_pass' => $env_vars['SMTP_PASSWORD'] ?? 'your_password',
+		)
+	);
+	
+	// config.php에 mail 설정 저장
+	Rhymix\Framework\Config::set('mail', $mail_settings);
+	Rhymix\Framework\Config::save();
+	
+	// 모든 관련 캐시 삭제 (관리자 페이지 반영을 위해)
+	Rhymix\Framework\Cache::delete('module_config:mail');
+	Rhymix\Framework\Cache::delete('module_config:advanced_mailer');
+	Rhymix\Framework\Cache::clearGroup('config');
+	Rhymix\Framework\Cache::clearGroup('module');
+	
+	// 추가로 opcache도 클리어 (PHP 캐시)
+	if (function_exists('opcache_reset')) opcache_reset();
+	
+	// ========== 회원 모듈 webmaster 정보 업데이트 (.env 값으로) ==========
+	$member_config = $oModuleModel->getModuleConfig('member') ?? new stdClass();
+	$member_config->webmaster_name = 'OOOO 지역주택조합';
+	$member_config->webmaster_email = $env_vars['SENDER_EMAIL'] ?? 'noreply@yourdomain.com';
+	$output = $oModuleController->updateModuleConfig('member', $member_config);
+	if (!$output->toBool()) return $output;
 	
 	// ---- [끝] SMTP 및 이메일 자동 설정 코드 ----
 	
