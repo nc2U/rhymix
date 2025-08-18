@@ -436,7 +436,6 @@
 	$oModuleController->updateModuleConfig('member', $member_config);
 	
 	// ---- [시작] SMTP 및 이메일 자동 설정 코드 ----
-	
 	// ========== .env 파일 설정 로드 ==========
 	function loadEnvFile($filePath)
 	{
@@ -499,6 +498,49 @@
 		$output = $oModuleController->updateModuleConfig('member', $member_config);
 		if (!$output->toBool()) return $output;
 	}
+	
+	// ---- [시작] FCM 푸시 알림 설정 코드 ----
+	
+	// FCM 서비스 계정 파일 로드
+	$firebase_key_file = $script_dir . '/firebase-key.json';
+	if (file_exists($firebase_key_file)) {
+		$firebase_service_account = file_get_contents($firebase_key_file);
+		
+		// JSON 유효성 검증
+		$decoded_firebase = @json_decode($firebase_service_account, true);
+		if ($decoded_firebase && isset($decoded_firebase['project_id']) && isset($decoded_firebase['private_key'])) {
+			
+			// FCM 설정 디렉터리 생성
+			$fcm_config_dir = RX_BASEDIR . 'files/config/fcmv1';
+			FileHandler::makeDir($fcm_config_dir);
+			
+			// 서비스 계정 파일을 안전한 위치에 저장
+			$service_account_filename = './files/config/fcmv1/pkey-' . \Rhymix\Framework\Security::getRandom(32) . '.json';
+			\Rhymix\Framework\Storage::write($service_account_filename, $firebase_service_account);
+			\Rhymix\Framework\Storage::write('./files/config/fcmv1/index.html', '<!-- Direct Access Not Allowed -->');
+			
+			// Push 설정 구성
+			$push_config = array(
+				'types' => array(
+					'fcmv1' => true  // FCM HTTP v1 API 활성화
+				),
+				'allow_guest_device' => false,  // 게스트 디바이스 허용 안함
+				'fcmv1' => array(
+					'service_account' => $service_account_filename  // 파일명만 저장
+				)
+			);
+			
+			// config.php에 push 설정 저장
+			Rhymix\Framework\Config::set('push', $push_config);
+			Rhymix\Framework\Config::save();
+			
+			// 푸시 설정 캐시 삭제
+			Rhymix\Framework\Cache::delete('push_config');
+			Rhymix\Framework\Cache::clearGroup('config');
+		}
+	}
+	
+	// ---- [끝] FCM 푸시 알림 설정 코드 ----
 	
 	// ---- [끝] SMTP 및 이메일 자동 설정 코드 ----
 	
