@@ -667,6 +667,28 @@
 		createInitDocument($post['module_id'], $post['title'], $logged_info, 'board', $is_notice);
 	}
 	
+	// ========== 게시판 비밀글 기능 설정 함수 ==========
+	function setBoardSecretStatus($module_id): bool
+	{
+		$oModuleModel = getModel('module');
+		$oModuleController = getController('module');
+		
+		// 모듈 정보 가져오기
+		$module_info = $oModuleModel->getModuleInfoByMid($module_id);
+		if (!$module_info) return false;
+		
+		// 현재 use_status 가져오기
+		$current_status = explode('|@|', $module_info->use_status ?? 'PUBLIC');
+		if (!in_array('SECRET', $current_status)) $current_status[] = 'SECRET'; // SECRET 상태가 없으면 추가하여 비밀글 옵션 활성화
+		$module_info->use_status = implode('|@|', $current_status); // use_status 업데이트
+		
+		// 모듈 업데이트
+		$output = $oModuleController->updateModule($module_info);
+		if (!$output->toBool()) return false;
+		
+		return true;
+	}
+	
 	// ========== 게시판 권한 설정 함수 ==========
 	function setBoardPermissions($module_id, $permissions = array()): bool
 	{
@@ -712,28 +734,6 @@
 			$grants->{$grant_name} = $grant_groups;
 		
 		$module_info->grants = serialize($grants);
-		
-		// 모듈 업데이트
-		$output = $oModuleController->updateModule($module_info);
-		if (!$output->toBool()) return false;
-		
-		return true;
-	}
-	
-	// ========== 게시판 비밀글 기능 설정 함수 ==========
-	function setBoardSecretStatus($module_id): bool
-	{
-		$oModuleModel = getModel('module');
-		$oModuleController = getController('module');
-		
-		// 모듈 정보 가져오기
-		$module_info = $oModuleModel->getModuleInfoByMid($module_id);
-		if (!$module_info) return false;
-		
-		// 현재 use_status 가져오기
-		$current_status = explode('|@|', $module_info->use_status ?? 'PUBLIC');
-		if (!in_array('SECRET', $current_status)) $current_status[] = 'SECRET'; // SECRET 상태가 없으면 추가하여 비밀글 옵션 활성화
-		$module_info->use_status = implode('|@|', $current_status); // use_status 업데이트
 		
 		// 모듈 업데이트
 		$output = $oModuleController->updateModule($module_info);
