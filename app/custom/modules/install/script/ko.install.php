@@ -736,7 +736,7 @@
 	foreach ($notices as $notice) insertCustomDocument('notice', $notice['title'], $notice['content'], $logged_info, 'board', 'Y');
 	
 	// ========== 게시판 권한 설정 함수 ==========
-	function setBoardPermissions($module_id, $permissions = array())
+	function setBoardPermissions($module_id, $permissions = array()): bool
 	{
 		$oModuleModel = getModel('module');
 		$oModuleController = getController('module');
@@ -790,87 +790,48 @@
 	
 	// ========== 게시판별 권한 설정 적용 ==========
 	// 사이트맵에서 board 타입 게시판들에 권한 설정 적용
-	function applyBoardPermissions($sitemap_list, $parent_name = '')
+	function applyBoardPermissions($sitemap_list, $parent_name = ''): void
 	{
 		foreach ($sitemap_list as $item) {
 			// board 모듈인 경우 권한 설정
 			if (isset($item['module_type']) && $item['module_type'] === 'board') {
 				$module_id = $item['module_id'];
 				
-				switch ($module_id) {
-					case 'notice':  // 공지사항 - 관리자만 글쓰기
-					case 'poll':    // 투표(설문) - 관리자만 글쓰기
-						$permissions = array(
-							'access' => array(-1),             // 로그인 회원만 접근 가능
-							'list' => array(2, 4),             // 정회원만 목록 보기 가능
-							'view' => array(2, 4),             // 정회원만 보기 가능
-							'write_document' => array(-3),     // 관리자만 글쓰기 가능
-							'write_comment' => array(2, 4),    // 정회원만 댓글 쓰기 가능
-							'vote_log_view' => array(2, 4),    // 정회원만 추천인 보기 가능
-							'update_view' => array(-3),        // 관리자만 수정 내역 보기 가능
-						);
-						break;
-					
-					case 'askAuth':  // 조합원 인증 요청 - 로그인 회원만 보기/쓰기
-						$permissions = array(
-							'access' => array(-1),              // 로그인 회원만 접근 가능
-							'list' => array(-1),                // 로그인 회원만 목록 보기 가능
-							'view' => array(-1),                // 로그인 회원만 보기 가능
-							'write_document' => array(-1),      // 로그인 회원만 글쓰기 가능
-							'write_comment' => array(-1),       // 로그인 회원만 댓글 쓰기 가능
-							'vote_log_view' => array(-1),       // 로그인 회원만 추천인 보기 가능
-							'update_view' => array(-1),         // 로그인 회원만 수정 내역 보기 가능
-						);
-						break;
-					
-					case 'info_01':
-					case 'info_02':
-					case 'info_03':
-					case 'info_04':
-					case 'info_05':
-					case 'info_06':
-					case 'info_07':
-					case 'info_08':
-					case 'info_09':
-					case 'info_10':
-					case 'info_11':
-					case 'info_12':
-					case 'info_13':
-					case 'info_14':
-					case 'info_15':  // 자료공개 게시판들 - 인증된 조합원만 (그룹 4번이라고 가정)
-						$permissions = array(
-							'access' => array(2, 4),           // 관리자, 정회원만 접근 가능
-							'list' => array(2, 4),             // 관리자, 정회원만 목록 보기 가능
-							'view' => array(2, 4),             // 관리자, 정회원만 보기 가능
-							'write_document' => array(-3),     // 관리자만 글쓰기 가능
-							'write_comment' => array(2, 4),    // 관리자, 정회원만 댓글 쓰기 가능
-							'vote_log_view' => array(2, 4),    // 관리자, 정회원만 추천인 보기 가능
-							'update_view' => array(-3),        // 관리자만 수정 내역 보기 가능
-						);
-						break;
-					
-					case 'faq':  // FAQ - 모든 사용자 보기, 관리자만 글쓰기
-						$permissions = array(
-							'access' => array(0),               // 모든 방문자 접근 가능
-							'list' => array(0),                 // 모든 방문자 목록 보기 가능
-							'view' => array(0),                 // 모든 방문자 보기 가능
-							'write_document' => array(-3),      // 관리자만 글쓰기 가능
-							'write_comment' => array(-3),       // 관리자만 댓글 쓰기 가능
-							'vote_log_view' => array(-3),       // 관리자만 추천인 보기 가능
-							'update_view' => array(-3),         // 관리자만 수정 내역 보기 가능
-						);
-						break;
-					
-					default:  // 기타 게시판들 (news, qna, free 등) - 기본 권한
-						$permissions = array(
-							'access' => array(-1),               // 로그인 회원만 접근 가능
-							'list' => array(2, 4),               // 관리자, 정회원만 목록 보기 가능
-							'view' => array(2, 4),               // 관리자, 정회원만 보기 가능
-							'write_document' => array(2, 4),     // 관리자, 정회원만 글쓰기 가능
-							'write_comment' => array(2, 4),      // 관리자, 정회원만 댓글 쓰기 가능
-						);
-						break;
-				}
+				$permissions = match ($module_id) {
+					'notice', 'poll' => array(
+						'view' => array(2, 4),             // 관리자, 정회원만 보기 가능
+						'write_document' => array(-3),     // 관리자만 글쓰기 가능
+						'write_comment' => array(2, 4),    // 관리자, 정회원만 댓글 쓰기 가능
+						'vote_log_view' => array(2, 4),    // 관리자, 정회원만 추천인 보기 가능
+						'update_view' => array(-3),        // 관리자만 수정 내역 보기 가능
+					),
+					'askAuth' => array(),
+					'info_01', 'info_02', 'info_03', 'info_04', 'info_05',
+					'info_06', 'info_07', 'info_08', 'info_09', 'info_10',
+					'info_11', 'info_12', 'info_13', 'info_14', 'info_15' => array(
+						'access' => array(2, 4),           // 관리자, 정회원만 접근 가능
+						'list' => array(2, 4),             // 관리자, 정회원만 목록 보기 가능
+						'view' => array(2, 4),             // 관리자, 정회원만 보기 가능
+						'write_document' => array(-3),     // 관리자만 글쓰기 가능
+						'write_comment' => array(2, 4),    // 관리자, 정회원만 댓글 쓰기 가능
+						'vote_log_view' => array(2, 4),    // 관리자, 정회원만 추천인 보기 가능
+						'update_view' => array(-3),        // 관리자만 수정 내역 보기 가능
+					),
+					'faq' => array(
+						'access' => array(0),               // 모든 방문자 접근 가능
+						'list' => array(0),                 // 모든 방문자 목록 보기 가능
+						'view' => array(0),                 // 모든 방문자 보기 가능
+						'write_document' => array(-3),      // 관리자만 글쓰기 가능
+						'write_comment' => array(-3),       // 관리자만 댓글 쓰기 가능
+						'vote_log_view' => array(-3),       // 관리자만 추천인 보기 가능
+						'update_view' => array(-3),         // 관리자만 수정 내역 보기 가능
+					),
+					default => array(
+						'view' => array(2, 4),               // 관리자, 정회원만 보기 가능
+						'write_document' => array(2, 4),     // 관리자, 정회원만 글쓰기 가능
+						'write_comment' => array(2, 4),      // 관리자, 정회원만 댓글 쓰기 가능
+					),
+				};
 				// 권한 설정 적용
 				setBoardPermissions($module_id, $permissions);
 			}
