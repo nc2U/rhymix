@@ -566,7 +566,7 @@
 		$obj->title = $title;
 		// blade.php 파일 경로 확인 (현재 스크립트 파일과 같은 경로)
 		$script_dir = dirname(__FILE__);
-		$blade_file = $script_dir . '/' . $module_id . '.blade.php';
+		$blade_file = $script_dir . '/pages' . $module_id . '.blade.php';
 		
 		// blade.php 파일이 있으면 해당 내용을 사용, 없으면 $content 사용
 		if (file_exists($blade_file)) {
