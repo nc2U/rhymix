@@ -50,7 +50,7 @@ kind: PersistentVolume
 metadata:
   name: {{ .Release.Name }}-{{ include "web.fullname" . }}-install-pv
 spec:
-  storageClassName: {{ include "web.fullname" . }}-skin
+  storageClassName: {{ include "web.fullname" . }}-install
   capacity:
     storage: 5Mi
   accessModes:
