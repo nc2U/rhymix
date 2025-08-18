@@ -545,7 +545,7 @@
 	// ---- [끝] SMTP 및 이메일 자동 설정 코드 ----
 	
 	// ========== rx_documents 테이블에 문서 데이터 삽입 예제 ==========
-	function insertCustomDocument($module_id, $title, $logged_info, $sort = 'page', $is_notice = 'N', $category_srl = 0)
+	function createInitDocument($module_id, $title, $logged_info, $sort = 'page', $is_notice = 'N', $category_srl = 0)
 	{
 		$oModuleModel = getModel('module');
 		$oModuleController = getController('module');
@@ -628,7 +628,7 @@
 		),
 	);
 	
-	foreach ($page_list as $page) insertCustomDocument($page['module_id'], $page['title'], $logged_info);
+	foreach ($page_list as $page) createInitDocument($page['module_id'], $page['title'], $logged_info);
 	
 	// 초기 게시물 생성 코드
 	$post_list = array(
@@ -664,7 +664,7 @@
 	
 	foreach ($post_list as $post) {
 		$is_notice = $post['module_id'] === 'faq' ? 'N' : 'Y';
-		insertCustomDocument($post['module_id'], $post['title'], $logged_info, 'board', $is_notice);
+		createInitDocument($post['module_id'], $post['title'], $logged_info, 'board', $is_notice);
 	}
 	
 	// ========== 게시판 권한 설정 함수 ==========
