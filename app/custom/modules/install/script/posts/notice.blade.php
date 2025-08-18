@@ -7,7 +7,7 @@
 	<tbody>
 	<tr>
 		<td style="padding: 20px;">
-			<h3>☀️&nbsp;<b>주요 기능 안내</b></h3>
+			<h4>☀️&nbsp;<b>주요 기능 안내</b></h4>
 			<p>&nbsp;</p>
 			<ul>
 				<li>
@@ -29,7 +29,7 @@
 			</ul>
 			<p>&nbsp;</p>
 			<p>&nbsp;</p>
-			<h3>☀️&nbsp;<b>조합원 인증 안내</b></h3>
+			<h4>☀️&nbsp;<b>조합원 인증 안내</b></h4>
 			<p>&nbsp;</p>
 			<ul>
 				<li>
