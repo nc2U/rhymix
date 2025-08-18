@@ -638,23 +638,23 @@
 		),
 		array(
 			'module_id' => 'news',
-			'title' => 'news test'
+			'title' => '✨ 조합 소식 게시판 이용 안내 ✨'
 		),
 		array(
 			'module_id' => 'qna',
-			'title' => 'qna test'
+			'title' => '질문 게시판 이용 안내'
 		),
 		array(
 			'module_id' => 'free',
-			'title' => 'free test'
+			'title' => '자유 게시판 이용 안내'
 		),
 		array(
 			'module_id' => 'poll',
-			'title' => 'poll test'
+			'title' => '투표(설문) 게시판 이용 안내'
 		),
 		array(
 			'module_id' => 'askAuth',
-			'title' => 'askAuth test'
+			'title' => '🪪 조합원 인증 요청 게시판 이용 안내'
 		),
 		array(
 			'module_id' => 'faq',
@@ -755,7 +755,6 @@
 						'view' => array(2, 4),             // 관리자, 정회원만 보기 가능
 						'write_document' => array(-3),     // 관리자만 글쓰기 가능
 						'write_comment' => array(2, 4),    // 관리자, 정회원만 댓글 쓰기 가능
-						'vote_log_view' => array(2, 4),    // 관리자, 정회원만 추천인 보기 가능
 						'update_view' => array(-3),        // 관리자만 수정 내역 보기 가능
 					),
 					'askAuth' => array(),
@@ -767,7 +766,6 @@
 						'view' => array(2, 4),             // 관리자, 정회원만 보기 가능
 						'write_document' => array(-3),     // 관리자만 글쓰기 가능
 						'write_comment' => array(2, 4),    // 관리자, 정회원만 댓글 쓰기 가능
-						'vote_log_view' => array(2, 4),    // 관리자, 정회원만 추천인 보기 가능
 						'update_view' => array(-3),        // 관리자만 수정 내역 보기 가능
 					),
 					'faq' => array(
