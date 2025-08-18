@@ -295,7 +295,7 @@
 	
 	$designInfo = new stdClass();
 	$designInfo->layout_srl = $layout_srl;
-	
+
 	
 	$moduleList = array('page', 'board', 'editor');
 	$moutput = ModuleHandler::triggerCall('menu.getModuleListInSitemap', 'after', $moduleList);
@@ -349,7 +349,6 @@
 	$obj->module_srl = $module_srl;
 	Context::set('version', RX_VERSION);
 	$obj->title = 'Brand Story!';
-	
 	// 커스텀 Welcome 콘텐츠 (필요시 별도 템플릿 파일 생성)
 	$obj->content = '
 	<link href="./layouts/ibs_layout/css/welcome.css" rel="stylesheet" />
@@ -835,7 +834,7 @@
 				// 권한 설정 적용
 				setBoardPermissions($module_id, $permissions);
 			}
-			
+
 			// 하위 메뉴가 있으면 재귀 호출
 			if (isset($item['list']) && is_array($item['list']))
 				applyBoardPermissions($item['list'], $parent_name . '/' . ($item['menu_name'] ?? ''));
