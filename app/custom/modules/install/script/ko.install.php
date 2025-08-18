@@ -545,7 +545,7 @@
 	// ---- [끝] SMTP 및 이메일 자동 설정 코드 ----
 	
 	// ========== rx_documents 테이블에 문서 데이터 삽입 예제 ==========
-	function insertCustomDocument($module_id, $title, $content, $logged_info, $sort = 'page', $is_notice = 'N', $category_srl = 0)
+	function insertCustomDocument($module_id, $title, $logged_info, $sort = 'page', $is_notice = 'N', $category_srl = 0)
 	{
 		$oModuleModel = getModel('module');
 		$oModuleController = getController('module');
@@ -566,15 +566,15 @@
 		$obj->title = $title;
 		// blade.php 파일 경로 확인 (현재 스크립트 파일과 같은 경로)
 		$script_dir = dirname(__FILE__);
-		$docs_dir = $sort === 'page' ? '/pages' : '/posts';
+		$docs_dir = $sort === 'page' ? '/pages/' : '/posts/';
 		$blade_file = $script_dir . $docs_dir . $module_id . '.blade.php';
 		
-		// blade.php 파일이 있으면 해당 내용을 사용, 없으면 $content 사용
+		$obj->content = '내용이 없습니다.';
+		// blade.php 파일이 있으면 해당 내용을 사용
 		if (file_exists($blade_file)) {
 			$file_content = file_get_contents($blade_file);
 			if ($file_content !== false && trim($file_content) !== '') $obj->content = $file_content;
-			else $obj->content = $content;
-		} else $obj->content = $content;
+		}
 		
 		$obj->status = 'PUBLIC'; // PUBLIC, PRIVATE, SECRET
 		$obj->comment_status = 'ALLOW'; // ALLOW, DENY
@@ -628,7 +628,7 @@
 		),
 	);
 	
-	foreach ($page_list as $page) insertCustomDocument($page['module_id'], $page['title'], '', $logged_info);
+	foreach ($page_list as $page) insertCustomDocument($page['module_id'], $page['title'], $logged_info);
 	
 	// 초기 게시물 생성 코드
 	$post_list = array(
@@ -637,14 +637,34 @@
 			'title' => '[안내] 조합 홈페이지 오픈 안내'
 		),
 		array(
+			'module_id' => 'news',
+			'title' => 'news test'
+		),
+		array(
+			'module_id' => 'qna',
+			'title' => 'qna test'
+		),
+		array(
+			'module_id' => 'free',
+			'title' => 'free test'
+		),
+		array(
+			'module_id' => 'poll',
+			'title' => 'poll test'
+		),
+		array(
+			'module_id' => 'askAuth',
+			'title' => 'askAuth test'
+		),
+		array(
 			'module_id' => 'faq',
 			'title' => '우리 조합의 조합원 자격 요건(기준)은 어떻게 되나요?'
-		)
+		),
 	);
 	
 	foreach ($post_list as $post) {
 		$is_notice = $post['module_id'] === 'faq' ? 'N' : 'Y';
-		insertCustomDocument($post['module_id'], $post['title'], '', $logged_info, 'board', $is_notice);
+		insertCustomDocument($post['module_id'], $post['title'], $logged_info, 'board', $is_notice);
 	}
 	
 	// ========== 게시판 권한 설정 함수 ==========
