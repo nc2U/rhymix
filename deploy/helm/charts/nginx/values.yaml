@@ -42,10 +42,10 @@ podSecurityContext: { }
 # fsGroup: 2000
 
 securityContext: { }
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
+# capabilities:
+#   drop:
+#   - ALL
+# readOnlyRootFilesystem: true
 # runAsNonRoot: true
 # runAsUser: 1000
 
@@ -78,10 +78,10 @@ resources: { }
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
+# limits:
+#   cpu: 100m
+#   memory: 128Mi
+# requests:
 #   cpu: 100m
 #   memory: 128Mi
 
@@ -126,6 +126,9 @@ volumes:
   - name: skin
     persistentVolumeClaim:
       claimName: rhymix-nginx-skin-pvc
+  - name: install
+    persistentVolumeClaim:
+      claimName: rhymix-nginx-install-pvc
 
 # Additional volumeMounts on the output Deployment definition.
 volumeMounts:
@@ -143,6 +146,8 @@ volumeMounts:
     readOnly: true
   - name: skin
     mountPath: /var/www/html/_rhymix/modules/board/skins/faq
+  - name: install
+    mountPath: /var/www/html/_rhymix/modules/install/script
 
 nodeSelector: { }
 

@@ -44,3 +44,18 @@ spec:
     server: {{ .Values.global.nfsHost }}
     path: {{ .Values.global.nfsPath }}/app/custom/modules/board/skins/faq
   persistentVolumeReclaimPolicy: Retain
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Release.Name }}-{{ include "nginx.fullname" . }}-install-pv
+spec:
+  storageClassName: {{ include "nginx.fullname" . }}-install
+  capacity:
+    storage: 5Mi
+  accessModes:
+    - ReadOnlyMany
+  nfs:
+    server: {{ .Values.global.nfsHost }}
+    path: {{ .Values.global.nfsPath }}/app/custom/modules/install/script
+  persistentVolumeReclaimPolicy: Retain
