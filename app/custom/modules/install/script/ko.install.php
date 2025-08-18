@@ -829,8 +829,43 @@
 		return true;
 	}
 	
+	// ========== 게시판 비밀글 기능 설정 함수 ==========
+	function setBoardSecretStatus($module_id, $is_default=false): bool
+	{
+		$oModuleModel = getModel('module');
+		$oModuleController = getController('module');
+		
+		// 모듈 정보 가져오기
+		$module_info = $oModuleModel->getModuleInfoByMid($module_id);
+		if (!$module_info) return false;
+		
+		// 현재 use_status 가져오기
+		$current_status = explode('|@|', $module_info->use_status ?? 'PUBLIC');
+		
+		// SECRET 상태가 없으면 추가
+		if (!in_array('SECRET', $current_status)) $current_status[] = 'SECRET';
+		
+		// use_status 업데이트
+		$module_info->use_status = implode('|@|', $current_status);
+		
+		// 비밀글 기본 설정
+		$module_info->secret = 'Y';
+		
+		// 게시물 작성 시 기본 상태를 SECRET으로 설정
+		if ($is_default) {
+			$module_info->default_status = 'SECRET';
+			// 비밀글을 기본으로 선택하도록 설정
+			$module_info->default_secret = 'Y';
+		}
+		
+		// 모듈 업데이트
+		$output = $oModuleController->updateModule($module_info);
+		if (!$output->toBool()) return false;
+		
+		return true;
+	}
+	
 	// ========== 게시판별 권한 설정 적용 ==========
-	// 사이트맵에서 board 타입 게시판들에 권한 설정 적용
 	function applyBoardPermissions($sitemap_list, $parent_name = ''): void
 	{
 		foreach ($sitemap_list as $item) {
@@ -875,6 +910,10 @@
 				};
 				// 권한 설정 적용
 				setBoardPermissions($module_id, $permissions);
+				
+				// 특정 게시판에 비밀글 기능 활성화 (필요한 게시판 ID 추가 가능)
+				$secret_enabled_boards = ['askAuth', 'qna']; // 조합원 인증 요청, 질문 게시판
+				if (in_array($module_id, $secret_enabled_boards)) setBoardSecretStatus($module_id);
 			}
 
 			// 하위 메뉴가 있으면 재귀 호출
