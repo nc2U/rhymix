@@ -1,13 +1,13 @@
 <h3><u>조합 공식 홈페이지 오픈 안내</u></h3>
 <p>&nbsp;</p>
-<p>안녕하세요, 조합원 여러분.</p>
-<p>조합의 사업 진행 상황과 각종 소식을 보다 <strong>신속하고 투명하게 </strong>전달해 드리기 위해 <strong>조합 공식 홈페이지</strong>를 새롭게 오픈하였습니다.</p>
+<p>안녕하세요, 조합원 여러분. 조합의 사업 진행 상황과 각종 소식을 보다&nbsp;<strong>신속하고 </strong></p>
+<p><strong>투명하게 </strong>전달해 드리기 위해 <strong>조합 공식 홈페이지</strong>를 새롭게 오픈하였습니다.</p>
 <p>&nbsp;</p>
 <table border="0px solid #ddd" cellpadding="30" cellspacing="0" style="width:740px;">
 	<tbody>
 	<tr>
 		<td style="padding: 20px;">
-			<h3><b>주요 기능 안내</b></h3>
+			<h3>☀️&nbsp;<b>주요 기능 안내</b></h3>
 			<p>&nbsp;</p>
 			<ul>
 				<li>
@@ -29,7 +29,7 @@
 			</ul>
 			<p>&nbsp;</p>
 			<p>&nbsp;</p>
-			<h3><b>조합원 인증 안내</b></h3>
+			<h3>☀️&nbsp;<b>조합원 인증 안내</b></h3>
 			<p>&nbsp;</p>
 			<ul>
 				<li>
