@@ -1,12 +1,12 @@
-<h3><u><b>조합 공식 홈페이지 오픈 안내</b></u></h3>
+<h3><u>조합 공식 홈페이지 오픈 안내</u></h3>
 <p>&nbsp;</p>
 <p>안녕하세요, 조합원 여러분.</p>
-<p>조합의 사업 진행 상황과 각종 소식을 보다&nbsp;<b>신속하고 투명하게</b>&nbsp;전달해 드리기 위해&nbsp;<b>조합 공식 홈페이지</b>를 새롭게 오픈하였습니다.</p>
+<p>조합의 사업 진행 상황과 각종 소식을 보다 <strong>신속하고 투명하게 </strong>전달해 드리기 위해 <strong>조합 공식 홈페이지</strong>를 새롭게 오픈하였습니다.</p>
 <p>&nbsp;</p>
-<table border="1" cellpadding="30" cellspacing="0" style="width:740px;">
+<table border="0px solid #ddd" cellpadding="30" cellspacing="0" style="width:740px;">
 	<tbody>
 	<tr>
-		<td style="padding: 20px; background: #fffff2;">
+		<td style="padding: 20px;">
 			<h3><b>주요 기능 안내</b></h3>
 			<p>&nbsp;</p>
 			<ul>
@@ -49,4 +49,5 @@
 <p>&nbsp;</p>
 <p>조합 공식 홈페이지가 조합원 여러분과의 소통 창구가 되어,</p>
 <p>사업 진행의 모든 과정을 투명하고 편리하게 공유할 수 있도록 노력하겠습니다.</p>
-<p>많은 방문과 이용 부탁드립니다.<a href="https://www.facebook.com/"><i></i></a></p>
+<p>&nbsp;</p>
+<p>많은 방문과 이용 부탁드립니다.</p>
