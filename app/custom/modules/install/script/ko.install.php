@@ -439,7 +439,6 @@
 	// ---- [시작] SMTP 및 이메일 자동 설정 코드 ----
 	
 	// ========== .env 파일 설정 로드 ==========
-	// 현재 스크립트 디렉터리의 .env 파일 읽기
 	function loadEnvFile($filePath)
 	{
 		$envVars = array();
