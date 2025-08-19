@@ -819,7 +819,6 @@ if (typeof jQuery !== 'undefined')
 						'update_view' => array(-3),        // 관리자만 수정 내역 보기 가능
 					),
 					'poll' => array(
-						'list' => array(2, 4),             // 관리자, 정회원만 목록 보기 가능
 						'view' => array(2, 4),             // 관리자, 정회원만 보기 가능
 						'write_document' => array(-3),     // 관리자만 글쓰기 가능
 						'write_comment' => array(2, 4),    // 관리자, 정회원만 댓글 쓰기 가능
@@ -836,7 +835,6 @@ if (typeof jQuery !== 'undefined')
 						'update_view' => array(-3),        // 관리자만 수정 내역 보기 가능
 					),
 					default => array(
-						'list' => array(2, 4),               // 관리자, 정회원만 목록 보기 가능
 						'view' => array(2, 4),               // 관리자, 정회원만 보기 가능
 						'write_document' => array(2, 4),     // 관리자, 정회원만 글쓰기 가능
 						'write_comment' => array(2, 4),      // 관리자, 정회원만 댓글 쓰기 가능
