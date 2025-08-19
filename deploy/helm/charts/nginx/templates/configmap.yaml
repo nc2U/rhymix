@@ -64,7 +64,7 @@ data:
             fastcgi_index index.php;
             fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 
-            fastcgi_connect_timeout 60s;
+            fastcgi_connect_timeout 300s;
             fastcgi_send_timeout 300s;
             fastcgi_read_timeout 300s;
         }
