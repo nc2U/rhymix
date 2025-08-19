@@ -23,7 +23,7 @@ jobs:
       - name: Check out source code
         uses: actions/checkout@v4
       
-      # Source Django to server copy transfer
+      # Source code to server copy transfer
       - name: Copy app, etc data to NFS server
         uses: appleboy/scp-action@master
         with:
@@ -33,20 +33,20 @@ jobs:
           source: 'app/custom'
           target: ${{ secrets.NFS_PATH }}/
       
-#      # web pod --> django model migrations & collectstatic
-#      - name: Custom source link to rhymix
-#        uses: garygrossgarten/github-action-ssh@release
-#        with:
-#          host: ${{ secrets.NFS_HOST }}
-#          username: ${{ secrets.NFS_USER }}
-#          password: ${{ secrets.NFS_PASS }}
-#          command: |
-#            cd ${{ secrets.NFS_PATH }}/app/_rhymix
-#            if [ ! -d ".git" ]; then
-#              git clone https://github.com/rhymix/rhymix.git .
-#            else
-#              git pull origin master
-#            fi
+      # web pod --> rhymix source link update
+      - name: Custom source link to rhymix
+        uses: garygrossgarten/github-action-ssh@release
+        with:
+          host: ${{ secrets.NFS_HOST }}
+          username: ${{ secrets.NFS_USER }}
+          password: ${{ secrets.NFS_PASS }}
+          command: |
+            cd ${{ secrets.NFS_PATH }}/app/_rhymix
+            if [ ! -d ".git" ]; then
+              git clone https://github.com/rhymix/rhymix.git .
+            else
+              git pull origin master
+            fi
       
       # slack --> notification
       - name: Send slack when failed
