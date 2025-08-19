@@ -296,7 +296,7 @@
 	$designInfo = new stdClass();
 	$designInfo->layout_srl = $layout_srl;
 	
-	$moduleList = array('page', 'board', 'editor');
+	$moduleList = array('page', 'board', 'editor', 'member');
 	$moutput = ModuleHandler::triggerCall('menu.getModuleListInSitemap', 'after', $moduleList);
 	if ($moutput->toBool()) $moduleList = array_unique($moduleList);
 	
@@ -308,7 +308,11 @@
 		$skinType = $key == 'skin' ? 'P' : 'M';
 		foreach ($moduleList as $moduleName) {
 			$designInfo->module->{$moduleName} = new stdClass();
-			$designInfo->module->{$moduleName}->{$key} = $oModuleModel->getModuleDefaultSkin($moduleName, $skinType, 0, false);
+			if ($key == 'skin')
+				$designInfo->module->{$moduleName}->{$key} = $oModuleModel->getModuleDefaultSkin($moduleName, $skinType, 0, false);
+			else
+				// 모바일은 PC와 동일한 반응형 스킨 사용
+				$designInfo->module->{$moduleName}->{$key} = '/RESPONSIVE/';
 		}
 	}
 	
@@ -325,7 +329,7 @@
 		// FAQ 게시판만 사이트 디자인을 사용하지 않도록 설정
 		$faq_module_info->is_skin_fix = 'Y';
 		$faq_module_info->skin = 'faq'; // IBS Faq 스킨으로 설정
-		$faq_module_info->mskin = '/USE_DEFAULT/'; // 모바일 스킨 기본값
+		$faq_module_info->mskin = '/RESPONSIVE/'; // 모바일 스킨 반응형 사용
 		
 		$output = $oModuleController->updateModule($faq_module_info);
 		if (!$output->toBool()) return $output;
