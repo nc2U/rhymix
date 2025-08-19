@@ -310,9 +310,7 @@
 			$designInfo->module->{$moduleName} = new stdClass();
 			if ($key == 'skin')
 				$designInfo->module->{$moduleName}->{$key} = $oModuleModel->getModuleDefaultSkin($moduleName, $skinType, 0, false);
-			else
-				// 모바일은 PC와 동일한 반응형 스킨 사용
-				$designInfo->module->{$moduleName}->{$key} = '/RESPONSIVE/';
+			else $designInfo->module->{$moduleName}->{$key} = '/RESPONSIVE/'; // 모바일은 PC와 동일한 반응형 스킨 사용
 		}
 	}
 	
