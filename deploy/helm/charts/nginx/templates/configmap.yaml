@@ -63,6 +63,10 @@ data:
             fastcgi_pass web:9000;  # PHP-FPM 컨테이너 이름 또는 unix:/run/php/php8.2-fpm.sock;
             fastcgi_index index.php;
             fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+
+            fastcgi_connect_timeout 60s;
+            fastcgi_send_timeout 300s;
+            fastcgi_read_timeout 300s;
         }
 
         # Let’s Encrypt 인증서 갱신용 (certbot 등)
