@@ -111,12 +111,12 @@ volumes:
   - name: layout
     persistentVolumeClaim:
       claimName: rhymix-web-layout-pvc
-  - name: skin
-    persistentVolumeClaim:
-      claimName: rhymix-web-skin-pvc
   - name: install
     persistentVolumeClaim:
       claimName: rhymix-web-install-pvc
+  - name: skin
+    persistentVolumeClaim:
+      claimName: rhymix-web-skin-pvc
   - name: tz-seoul
     hostPath:
       path: /usr/share/zoneinfo/Asia/Seoul
@@ -127,10 +127,10 @@ volumeMounts:
     mountPath: /var/www/html
   - name: layout
     mountPath: /var/www/html/_rhymix/layouts/ibs_layout
-  - name: skin
-    mountPath: /var/www/html/_rhymix/modules/board/skins/faq
   - name: install
     mountPath: /var/www/html/_rhymix/modules/install/script
+  - name: skin
+    mountPath: /var/www/html/_rhymix/modules/board/skins/faq
 
 nodeSelector: { }
 
