@@ -11,6 +11,10 @@ spec:
   mountOptions:
     - hard
     - nfsvers=4.1
+    - rw
+    - all_squash
+    - anonuid=33
+    - anongid=33
   nfs:
     path: {{ .Values.global.nfsPath }}/app
     server: {{ .Values.global.nfsHost }}

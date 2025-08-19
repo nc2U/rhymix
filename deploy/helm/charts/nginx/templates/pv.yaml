@@ -59,3 +59,4 @@ spec:
     server: {{ .Values.global.nfsHost }}
     path: {{ .Values.global.nfsPath }}/app/custom/modules/install/script
   persistentVolumeReclaimPolicy: Retain
+
