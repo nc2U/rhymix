@@ -9,13 +9,13 @@
 	$oModuleModel = getModel('module'); // 모듈 모델
 	$oDocumentModel = getModel('document'); // 문서 모델
 	
+	$oAdminController = getAdminController('admin'); // 어드민 컨트롤러
 	$oMenuAdminController = getAdminController('menu'); // 메뉴 어드민 컨트롤러
 	$oLayoutAdminController = getAdminController('layout'); // 레이아웃 어드민 컨트롤러
 	
+	$oFileController = getController('file'); // 파일 컨트롤러
 	$oModuleController = getController('module'); // 모듈 컨트롤러
 	$oDocumentController = getController('document'); // 문서 컨트롤러
-	$oFileController = getController('file'); // 파일 컨트롤러
-	$oAdminController = getAdminController('admin'); // 어드민 컨트롤러
 	
 	// 커스텀 사이트맵 구조
 	$sitemap = array(
@@ -296,7 +296,6 @@
 	$designInfo = new stdClass();
 	$designInfo->layout_srl = $layout_srl;
 	
-	
 	$moduleList = array('page', 'board', 'editor');
 	$moutput = ModuleHandler::triggerCall('menu.getModuleListInSitemap', 'after', $moduleList);
 	if ($moutput->toBool()) $moduleList = array_unique($moduleList);
@@ -335,9 +334,6 @@
 	// Welcome 페이지 생성
 	$moduleInfo = $oModuleModel->getModuleInfoByMenuItemSrl($sitemap['GNB']['list'][0]['menu_srl']);
 	$module_srl = $moduleInfo->module_srl;
-	
-	// insert PageContents - widget
-	$oTemplateHandler = TemplateHandler::getInstance();
 	
 	$obj = new stdClass();
 	$obj->member_srl = $logged_info->member_srl;
@@ -530,13 +526,8 @@
 			// config.php에 push 설정 저장
 			Rhymix\Framework\Config::set('push', $push_config);
 			Rhymix\Framework\Config::save();
-			
-			// 푸시 설정 캐시 삭제
-			Rhymix\Framework\Cache::delete('push_config');
-			Rhymix\Framework\Cache::clearGroup('config');
 		}
 	}
-	
 	// ---- [끝] FCM 푸시 알림 설정 코드 ----
 	
 	// ---- [끝] SMTP 및 이메일 자동 설정 코드 ----
