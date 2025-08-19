@@ -45,7 +45,7 @@ data:
         listen 80;                  # 다른 파일을 만들어 쓰는 경우 default 삭제
         root /var/www/html/_rhymix; # 라이믹스를 설치할 경로 (반드시 최상단에 위치해야 합니다.)
         server_name _;              # 사용할 도메인을 여기에 추가해도 됨 (예: server_name example.com www.example.com;)
-        client_max_body_size 32m;   # 업로드 허용 용량 (라이믹스는 분할 업로드를 지원하므로 약 10MB만 넘으면 사실상 무한대가 됩니다.)
+        client_max_body_size 100m;   # 업로드 허용 용량 (라이믹스는 분할 업로드를 지원하므로 약 10MB만 넘으면 사실상 무한대가 됩니다.)
 
         index index.php index.html index.htm;
 
