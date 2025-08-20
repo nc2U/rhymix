@@ -113,7 +113,7 @@ autoscaling:
 
 # Additional volumes on the output Deployment definition.
 volumes:
-  - name: rhymix-source
+  - name: rhymix-html
     persistentVolumeClaim:
       claimName: rhymix-web-html-pvc
   - name: rhymix-files
