@@ -7,7 +7,7 @@ spec:
   capacity:
     storage: 200Mi
   accessModes:
-    - ReadWriteMany
+    - ReadOnlyMany
   mountOptions:
     - hard
     - nfsvers=4.1
