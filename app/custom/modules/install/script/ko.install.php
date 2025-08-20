@@ -494,6 +494,14 @@
 		if (!$output->toBool()) return $output;
 	}
 	
+	// ========== 세션 DB 사용 설정 (쿠버네티스 멀티 Pod 환경 대응) ==========
+	$session_config = Rhymix\Framework\Config::get('session');
+	$session_config['use_db'] = true;  // DB 기반 세션 사용
+	$session_config['lifetime'] = 86400;  // 24시간 (0은 브라우저 닫으면 만료)
+	$session_config['refresh'] = 1800;  // 30분마다 갱신 (기본 5분에서 연장)
+	Rhymix\Framework\Config::set('session', $session_config);
+	Rhymix\Framework\Config::save();
+	
 	// ---- [시작] FCM 푸시 알림 설정 코드 ----
 	
 	// FCM 서비스 계정 파일 로드
