@@ -9,6 +9,7 @@ spec:
   resources:
     requests:
       storage: 200Mi
+  volumeName: rhymix-nginx-html-pv
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
