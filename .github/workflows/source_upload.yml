@@ -47,16 +47,17 @@ jobs:
             else
               git pull origin master
             fi
-            # Create and set permissions for files directory
+            # Create and set permissions for files directory (with sudo session)
+            echo '${{ secrets.NFS_PASS }}' | sudo -S -v  # Authenticate once
             if [ ! -d "${{ secrets.NFS_PATH }}/files" ]; then
               echo "Creating files directory..."
-              mkdir -p ${{ secrets.NFS_PATH }}/files
+              sudo mkdir -p ${{ secrets.NFS_PATH }}/files
             fi
             echo "Setting files directory permissions to 777..."
-            chmod 777 ${{ secrets.NFS_PATH }}/files
+            sudo chmod 777 ${{ secrets.NFS_PATH }}/files
             # Fix all permissions: files=644, directories=755
-            find . -type f -exec chmod 644 {} \;
-            find . -type d -exec chmod 755 {} \;
+            sudo find . -type f -exec chmod 644 {} \;
+            sudo find . -type d -exec chmod 755 {} \;
       
       # slack --> notification
       - name: Send slack when failed
