@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ .Release.Name }}-{{ include "nginx.fullname" . }}-html-pvc
+  name: rhymix-nginx-html-pvc
 spec:
-  storageClassName: {{ include "nginx.fullname" . }}-html
+  storageClassName: nginx-html
   accessModes:
     - ReadWriteMany
   resources:
@@ -13,38 +13,51 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ .Release.Name }}-{{ include "nginx.fullname" . }}-layout-pvc
+  name: rhymix-nginx-files-pvc
 spec:
-  storageClassName: {{ include "nginx.fullname" . }}-layout
+  storageClassName: nginx-files
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  volumeName: rhymix-nginx-files-pv
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: rhymix-nginx-layout-pvc
+spec:
+  storageClassName: nginx-layout
   accessModes:
     - ReadOnlyMany
   resources:
     requests:
       storage: 50Mi
-  volumeName: {{ .Release.Name }}-{{ include "nginx.fullname" . }}-layout-pv
+  volumeName: rhymix-nginx-layout-pv
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ .Release.Name }}-{{ include "nginx.fullname" . }}-skin-pvc
+  name: rhymix-nginx-skin-pvc
 spec:
-  storageClassName: {{ include "nginx.fullname" . }}-skin
+  storageClassName: nginx-skin
   accessModes:
     - ReadOnlyMany
   resources:
     requests:
       storage: 10Mi
-  volumeName: {{ .Release.Name }}-{{ include "nginx.fullname" . }}-skin-pv
+  volumeName: rhymix-nginx-skin-pv
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ .Release.Name }}-{{ include "nginx.fullname" . }}-install-pvc
+  name: rhymix-nginx-install-pvc
 spec:
-  storageClassName: {{ include "nginx.fullname" . }}-install
+  storageClassName: nginx-install
   accessModes:
     - ReadOnlyMany
   resources:
     requests:
       storage: 5Mi
-  volumeName: {{ .Release.Name }}-{{ include "nginx.fullname" . }}-install-pv
+  volumeName: rhymix-nginx-install-pv

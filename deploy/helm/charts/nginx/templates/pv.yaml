@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: {{ .Release.Name }}-{{ include "nginx.fullname" . }}-html-pv
+  name: rhymix-nginx-html-pv
 spec:
-  storageClassName: {{ include "nginx.fullname" . }}-html
+  storageClassName: nginx-html
   capacity:
     storage: 200Mi
   accessModes:
@@ -14,13 +14,33 @@ spec:
   nfs:
     server: {{ .Values.global.nfsHost }}
     path: {{ .Values.global.nfsPath }}/app
+  persistentVolumeReclaimPolicy: Retain
 ---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: {{ .Release.Name }}-{{ include "nginx.fullname" . }}-layout-pv
+  name: rhymix-nginx-files-pv
 spec:
-  storageClassName: {{ include "nginx.fullname" . }}-layout
+  storageClassName: nginx-files
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  mountOptions:
+    - hard
+    - nfsvers=4.1
+    - rw
+  nfs:
+    server: {{ .Values.global.nfsHost }}
+    path: {{ .Values.global.nfsPath }}/files
+  persistentVolumeReclaimPolicy: Retain
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: rhymix-nginx-layout-pv
+spec:
+  storageClassName: nginx-layout
   capacity:
     storage: 50Mi
   accessModes:
@@ -33,9 +53,9 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: {{ .Release.Name }}-{{ include "nginx.fullname" . }}-skin-pv
+  name: rhymix-nginx-skin-pv
 spec:
-  storageClassName: {{ include "nginx.fullname" . }}-skin
+  storageClassName: nginx-skin
   capacity:
     storage: 10Mi
   accessModes:
@@ -48,9 +68,9 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: {{ .Release.Name }}-{{ include "nginx.fullname" . }}-install-pv
+  name: rhymix-nginx-install-pv
 spec:
-  storageClassName: {{ include "nginx.fullname" . }}-install
+  storageClassName: nginx-install
   capacity:
     storage: 5Mi
   accessModes:
