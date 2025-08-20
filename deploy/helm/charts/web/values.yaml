@@ -118,7 +118,7 @@ volumes:
       claimName: rhymix-web-source-pvc
   - name: rhymix-files
     persistentVolumeClaim:
-      claimName: "{{ .Release.Name }}-{{ include \"web.fullname\" . }}-files-pvc"
+      claimName: rhymix-web-files-pvc
   - name: layout
     persistentVolumeClaim:
       claimName: rhymix-web-layout-pvc

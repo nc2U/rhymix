@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: {{ .Release.Name }}-{{ include "web.fullname" . }}-source-pv
+  name: rhymix-web-source-pv
 spec:
-  storageClassName: {{ include "web.fullname" . }}-app
+  storageClassName: web-app
   capacity:
     storage: 300Mi
   accessModes:
@@ -20,9 +20,9 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: {{ .Release.Name }}-{{ include "web.fullname" . }}-files-pv
+  name: rhymix-web-files-pv
 spec:
-  storageClassName: {{ include "web.fullname" . }}-files
+  storageClassName: web-files
   capacity:
     storage: 1Gi
   accessModes:
@@ -39,9 +39,9 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: {{ .Release.Name }}-{{ include "web.fullname" . }}-layout-pv
+  name: rhymix-web-layout-pv
 spec:
-  storageClassName: {{ include "web.fullname" . }}-layout
+  storageClassName: web-layout
   capacity:
     storage: 50Mi
   accessModes:
@@ -54,9 +54,9 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: {{ .Release.Name }}-{{ include "web.fullname" . }}-skin-pv
+  name: rhymix-web-skin-pv
 spec:
-  storageClassName: {{ include "web.fullname" . }}-skin
+  storageClassName: web-skin
   capacity:
     storage: 10Mi
   accessModes:
@@ -69,9 +69,9 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: {{ .Release.Name }}-{{ include "web.fullname" . }}-install-pv
+  name: rhymix-web-install-pv
 spec:
-  storageClassName: {{ include "web.fullname" . }}-install
+  storageClassName: web-install
   capacity:
     storage: 5Mi
   accessModes:
