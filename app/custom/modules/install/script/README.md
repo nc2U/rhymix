@@ -101,6 +101,14 @@ ADMIN_EMAIL=admin@yourdomain.com
 3. 포트 번호 확인 (587, 465, 25)
 4. 인증 정보 확인
 
+### FCM 푸시 알림 을 사용하는 경우
+
+```bash
+vi firebase-key.json
+# Firebase 콘솔의 "서비스 계정" 메뉴에서 비공개 키를 생성한 후,
+# 다운로드한 JSON 파일의 내용을 이 파일에 붙여넣으십시오.
+```
+
 ## 보안 주의사항
 
 - `.env` 파일에는 민감한 정보가 포함되어 있으므로 버전 관리 시스템에 포함하지 마세요
@@ -119,5 +127,6 @@ script/
 ├── ko.install.php     # 설치 스크립트
 ├── .env              # 실제 설정 파일 (수정 필요)
 ├── .env.example      # 설정 예시 파일
+├── firebase-key.json # FCM 계정 정보 (입력 필요)
 └── README.md         # 이 파일
 ```
