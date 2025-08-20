@@ -47,6 +47,13 @@ jobs:
             else
               git pull origin master
             fi
+            # Create and set permissions for files directory
+            if [ ! -d "${{ secrets.NFS_PATH }}/files" ]; then
+              echo "Creating files directory..."
+              mkdir -p ${{ secrets.NFS_PATH }}/files
+            fi
+            echo "Setting files directory permissions to 777..."
+            chmod 777 ${{ secrets.NFS_PATH }}/files
             # Fix all permissions: files=644, directories=755
             find . -type f -exec chmod 644 {} \;
             find . -type d -exec chmod 755 {} \;
