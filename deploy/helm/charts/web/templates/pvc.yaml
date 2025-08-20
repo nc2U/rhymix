@@ -1,15 +1,15 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: rhymix-web-source-pvc
+  name: rhymix-web-html-pvc
 spec:
   storageClassName: web-app
   accessModes:
     - ReadWriteMany
   resources:
     requests:
-      storage: 300Mi
-  volumeName: rhymix-web-source-pv
+      storage: 200Mi
+  volumeName: rhymix-web-html-pv
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

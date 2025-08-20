@@ -1,20 +1,19 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: rhymix-web-source-pv
+  name: rhymix-web-html-pv
 spec:
   storageClassName: web-app
   capacity:
-    storage: 300Mi
+    storage: 200Mi
   accessModes:
     - ReadWriteMany
   mountOptions:
     - hard
     - nfsvers=4.1
-    - rw
   nfs:
-    path: {{ .Values.global.nfsPath }}/app
     server: {{ .Values.global.nfsHost }}
+    path: {{ .Values.global.nfsPath }}/app
   persistentVolumeReclaimPolicy: Retain
 ---
 apiVersion: v1
@@ -32,8 +31,8 @@ spec:
     - nfsvers=4.1
     - rw
   nfs:
-    path: {{ .Values.global.nfsPath }}/files
     server: {{ .Values.global.nfsHost }}
+    path: {{ .Values.global.nfsPath }}/files
   persistentVolumeReclaimPolicy: Retain
 ---
 apiVersion: v1

@@ -115,7 +115,7 @@ autoscaling:
 volumes:
   - name: rhymix-source
     persistentVolumeClaim:
-      claimName: rhymix-web-source-pvc
+      claimName: rhymix-web-html-pvc
   - name: rhymix-files
     persistentVolumeClaim:
       claimName: rhymix-web-files-pvc
@@ -134,7 +134,7 @@ volumes:
 
 # Additional volumeMounts on the output Deployment definition.
 volumeMounts:
-  - name: rhymix-source
+  - name: rhymix-html
     mountPath: /var/www/html
   - name: rhymix-files
     mountPath: /var/www/html/_rhymix/files
