@@ -486,6 +486,29 @@
 		Rhymix\Framework\Config::set('mail', $mail_settings);
 		Rhymix\Framework\Config::save();
 		
+		// HTTPS 환경에서 SSL 쿠키 설정 자동 적용
+		$current_url = Rhymix\Framework\Config::get('url.default') ?? '';
+		if (strpos($current_url, 'https://') === 0) {
+			$session_config = Rhymix\Framework\Config::get('session');
+			$session_config['use_ssl_cookies'] = true;
+			Rhymix\Framework\Config::set('session', $session_config);
+			
+			$cookie_config = Rhymix\Framework\Config::get('cookie');
+			$cookie_config['secure'] = true;
+			Rhymix\Framework\Config::set('cookie', $cookie_config);
+			
+			Rhymix\Framework\Config::save();
+		}
+		
+		// umask 설정을 0000으로 변경하여 Rhymix가 777 권한으로 디렉토리 생성하도록 함
+		$file_config = Rhymix\Framework\Config::get('file');
+		$file_config['umask'] = '0000';
+		Rhymix\Framework\Config::set('file', $file_config);
+		Rhymix\Framework\Config::save();
+		
+		// 시스템 umask도 0000으로 설정 (PHP 프로세스 레벨)
+		umask(0000);
+		
 		// ========== 회원 모듈 webmaster 정보 업데이트 (.env 값으로) ==========
 		$member_config = $oModuleModel->getModuleConfig('member') ?? new stdClass();
 		$member_config->webmaster_name = 'OOOO 지역주택조합';
