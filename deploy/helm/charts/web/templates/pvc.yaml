@@ -14,6 +14,19 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  name: {{ .Release.Name }}-{{ include "web.fullname" . }}-files-pvc
+spec:
+  storageClassName: {{ include "web.fullname" . }}-files
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  volumeName: {{ .Release.Name }}-{{ include "web.fullname" . }}-files-pv
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
   name: {{ .Release.Name }}-{{ include "web.fullname" . }}-layout-pvc
 spec:
   storageClassName: {{ include "web.fullname" . }}-layout

@@ -15,6 +15,26 @@ spec:
   nfs:
     path: {{ .Values.global.nfsPath }}/app
     server: {{ .Values.global.nfsHost }}
+  persistentVolumeReclaimPolicy: Retain
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Release.Name }}-{{ include "web.fullname" . }}-files-pv
+spec:
+  storageClassName: {{ include "web.fullname" . }}-files
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  mountOptions:
+    - hard
+    - nfsvers=4.1
+    - rw
+  nfs:
+    path: {{ .Values.global.nfsPath }}/files
+    server: {{ .Values.global.nfsHost }}
+  persistentVolumeReclaimPolicy: Retain
 ---
 apiVersion: v1
 kind: PersistentVolume
