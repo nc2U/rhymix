@@ -3,7 +3,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: rhymix-web-html-pvc
 spec:
-  storageClassName: web-app
+  storageClassName: web-html
   accessModes:
     - ReadOnlyMany
   resources:

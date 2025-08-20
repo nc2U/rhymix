@@ -3,7 +3,7 @@ kind: PersistentVolume
 metadata:
   name: rhymix-web-html-pv
 spec:
-  storageClassName: web-app
+  storageClassName: web-html
   capacity:
     storage: 200Mi
   accessModes:
