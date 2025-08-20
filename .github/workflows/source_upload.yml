@@ -47,9 +47,8 @@ jobs:
             else
               git pull origin master
             fi
-            # Fix permissions for static files (CSS, JS, images)
-            find . -type f \( -name "*.css" -o -name "*.js" -o -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" -o -name "*.gif" -o -name "*.svg" -o -name "*.ico" -o -name "*.woff" -o -name "*.woff2" -o -name "*.ttf" -o -name "*.eot" \) -exec chmod 644 {} \;
-            # Fix directory permissions
+            # Fix all permissions: files=644, directories=755
+            find . -type f -exec chmod 644 {} \;
             find . -type d -exec chmod 755 {} \;
       
       # slack --> notification
