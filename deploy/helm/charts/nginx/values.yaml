@@ -145,14 +145,14 @@ volumeMounts:
   - name: nginx-html
     mountPath: /var/www/html
   - name: nginx-files
-    mountPath: /var/www/html/_rhymix/files
+    mountPath: /var/www/html/files
   - name: layout
-    mountPath: /var/www/html/_rhymix/layouts/ibs_layout
+    mountPath: /var/www/html/layouts/ibs_layout
     readOnly: true
   - name: install
-    mountPath: /var/www/html/_rhymix/modules/install/script
+    mountPath: /var/www/html/modules/install/script
   - name: skin
-    mountPath: /var/www/html/_rhymix/modules/board/skins/faq
+    mountPath: /var/www/html/modules/board/skins/faq
 
 nodeSelector: { }
 

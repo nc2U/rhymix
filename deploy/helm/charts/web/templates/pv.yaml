@@ -13,7 +13,7 @@ spec:
     - nfsvers=4.1
   nfs:
     server: {{ .Values.global.nfsHost }}
-    path: {{ .Values.global.nfsPath }}/app
+    path: {{ .Values.global.nfsPath }}/app/_rhymix
   persistentVolumeReclaimPolicy: Retain
 ---
 apiVersion: v1
@@ -32,7 +32,7 @@ spec:
     - rw
   nfs:
     server: {{ .Values.global.nfsHost }}
-    path: {{ .Values.global.nfsPath }}/app/_rhymix/files
+    path: {{ .Values.global.nfsPath }}/files
   persistentVolumeReclaimPolicy: Retain
 ---
 apiVersion: v1
