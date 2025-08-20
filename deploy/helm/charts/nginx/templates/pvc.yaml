@@ -5,7 +5,7 @@ metadata:
 spec:
   storageClassName: nginx-html
   accessModes:
-    - ReadWriteMany
+    - ReadOnlyMany
   resources:
     requests:
       storage: 200Mi

@@ -5,7 +5,7 @@ metadata:
 spec:
   storageClassName: web-app
   accessModes:
-    - ReadWriteMany
+    - ReadOnlyMany
   resources:
     requests:
       storage: 200Mi
