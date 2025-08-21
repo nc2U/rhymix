@@ -502,6 +502,14 @@
 	Rhymix\Framework\Config::set('session', $session_config);
 	Rhymix\Framework\Config::save();
 	
+	// ========== 모바일 뷰 전체 비활성화 설정 ==========
+	$mobile_config = array(
+		'enabled' => false,  // 모바일 뷰 사용 안함
+		'tablets' => false   // 태블릿도 모바일로 처리 안함
+	);
+	Rhymix\Framework\Config::set('mobile', $mobile_config);
+	Rhymix\Framework\Config::save();
+	
 	// ---- [시작] FCM 푸시 알림 설정 코드 ----
 	
 	// FCM 서비스 계정 파일 로드
@@ -751,6 +759,9 @@ if (typeof jQuery !== 'undefined')
 		// 모듈 정보 가져오기
 		$module_info = $oModuleModel->getModuleInfoByMid($module_id);
 		if (!$module_info) return false;
+		
+		// 모바일 설정 업데이트
+		$module_info->use_mobile = 'N';
 		
 		// 기본 권한 설정
 		$default_permissions = array(
