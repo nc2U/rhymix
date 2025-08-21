@@ -29,13 +29,6 @@ services:
       - ../app/custom/modules/install/script:/var/www/html/modules/install/script
       - ../app/custom/modules/board/skins/faq:/var/www/html/modules/board/skins/faq
       - ./docker/php/php-logging.conf:/usr/local/etc/php-fpm.d/zz-log.conf
-    environment:
-      BASE_URL: http://localhost:8080/
-      ENCRYPTION_KEY: random-key
-      DATABASE_HOST: mariadb
-      DATABASE_NAME: my-db-name # mariadb env 와 일치
-      DATABASE_USER: my-db-user # mariadb env 와 일치
-      DATABASE_PASSWORD: my-db-password # mariadb env 와 일치
     depends_on:
       - mariadb
   
@@ -55,18 +48,3 @@ services:
       - ./docker/nginx/conf.d:/etc/nginx/conf.d
     depends_on:
       - web
-  
-  # phpMyAdmin Service
-  phpmyadmin:
-    container_name: rhymix-phpmyadmin
-    image: phpmyadmin:latest
-    restart: always
-    ports:
-      - '8081:80'
-    environment:
-      PMA_HOST: my-db-name # mariadb env 와 일치
-      PMA_USER: my-db-user # mariadb env 와 일치
-      PMA_PASSWORD: my-db-password # mariadb env 와 일치
-      PMA_ARBITRARY: 1
-    depends_on:
-      - mariadb
