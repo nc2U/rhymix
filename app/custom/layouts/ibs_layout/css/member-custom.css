@@ -23,7 +23,7 @@
 }
 
 /* 반응형 대응 */
-@media (max-width: 768px) {
+@media (max-width: 480px) {
     .act-dispMemberSignUpForm h1 {
         margin-bottom: 25px !important;
         padding-bottom: 10px !important;
