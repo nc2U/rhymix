@@ -28,8 +28,34 @@
         margin-bottom: 25px !important;
         padding-bottom: 10px !important;
     }
-    
+
     .act-dispMemberSignUpForm .control-group:first-of-type {
         margin-top: 20px !important;
+    }
+
+    /* 모바일에서 control-label 스타일 조정 */
+    .xm .form-horizontal .control-label {
+        float: none !important;
+        width: auto !important;
+        padding-top: 0 !important;
+        text-align: left !important;
+        margin-bottom: 5px !important;
+        display: block !important;
+    }
+
+    /* 모바일에서 controls 영역 조정 */
+    .xm .form-horizontal .controls {
+        margin-left: 0 !important;
+    }
+
+    /* 입력 필드 전체 너비 사용 */
+    .xm .form-horizontal input[type="text"],
+    .xm .form-horizontal input[type="email"],
+    .xm .form-horizontal input[type="password"],
+    .xm .form-horizontal select,
+    .xm .form-horizontal textarea {
+        width: 100% !important;
+        height: 30px !important;
+        box-sizing: border-box !important;
     }
 }
