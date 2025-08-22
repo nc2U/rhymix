@@ -84,10 +84,10 @@
         transition: all 0.3s ease;
     }
     
-    .img_thumb_list a:hover {
-        border-color: #007bff;
-        box-shadow: 0 2px 8px rgba(0,123,255,0.3);
-    }
+    /*.img_thumb_list a:hover {*/
+    /*    border-color: #007bff;*/
+    /*    box-shadow: 0 2px 8px rgba(0,123,255,0.3);*/
+    /*}*/
     
     .img_thumb_list img {
         width: 100px;
@@ -104,12 +104,13 @@
     .col_datatable {
         width: 100%;
         border-collapse: collapse;
-        border-top: 2px solid #333;
+        border-top: 1px solid #E0E0E0;
+        border-bottom: 1px solid #E0E0E0;
         margin: 0 auto;
         background: #fff;
         border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        /*overflow: hidden;*/
+        /*box-shadow: 0 4px 15px rgba(0,0,0,0.1);*/
     }
     
     .col_datatable caption {
@@ -152,9 +153,9 @@
         vertical-align: middle;
     }
     
-    .col_datatable tr:hover {
-        background-color: #f8f9fa;
-    }
+    /*.col_datatable tr:hover {*/
+    /*    background-color: #f8f9fa;*/
+    /*}*/
     
     /* 반응형 디자인 */
     @media (max-width: 768px) {
@@ -209,7 +210,7 @@
             margin-bottom: 20px;
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            /*box-shadow: 0 2px 8px rgba(0,0,0,0.1);*/
         }
     }
 </style>
