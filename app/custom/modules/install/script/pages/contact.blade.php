@@ -109,7 +109,6 @@
         font-size: 14px;
         background: #ffffff;
         padding: 8px 16px;
-        border-radius: 20px;
         border: 1px solid #dee2e6;
         text-align: center;
         margin: 0;
@@ -125,8 +124,7 @@
     .btn_map {
         background: linear-gradient(135deg, #007bff, #0056b3);
         color: #ffffff;
-        padding: 8px 16px;
-        border-radius: 20px;
+        padding: 16px;
         text-decoration: none;
         font-size: 13px;
         font-weight: 500;
