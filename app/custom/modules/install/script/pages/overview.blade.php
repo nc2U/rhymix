@@ -1,6 +1,6 @@
 <div class="img_box tabcontents">
     <ul class="img_list">
-        <li><img src="" alt="조감도 CG" /></li>
+        <li><img src="" alt="조감도 CG" width="800px" /></li>
     </ul>
     <ul class="img_thumb_list">
         <li><a href="javascript:;"><img src="" alt="조감도 CG" /></a></li>
@@ -63,8 +63,8 @@
         width: 100%;
         max-width: 800px;
         height: auto;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        /*border-radius: 8px;*/
+        /*box-shadow: 0 4px 12px rgba(0,0,0,0.15);*/
     }
     
     .img_thumb_list {
