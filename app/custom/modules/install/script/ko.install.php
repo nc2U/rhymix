@@ -352,10 +352,10 @@
 	<link href="./layouts/ibs_layout/css/welcome.css" rel="stylesheet" />
 	<div class="welcomeXE">
 	<section class="intro"><span class="noti">BRAND STORY!</span>
-	<h1 class="tit">변화하는 시대 속에서 새로운 주거의 이야기가 시작됩니다.</h1>
-	<p class="cont">고급 주거 공간은 언제나 삶의 변화를 반영하며 도시의 새로운 기준을 만들어왔습니다.</p>
-	<p class="cont">세련된 미학과 앞선 기술이 어우러진 특별한 공간 경험은 현대인의 라이프스타일을 선도하며, 단순한 거주를 넘어 삶의 가치를 더하는 상징으로 자리매김해왔습니다.</p>
-	<p class="cont">이제, 주거는 또 한 번의 진화를 준비합니다. 깊이 있는 시선과 혁신적인 관점을 더해, 달라진 삶의 의미와 미래를 향한 가치를 담은 새로운 고급 주거 경험이 시작됩니다.<br />
+	<h1 class="tit">한 차원 높은 생활의 가치와 남다른 삶을 제공하다</h1>
+	<p class="cont">오랜 시간 쌓아온 신뢰를 바탕으로 힐스테이트라는 브랜드를 도입한 이래,</p>
+	<p class="cont">단순한 주거공간을 넘어 주거문화를 새롭게 하는</p>
+	<p class="cont">라이프스타일 리더로 거듭나고 있습니다.<br />
 	<a class="btn_start" href="/brand">둘러보기</a></p>
 	</section>
 	</div>';
