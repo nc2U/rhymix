@@ -510,6 +510,13 @@
 	Rhymix\Framework\Config::set('mobile', $mobile_config);
 	Rhymix\Framework\Config::save();
 	
+	// ========== 사이트 색상 조합을 밝은 색상으로 고정 설정 ==========
+	$theme_config = array(
+		'colorset' => 'light'  // 밝은 색상 조합 고정
+	);
+	Rhymix\Framework\Config::set('theme', $theme_config);
+	Rhymix\Framework\Config::save();
+	
 	// ---- [시작] FCM 푸시 알림 설정 코드 ----
 	
 	// FCM 서비스 계정 파일 로드
