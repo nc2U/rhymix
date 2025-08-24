@@ -23,7 +23,7 @@
 			'title' => 'Main Menu',
 			'list' => array(
 				array(
-					'menu_name' => 'Home',
+					'menu_name' => '홈',
 					'module_type' => 'WIDGET',
 					'module_id' => 'index',
 				),
@@ -353,8 +353,8 @@
 	<div class="welcomeXE">
 	<section class="intro"><span class="noti">BRAND STORY!</span>
 	<h1 class="tit">한 차원 높은 생활의 가치와 남다른 삶을 제공하다</h1>
-	<p class="cont">오랜 시간 쌓아온 신뢰를 바탕으로 힐스테이트라는 브랜드를 도입한 이래,</p>
-	<p class="cont">단순한 주거공간을 넘어 주거문화를 새롭게 하는</p>
+	<p class="cont">오랜 시간 쌓아온 신뢰를 바탕으로 힐스테이트라는 브랜드를 도입한</p>
+	<p class="cont">이래, 단순한 주거공간을 넘어 주거문화를 새롭게 하는 </p>
 	<p class="cont">라이프스타일 리더로 거듭나고 있습니다.<br />
 	<a class="btn_start" href="/brand">둘러보기</a></p>
 	</section>
@@ -382,6 +382,13 @@
 	$domain_args = new stdClass();
 	$domain_args->domain_srl = 0;
 	$domain_args->index_module_srl = $module_srl;
+	// settings 객체를 먼저 생성
+	$settings = [
+		'title' => 'OOOO 지역주택조합',
+		'subtitle' => '아파트 브랜드명',
+		'color_scheme' => 'light',
+	];
+	$domain_args->settings = json_encode($settings, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 	executeQuery('module.updateDomain', $domain_args);
 	
 	// 관리자 즐겨찾기에 유용한 모듈들 추가
