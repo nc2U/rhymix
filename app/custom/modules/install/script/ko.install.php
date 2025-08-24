@@ -382,13 +382,11 @@
 	$domain_args = new stdClass();
 	$domain_args->domain_srl = 0;
 	$domain_args->index_module_srl = $module_srl;
-	// settings 객체를 먼저 생성
-	$settings = [
+	$domain_args->settings = json_encode([
 		'title' => 'OOOO 지역주택조합',
 		'subtitle' => '아파트 브랜드명',
 		'color_scheme' => 'light',
-	];
-	$domain_args->settings = json_encode($settings, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+	], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 	executeQuery('module.updateDomain', $domain_args);
 	
 	// 관리자 즐겨찾기에 유용한 모듈들 추가
