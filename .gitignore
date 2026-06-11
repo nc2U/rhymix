@@ -11,3 +11,4 @@ mysql
 # settings
 .env
 firebase-key.json
+values-custom.yaml
