@@ -51,7 +51,7 @@ spec:
             failureThreshold: 3
           readinessProbe:
             exec:
-              command: ["mysql", "-h", "localhost", "-u", "root", "-p$(MYSQL_ROOT_PASSWORD)", "-e", "SELECT 1"]
+              command: ["mysql", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}", "-e", "SELECT 1"]
             initialDelaySeconds: 10
             periodSeconds: 5
             timeoutSeconds: 3
