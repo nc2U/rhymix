@@ -1,0 +1,8 @@
+mariadb:
+  serviceAccount:
+    create: true
+    automount: true
+  ingress:
+    enabled: false
+  autoscaling:
+    enabled: false
