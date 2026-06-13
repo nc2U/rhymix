@@ -1,8 +1,34 @@
+# Default values for rhymix.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+global:
+  appMode: prod
+  nfsHost: dyibs.synology.me
+  nfsPath: /volume1/mnt/rhymix
+
 mariadb:
-  serviceAccount:
-    create: true
-    automount: true
+  auth:
+    username: "rhymix"
+    password: ""
+    rootPassword: ""
+
+nginx:
+  service:
+    port: 8883
+  
   ingress:
-    enabled: false
-  autoscaling:
-    enabled: false
+    enabled: true
+    className: "nginx"
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      nginx.ingress.kubernetes.io/proxy-connect-timeout: "120"
+      nginx.ingress.kubernetes.io/proxy-send-timeout: "120"
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "120"
+    hosts:
+      - host: your-domain.com
+        paths: [ { path: /, pathType: Prefix } ]
+    tls:
+      - secretName: web-devbox-kr-cert
+        hosts:
+          - your-domain.com

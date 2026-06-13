@@ -9,6 +9,8 @@ docker-compose.yml
 mysql
 
 # settings
+files/config/
+
 .env
 firebase-key.json
 values-custom.yaml
