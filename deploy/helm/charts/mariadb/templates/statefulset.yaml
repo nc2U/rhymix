@@ -43,7 +43,7 @@ spec:
               mountPath: {{ .Values.persistence.mountPath }}
           livenessProbe:
             exec:
-              command: ["mysqladmin", "ping", "-h", "localhost"]
+              command: ["/bin/sh", "-c", "mysqladmin ping -h localhost -u root -p${MYSQL_ROOT_PASSWORD}"]
             initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 5
@@ -51,7 +51,7 @@ spec:
             failureThreshold: 3
           readinessProbe:
             exec:
-              command: ["mysql", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}", "-e", "SELECT 1"]
+              command: ["/bin/sh", "-c", "mysql -h localhost -u root -p${MYSQL_ROOT_PASSWORD} -e 'SELECT 1'"]
             initialDelaySeconds: 10
             periodSeconds: 5
             timeoutSeconds: 3
