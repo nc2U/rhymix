@@ -4,8 +4,8 @@
 
 global:
   appMode: prod
-  nfsHost: dyibs.synology.me
-  nfsPath: /volume1/mnt/rhymix
+  nfsHost: your-nfs-server-ip
+  nfsPath: your-nfs-path
 
 mariadb:
   auth:
@@ -29,6 +29,6 @@ nginx:
       - host: your-domain.com
         paths: [ { path: /, pathType: Prefix } ]
     tls:
-      - secretName: web-devbox-kr-cert
+      - secretName: your-domain-tls
         hosts:
           - your-domain.com
